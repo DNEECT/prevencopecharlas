@@ -1,0 +1,14 @@
+.snackInfoContent {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.snackInfoContent p {
+  margin: 0;
+}
+
+::ng-deep .mdc-snackbar__surface {
+  background-color: var(--bg_body_color_main) !important;
+}
+
+/*# sourceMappingURL=snackbar-info.component.css.map */

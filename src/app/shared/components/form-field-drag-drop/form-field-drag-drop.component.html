@@ -1,0 +1,57 @@
+<div class="form-field-drag-drop" [ngClass]="getClass()">
+  <label class="label">{{ label }}</label>
+
+  <div
+    class="drop-zone"
+    [class.hover]="hover"
+    (drop)="onDrop($event)"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (click)="openFileDialog()"
+    [attr.aria-disabled]="!isEditable"
+  >
+    <input
+      #fileInput
+      type="file"
+      [attr.accept]="accept"
+      [attr.multiple]="multiple ? '' : null"
+      hidden
+      (change)="onFilesChosen($event)"
+    />
+    <div class="content">
+      <div class="title">{{ placeholder }}</div>
+      <button type="button" mat-button (click)="openFileDialog(); $event.stopPropagation()">
+        <mat-icon>cloud_upload</mat-icon>
+        Subir archivo
+      </button>
+      <div class="hint">Archivos permitidos: {{ accept }} (máx {{ maxSizeMB }} MB)</div>
+    </div>
+  </div>
+
+  <div class="files-list" *ngIf="files.length > 0">
+    <div class="file-item" *ngFor="let f of files; let i = index">
+      <div class="file-info">
+        <mat-icon>insert_drive_file</mat-icon>
+        <div class="meta">
+          <div class="name">{{ f.name }}</div>
+          <div class="size">{{ formatSize(f.size) }}</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button mat-icon-button type="button" (click)="downloadFile(f)" title="Descargar">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="removeFile(i)" title="Eliminar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="controls">
+      <button mat-stroked-button type="button" (click)="clearAll()">Limpiar</button>
+    </div>
+  </div>
+
+  <div class="errors" *ngIf="messageErrors && messageErrors.length">
+    <div class="error" *ngFor="let err of messageErrors">{{ err }}</div>
+  </div>
+</div>

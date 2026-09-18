@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="title" style="display: flex; align-items: center; gap: 12px">
+    <h2>Formato de actividad</h2>
+    <button mat-raised-button class="button-prevencope" (click)="redirectToAddActivityFormat()">
+      Nuevo
+    </button>
+  </div>
+
+  <div class="table-wrapper">
+    <app-table-paginate
+      [loading]="loading"
+      [dataSource]="dataSourceFormatoActividades"
+      [pageSize]="paginationData.pageSize"
+      [pageIndex]="paginationData.pageIndex"
+      [length]="paginationData.length"
+      [headers]="headers"
+      (pageChange)="onPageChange($event)"
+      (optionSelect)="onOptionSelect($event)"
+    >
+    </app-table-paginate>
+  </div>
+</div>

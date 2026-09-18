@@ -1,0 +1,146 @@
+<div class="table-wrap mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)">
+    @for (id of ids; track id) {
+      <ng-container
+        [matColumnDef]="id"
+        [stickyEnd]="
+          getDataTypeForId(id) === 'options' || getDataTypeForId(id) === 'options-butons'
+            ? true
+            : null
+        "
+      >
+        <!-- Encabezado -->
+        <th mat-header-cell *matHeaderCellDef>
+          @if (getSortForId(id); as sortId) {
+            <div [mat-sort-header]="sortId" [sortActionDescription]="sortId">
+              {{ getLabelForId(id) }}
+            </div>
+          } @else {
+            {{ getLabelForId(id) }}
+          }
+        </th>
+
+        <!-- Celdas -->
+        <td
+          mat-cell
+          *matCellDef="let element"
+          [ngStyle]="{ 'max-width': getMaxWidthForId(id) || 'none' }"
+        >
+          @switch (getDataTypeForId(id)) {
+            @case ('options') {
+              @if (element[id]?.length > 0) {
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  @for (menuItem of element[id]; track menuItem) {
+                    <button
+                      mat-menu-item
+                      [value]="menuItem"
+                      (click)="onMenuItemClick(menuItem, element)"
+                    >
+                      <mat-icon>{{ menuItem.icon }}</mat-icon>
+                      {{ menuItem.options }}
+                    </button>
+                  }
+                </mat-menu>
+              }
+            }
+
+            @case ('options-butons') {
+              <div>
+                @for (menuItem of element[id]; track menuItem) {
+                  <button
+                    mat-icon-button
+                    class="small-action"
+                    [value]="menuItem"
+                    (click)="onMenuItemClick(menuItem, element)"
+                    [matTooltip]="menuItem.options"
+                    [attr.aria-label]="menuItem.options"
+                  >
+                    <mat-icon
+                      [attr.style]="'color: ' + (menuItem.color || 'inherit') + ' !important'"
+                      >{{ menuItem.icon }}</mat-icon
+                    >
+                  </button>
+                }
+              </div>
+            }
+
+            @case ('string') {
+              {{ element[id] }}
+            }
+
+            @case ('number') {
+              {{ element[id] }}
+            }
+
+            @case ('checked') {
+              {{ element[id] ? 'x' : '' }}
+            }
+
+            @case ('date') {
+              {{ element[id] ? (element[id] | date: 'dd-MM-yyyy') : '' }}
+            }
+
+            @case ('estado') {
+              @if (element[id]) {
+                <span class="estado-badge activo" aria-label="Activo">Activo</span>
+              } @else {
+                <span class="estado-badge inactivo" aria-label="Inactivo">Inactivo</span>
+              }
+            }
+
+            @case ('array-objeto') {
+              @for (item of element[id]; track item) {
+                <span class="estado-badge objeto">
+                  {{ item[getCampoArrayForId(id)] }}
+                </span>
+                &nbsp;
+              }
+            }
+
+            @case ('permisos') {
+              @if (getPermiso(element, id) !== null) {
+                <app-form-slide-toggle [checked]="getPermiso(element, id)?.estado">
+                </app-form-slide-toggle>
+              } @else {
+                <app-form-slide-toggle [checked]="false" [isEditable]="false">
+                </app-form-slide-toggle>
+              }
+            }
+
+            @default {
+              {{ element[id] }}
+            }
+          }
+        </td>
+      </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="ids; sticky: true"></tr>
+    <tr mat-row *matRowDef="let _; columns: ids"></tr>
+  </table>
+
+  <!-- Loader -->
+  @if (loading) {
+    <div [style.height]="'90px'">
+      <mat-progress-spinner [strokeWidth]="3" class="table-loader" [mode]="'indeterminate'">
+      </mat-progress-spinner>
+    </div>
+  } @else if (dataEmpty()) {
+    <div class="no-results">No hay resultados</div>
+  } @else if (enablePagination && !dataEmpty()) {
+    <mat-paginator
+      class="dpaginator"
+      [disabled]="loading"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [length]="length"
+      (page)="handlePageEvent($event)"
+      [showFirstLastButtons]="true"
+    >
+    </mat-paginator>
+  }
+</div>

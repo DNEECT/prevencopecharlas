@@ -1,0 +1,23 @@
+.mat-expansion-panel {
+  background: var(--bg_body_color_main) !important;
+  color: var(--color_text_body_main) !important;
+}
+
+.mat-expansion-panel-header-title {
+  color: var(--color_text_body_main) !important;
+}
+
+.mat-expansion-panel-header-description {
+  color: var(--color_text_body_main) !important;
+}
+
+.mat-expansion-indicator {
+  color: var(--color_text_body_main) !important;
+}
+
+::ng-deep .mat-expansion-indicator svg {
+  fill: var(--color_text_body_main) !important;
+  color: var(--color_text_body_main) !important;
+}
+
+/*# sourceMappingURL=form-activity-register.css.map */

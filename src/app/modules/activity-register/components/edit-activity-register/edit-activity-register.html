@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="title-form">
+    <h2>Registro de actividad</h2>
+  </div>
+
+  <app-form-activity-register
+    [form]="activityRegisterForm"
+    [errorMessagesForm]="errorMessagesForm"
+    [listDetailsParticipantsRegistro]="listDetailsParticipantsRegistro"
+    [codigo]="codigo"
+    [isEdit]="true"
+    (addParticipant)="onAddParticipant($event)"
+    (removeParticipant)="onRemoveParticipant($event)"
+  >
+  </app-form-activity-register>
+
+  <div class="button-container">
+    <button mat-raised-button (click)="cancelActivityRegister()" class="button-border">
+      Cancelar
+    </button>
+    <button
+      mat-raised-button
+      (click)="createActivityRegister()"
+      [disabled]="activityRegisterForm.invalid || listDetailsParticipantsRegistro.length == 0"
+      class="button-prevencope"
+    >
+      Actualizar
+    </button>
+  </div>
+</div>

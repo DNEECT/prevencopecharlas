@@ -1,0 +1,98 @@
+@charset "UTF-8";
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--bg_contend_color_main);
+}
+:host mat-dialog-title {
+  color: var(--color_text_button_main);
+}
+:host .mat-mdc-dialog-title {
+  color: var(--color_text_button_main);
+}
+:host .file-upload-content {
+  display: flex;
+  flex-direction: column;
+  color: var(--color_text_button_main);
+}
+:host .mat-mdc-dialog-actions .mat-button-base + .mat-button-base,
+:host .mat-mdc-dialog-actions .mat-mdc-button-base + .mat-mdc-button-base {
+  margin-left: 0;
+}
+:host .file-input-container {
+  display: flex;
+  color: var(--color_text_button_main);
+  flex-direction: row; /* Inicia como columna en pantallas pequeñas */
+  gap: 8px;
+  align-items: stretch; /* Alinea los elementos para que ocupen todo el ancho */
+}
+:host input[type='file'] {
+  width: 100%; /* El input ocupa el 100% del ancho */
+  align-content: center;
+}
+:host .clear-file-btn {
+  color: var(--color_enlace_redireccion);
+  border-radius: 10%;
+  background-color: var(--bg_contend_color_main);
+}
+:host mat-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+:host .btn-cancel,
+:host .btn-upload {
+  width: 100%;
+  border-radius: 10px;
+  padding: 8px 16px;
+  text-transform: uppercase;
+}
+:host .btn-cancel {
+  color: var(--color_primary); /* Color azul para el texto */
+  background-color: var(--color_text_button_white_main);
+  border: 1px solid var(--color_primary); /* Borde azul para el botón de cancelar */
+}
+:host .btn-upload {
+  color: var(--color_text_button_main);
+  background-color: var(--color_primary); /* Color azul para el botón de subir */
+  border: none;
+}
+:host .btn-upload:disabled {
+  background-color: var(--color_text_button_white_main); /* Color gris cuando está deshabilitado */
+  color: var(--color_border_button_main);
+  border: 1px solid var(--color_border_button_main);
+}
+
+@media (min-width: 600px) {
+  .file-input-container {
+    flex-direction: row; /* Pasa a fila en pantallas medianas */
+    align-items: center; /* Alinea verticalmente el input y el botón */
+  }
+  mat-dialog-actions {
+    flex-direction: row !important;
+    justify-content: flex-end;
+  }
+  .mdc-dialog__actions {
+    flex-wrap: nowrap;
+  }
+  .btn-cancel,
+  .btn-upload {
+    width: auto; /* Botones ocupan solo el espacio necesario */
+  }
+}
+@media (min-width: 900px) {
+  mat-dialog-content {
+    margin-bottom: 16px; /* Aumenta el espacio inferior para pantallas más grandes */
+  }
+  .file-input-container {
+    gap: 16px; /* Aumenta el espacio entre el input y el botón */
+  }
+  .btn-cancel,
+  .btn-upload {
+    padding: 10px 20px; /* Botones más grandes en pantallas grandes */
+  }
+}
+
+/*# sourceMappingURL=dialog-upload.component.css.map */

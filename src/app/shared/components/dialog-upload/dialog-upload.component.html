@@ -1,0 +1,22 @@
+<h2 mat-dialog-title class="mat-mdc-dialog-title">{{ data.tittle || 'Subir archivo' }}</h2>
+<mat-dialog-content class="file-upload-content">
+  <div class="file-input-container">
+    <input type="file" (change)="onFileSelected($event)" [accept]="data.acceptedTypes" />
+    <button
+      mat-icon-button
+      *ngIf="selectedFile"
+      class="clear-file-btn"
+      (click)="onClear()"
+      aria-label="Clear file selection"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+  <div class="file-template" *ngIf="data.template">Descargar plantilla: {{ data.template }}</div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button class="btn-cancel" (click)="onCancel()">Cancelar</button>
+  <button mat-button class="btn-upload" [disabled]="!selectedFile" (click)="onUpload()">
+    Subir
+  </button>
+</mat-dialog-actions>

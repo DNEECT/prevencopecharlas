@@ -1,0 +1,154 @@
+<mat-sidenav-container class="sidenav-container">
+  <!-- 🔹 SIDENAV (versión móvil) -->
+  <mat-sidenav
+    #drawer
+    mode="over"
+    class="sidenav"
+    [fixedInViewport]="true"
+    fixedTopGap="60"
+    [disableClose]="false"
+  >
+    <mat-nav-list>
+      @for (item of menuItems; track item) {
+        @if (item.isVisible) {
+          @if (!item.items || item.items.length === 0) {
+            <a
+              mat-list-item
+              [routerLink]="item.link"
+              (click)="drawer.close()"
+              [ngClass]="{ 'active-link': item.active }"
+            >
+              @if (item.icon) {
+                <mat-icon>{{ item.icon }}</mat-icon>
+              }
+              <span class="item-label">{{ item.title }}</span>
+            </a>
+          } @else {
+            <mat-expansion-panel class="sidenav-panel" [expanded]="item.active">
+              <mat-expansion-panel-header>
+                <mat-panel-title [ngClass]="{ 'active-link': item.active }">
+                  @if (item.icon) {
+                    <mat-icon>{{ item.icon }}</mat-icon>
+                  }
+                  <span class="item-label">{{ item.title }}</span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <mat-nav-list>
+                @for (child of item.items; track child) {
+                  <a
+                    mat-list-item
+                    [routerLink]="child.link"
+                    [ngClass]="{ 'active-link': child.active }"
+                    (click)="drawer.close()"
+                  >
+                    <mat-icon class="child-icon">chevron_right</mat-icon>
+                    <span class="item-label">{{ child.title }}</span>
+                  </a>
+                }
+              </mat-nav-list>
+            </mat-expansion-panel>
+          }
+        }
+      }
+      <a mat-list-item (click)="drawer.close(); closeSession()">
+        <mat-icon>logout</mat-icon>
+        <span class="item-label">Cerrar Sesion</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <!-- 🔹 CONTENIDO PRINCIPAL -->
+  <mat-sidenav-content>
+    <!-- 🔹 BARRA SUPERIOR -->
+    <mat-toolbar class="navbar">
+      <button mat-icon-button (click)="drawer.toggle()" class="menu-icon">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <!--<span class="logo">PREVENCOPE</span>-->
+      <div class="logo" title="PREVENCOPE">
+        <img
+          ngSrc="/prevencope-icon.png"
+          alt="PREVENCOPE"
+          class="logo-img"
+          height="1024"
+          width="1536"
+        />
+      </div>
+
+      <!-- 🔹 MENÚ DESKTOP -->
+      <div class="menu-desktop">
+        @for (item of menuItems; track item) {
+          @if (item.isVisible) {
+            @if (!item.items || item.items.length === 0) {
+              <!-- Links simples -->
+              <button mat-button [routerLink]="item.link" routerLinkActive="active-link">
+                @if (item.icon) {
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                }
+                {{ item.title }}
+              </button>
+            } @else {
+              <!-- Links con submenú -->
+              <button
+                mat-button
+                [matMenuTriggerFor]="subMenu"
+                [matMenuTriggerData]="{ children: item.items }"
+                #subTrigger="matMenuTrigger"
+                [ngClass]="{
+                  'active-link': item.active,
+                  'inactive-link': !item.active,
+                }"
+              >
+                @if (item.icon) {
+                  <mat-icon>{{ item.icon }}</mat-icon>
+                }
+                {{ item.title }}
+                <mat-icon class="expand">expand_more</mat-icon>
+              </button>
+            }
+          }
+        }
+        <!-- Avatar -->
+        <div class="avatar" [matMenuTriggerFor]="userMenu" #userTrigger="matMenuTrigger">
+          <span>{{ initials() }}</span>
+        </div>
+      </div>
+    </mat-toolbar>
+
+    <!-- 🔹 MENÚS OVERLAY -->
+    <mat-menu
+      #subMenu="matMenu"
+      class="sub-menu"
+      backdropClass="sub-menu-backdrop"
+      overlapTrigger="false"
+      yPosition="below"
+    >
+      <ng-template matMenuContent let-children="children">
+        @for (sub of children; track sub) {
+          <button
+            mat-menu-item
+            [routerLink]="sub.link"
+            class="sub-menu-item"
+            routerLinkActive="active-link"
+          >
+            {{ sub.title }}
+            <mat-icon class="sub-arrow">chevron_right</mat-icon>
+          </button>
+        }
+      </ng-template>
+    </mat-menu>
+
+    <mat-menu #userMenu="matMenu" class="user-menu">
+      <button mat-menu-item (click)="redirectPerfil()">
+        <mat-icon>account_circle</mat-icon>
+        Mi Cuenta
+      </button>
+
+      <button mat-menu-item (click)="closeSession()">
+        <mat-icon>power_settings_new</mat-icon>
+        Cerrar Sesión
+      </button>
+    </mat-menu>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,76 @@
+.button-prevencope {
+  background: var(--color_button) !important;
+  width: 100%;
+  color: var(--color_white) !important;
+  min-width: 14rem !important;
+  min-height: 2.5rem !important;
+  transition: all 0.5s !important;
+  box-shadow: 0 1px 3px #11111112 !important;
+  border-radius: 10px !important;
+  position: relative;
+  z-index: 0; /* asegurar por debajo del navbar */
+  .mat-icon {
+    color: var(--color_white) !important;
+  }
+  .mdc-button__label {
+    color: var(--color_white);
+  }
+  &:disabled {
+    background: #b7b7b7 !important;
+    color: #737070 !important;
+  }
+  &:not(:disabled):before {
+    transition: 0.3s all ease !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 50% !important;
+    right: 50% !important;
+    bottom: 0;
+    opacity: 0;
+    background: transparent !important;
+    border-radius: 10px !important;
+  }
+  &:not(:disabled):hover:before {
+    transition: 0.3s all ease !important;
+    position: absolute !important;
+    top: -1%;
+    left: -1%;
+    right: -1%;
+    bottom: -1%;
+    opacity: 1;
+    z-index: -1;
+    border-radius: 4px;
+  }
+}
+
+.button-fill {
+  background-color: var(--color_button) !important;
+  border-color: var(--color_button) !important;
+  color: var(--color_white) !important;
+  border-radius: 10px !important;
+  width: 100%;
+  height: 100%;
+  min-height: 2.5rem !important;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 0;
+
+  &:disabled {
+    background-color: #b7b7b7 !important;
+  }
+}
+
+.button-border {
+  background-color: transparent !important;
+  border: 1px solid #be1717 !important;
+  color: #be1717 !important;
+  border-radius: 10px !important;
+  width: 100%;
+  height: 100%;
+  min-height: 2.5rem !important;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 0; /* asegurar por debajo del navbar */
+}

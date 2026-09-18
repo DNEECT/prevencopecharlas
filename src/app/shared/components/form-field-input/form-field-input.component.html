@@ -1,0 +1,23 @@
+<mat-form-field appearance="outline" class="form-field-input" [ngClass]="getClass()">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    [formControl]="control"
+    [placeholder]="placeholder"
+    [readonly]="!isEditable"
+    [autocomplete]="false"
+    [id]="controlName"
+    (input)="onInput($event)"
+    autocomplete="off"
+  />
+
+  @if (showClearButton) {
+    <mat-icon matSuffix (click)="clearInput()"> clear </mat-icon>
+  }
+
+  @for (error of messageErrors; track error) {
+    <mat-error *ngIf="control.hasError(objectKeys(error).toString())">
+      {{ error[objectKeys(error).toString()] }}
+    </mat-error>
+  }
+</mat-form-field>

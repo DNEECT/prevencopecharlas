@@ -1,0 +1,2 @@
+-- Seed data will be added after the legacy dump has been recovered and
+-- sanitized. Do not place production credentials or personal data here.

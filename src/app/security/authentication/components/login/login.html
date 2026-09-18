@@ -1,0 +1,40 @@
+<section class="Login">
+  <div class="Login__Form">
+
+    <h1 class="Login__Form__Content__Title">
+      FORMULARIO DE REGISTRO
+      DE ACTIVIDADES
+    </h1>
+    <form
+      [formGroup]="loginForm"
+      class="Login__Form__Content"
+      autocomplete="off"
+      matAutocompleteOrigin
+    >
+      <app-form-field-input
+        [label]="'Usuario'"
+        [placeholder]="'Ingrese su Usuario'"
+        [controlName]="'usuario'"
+        [control]="loginForm.controls['usuario']"
+        [messageErrors]="errorMessagesForm['usuario']"
+      >
+      </app-form-field-input>
+
+      <app-form-field-password
+        [label]="'Contraseña'"
+        [placeholder]="'Ingrese su Contraseña'"
+        [control]="loginForm.controls['contrasenia']"
+        [controlName]="'contrasenia'"
+        [messageErrors]="errorMessagesForm['contrasenia']"
+      >
+      </app-form-field-password>
+
+      <button mat-raised-button class="button-border" (click)="login()" id="login">
+        INICIAR SESIÓN
+      </button>
+    </form>
+  </div>
+  <div class="Login__Background">
+    <img ngSrc="logo-jne-blanco.svg" alt="" height="500" width="350" />
+  </div>
+</section>

@@ -1,0 +1,95 @@
+<!-- html -->
+<div class="form-field-file" [ngClass]="getClass()">
+  <mat-form-field appearance="outline" class="file-form-field" floatLabel="auto">
+    <mat-label>{{ placeholder || 'Archivo' }}</mat-label>
+
+    <input
+      matInput
+      [value]="selectedFileName || ''"
+      readonly
+      (click)="openFileSelector()"
+      aria-label="Nombre de archivo"
+      [ngClass]="getClass()"
+    />
+
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      (click)="openFileSelector()"
+      aria-label="Seleccionar archivo"
+      class="select-file-btn"
+    >
+      <mat-icon>upload_file</mat-icon>
+    </button>
+
+    <button
+      *ngIf="hasFile"
+      mat-icon-button
+      matSuffix
+      type="button"
+      (click)="clearInput()"
+      aria-label="Limpiar"
+    >
+      <mat-icon>clear</mat-icon>
+    </button>
+
+    <mat-error *ngFor="let err of messageErrors">
+      <ng-container *ngIf="control.hasError(objectKeys(err).toString())">
+        {{ err[objectKeys(err).toString()] }}
+      </ng-container>
+    </mat-error>
+  </mat-form-field>
+
+  <input
+    #fileInput
+    class="real-file-input"
+    type="file"
+    [id]="controlName"
+    [accept]="accept"
+    [attr.multiple]="multiple ? '' : null"
+    (change)="onFileSelected($event)"
+    hidden
+  />
+
+  <div class="files-list" *ngIf="selectedFiles.length > 0">
+    <div class="file-item" *ngFor="let f of selectedFiles; let i = index">
+      <div class="file-info">
+        <mat-icon>insert_drive_file</mat-icon>
+        <div class="meta">
+          <div class="name">{{ f.name }}</div>
+          <div class="size">{{ formatSize(f.size) }}</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button mat-icon-button type="button" (click)="downloadFile(f)" title="Descargar">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="removeFile(i)" title="Eliminar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mostrar archivo existente (URL) -->
+  <div class="files-list" *ngIf="existingFileUrl && selectedFiles.length === 0">
+    <div class="file-item">
+      <div class="file-info">
+        <mat-icon>insert_drive_file</mat-icon>
+        <div class="meta">
+          <div class="name">{{ existingFileUrl.split('/').pop() }}</div>
+          <div class="size">Archivo guardado</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button mat-icon-button type="button" (click)="downloadExistingFile()" title="Descargar">
+          <mat-icon>download</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="clearInput()" title="Eliminar">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

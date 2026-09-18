@@ -1,0 +1,24 @@
+<mat-form-field appearance="outline" class="form-field-data-range" [ngClass]="getClass()">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    [matDatepicker]="datepicker"
+    [placeholder]="placeholder"
+    [formControl]="control"
+    [readonly]="true"
+    [id]="controlName"
+    (dateChange)="onChange()"
+  />
+  <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+  <mat-datepicker #datepicker [disabled]="!isEditable"></mat-datepicker>
+  @if (showDeleteIcon) {
+    <button mat-icon-button matSuffix (click)="clear()" [disabled]="!isEditable">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+  @for (error of messageErrors; track error) {
+    <mat-error *ngIf="control.hasError(objectKeys(error).toString())">
+      {{ error[objectKeys(error).toString()] }}
+    </mat-error>
+  }
+</mat-form-field>

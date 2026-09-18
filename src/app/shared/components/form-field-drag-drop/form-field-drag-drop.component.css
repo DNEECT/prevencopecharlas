@@ -1,0 +1,75 @@
+.form-field-drag-drop .label {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.form-field-drag-drop .drop-zone {
+  border: 2px dashed #7dd3fc;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+  background: #fff;
+}
+.form-field-drag-drop .drop-zone.hover {
+  background: #f0f9ff;
+  border-color: #06b6d4;
+}
+.form-field-drag-drop .drop-zone .content .title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.form-field-drag-drop .drop-zone .content .hint {
+  color: #94a3b8;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+.form-field-drag-drop .drop-zone .content button {
+  margin-top: 10px;
+}
+.form-field-drag-drop .files-list {
+  margin-top: 12px;
+}
+.form-field-drag-drop .files-list .file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #e6eef2;
+  margin-bottom: 8px;
+}
+.form-field-drag-drop .files-list .file-item .file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.form-field-drag-drop .files-list .file-item .file-info mat-icon {
+  color: #06b6d4;
+}
+.form-field-drag-drop .files-list .file-item .file-info .meta .name {
+  font-weight: 600;
+}
+.form-field-drag-drop .files-list .file-item .file-info .meta .size {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+.form-field-drag-drop .files-list .file-item .actions {
+  display: flex;
+  gap: 8px;
+}
+.form-field-drag-drop .files-list .controls {
+  margin-top: 8px;
+}
+.form-field-drag-drop .errors {
+  color: #dc2626;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+/*# sourceMappingURL=form-field-drag-drop.component.css.map */

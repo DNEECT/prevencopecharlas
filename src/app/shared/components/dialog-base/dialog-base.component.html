@@ -1,0 +1,26 @@
+<div class="Dialog">
+  <div class="Dialog__Content">
+    @if (data.icon) {
+      <mat-icon class="Dialog__Content__Icon" [style.color]="data.color">{{ data.icon }}</mat-icon>
+    }
+    @if (data.tittle) {
+      <h1 class="Dialog__Content__Title">{{ data.tittle }}</h1>
+    }
+    @if (data.content) {
+      <p class="Dialog__Content__Text">{{ data.content }}</p>
+    }
+  </div>
+
+  <div mat-dialog-actions class="Dialog__Actions">
+    @if (data && data.actions) {
+      @for (action of data.actions; track action.name) {
+        <button
+          [ngClass]="action.style ? action.style : 'btn_standard'"
+          [mat-dialog-close]="action.returnValue"
+        >
+          {{ action.name }}
+        </button>
+      }
+    }
+  </div>
+</div>

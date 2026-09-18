@@ -1,0 +1,11 @@
+<mat-slide-toggle
+  class="form-slide-toggle"
+  [checked]="checked"
+  [disabled]="!isEditable"
+  (change)="onToggleChange($event)"
+  [ngClass]="{
+    'is-not-editable': !isEditable,
+  }"
+>
+  {{ label }}
+</mat-slide-toggle>

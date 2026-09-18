@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="title-form">
+    <h2>Formato de actividad</h2>
+  </div>
+
+  <app-form-activity-format [form]="activityFormatForm" [errorMessagesForm]="errorMessagesForm">
+  </app-form-activity-format>
+
+  <div class="button-container">
+    <button mat-raised-button (click)="cancelActivityFormat()" class="button-border">
+      Cancelar
+    </button>
+    <button
+      mat-raised-button
+      (click)="updateActivityFormat()"
+      [disabled]="activityFormatForm.invalid"
+      class="button-prevencope"
+    >
+      Actualizar
+    </button>
+  </div>
+</div>

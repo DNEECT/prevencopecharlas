@@ -1,0 +1,16 @@
+:host {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.form-field-text-area {
+  width: 100% !important;
+  height: auto !important;
+}
+.form-field-text-area textarea {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/*# sourceMappingURL=form-field-text-area.component.css.map */

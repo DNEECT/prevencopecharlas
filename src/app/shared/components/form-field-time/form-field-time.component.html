@@ -1,0 +1,25 @@
+<mat-form-field appearance="outline" class="form-field-time" [ngClass]="getClass()">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    [placeholder]="placeholder"
+    [formControl]="control"
+    [readonly]="!isEditable"
+    [id]="controlName"
+    (input)="onChange()"
+    (keydown.enter)="$event.preventDefault()"
+    type="time"
+  />
+
+  @if (showDeleteIcon) {
+    <button mat-icon-button matSuffix (click)="clear()" [disabled]="!isEditable">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
+
+  @for (error of messageErrors; track error) {
+    <mat-error *ngIf="control.hasError(objectKeys(error).toString())">
+      {{ error[objectKeys(error).toString()] }}
+    </mat-error>
+  }
+</mat-form-field>

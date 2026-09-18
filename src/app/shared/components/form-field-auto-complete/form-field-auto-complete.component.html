@@ -1,0 +1,57 @@
+<mat-form-field appearance="outline" class="form-field-auto-complete" [ngClass]="getClass()">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    #input
+    #autoTrigger="matAutocompleteTrigger"
+    [formControl]="control"
+    [placeholder]="placeholder"
+    (input)="filter()"
+    (focus)="filter()"
+    (keydown.enter)="$event.preventDefault()"
+    [matAutocomplete]="auto"
+    [readonly]="!isEditable || isLoading"
+    [id]="'input-' + controlName"
+    matInput
+  />
+
+  @if (isLoading) {
+    <mat-spinner matSuffix [diameter]="20"></mat-spinner>
+  } @else {
+    @if (control.value) {
+      <button matSuffix mat-icon-button (click)="clear($event)" [disabled]="!isEditable">
+        <mat-icon>close</mat-icon>
+      </button>
+    } @else {
+      <button
+        matSuffix
+        mat-icon-button
+        type="button"
+        (click)="onToggleClick($event, input, autoTrigger)"
+        aria-label="toggle-autocomplete"
+      >
+        <mat-icon>{{ panelOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+      </button>
+    }
+  }
+
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    [displayWith]="displayFn.bind(this)"
+    [id]="'autocomplete-' + controlName"
+    (opened)="panelOpen = true"
+    (closed)="panelOpen = false"
+    (optionSelected)="onOptionSelected($event.option.value)"
+  >
+    @for (option of filteredOptions; track option[keyField]) {
+      <mat-option [value]="option">
+        {{ option[valueField] }}
+      </mat-option>
+    }
+  </mat-autocomplete>
+
+  @for (error of messageErrors; track error) {
+    <mat-error *ngIf="control.hasError(objectKeys(error).toString())">
+      {{ error[objectKeys(error).toString()] }}
+    </mat-error>
+  }
+</mat-form-field>

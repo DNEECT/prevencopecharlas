@@ -1,0 +1,13 @@
+<div class="dialog-content">
+  <div class="close-button" (click)="closeDialog()">
+    <span class="close-icon">×</span>
+  </div>
+  <div class="Container__Simple__Content__Wrapper">
+    <ng-container #container> </ng-container>
+  </div>
+
+  <div class="Container__Simple__Actions">
+    <button mat-raised-button class="button-fill" (click)="submitData()">Guardar</button>
+    <button mat-raised-button class="button-border" (click)="closeDialog()">Cancelar</button>
+  </div>
+</div>

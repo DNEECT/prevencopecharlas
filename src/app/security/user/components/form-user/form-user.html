@@ -1,0 +1,90 @@
+<form class="form-grid">
+  <div class="form-item col-span-4">
+    <app-form-field-input
+      [label]="'Numero Documento'"
+      [placeholder]="'Ingrese numero de documento del usuario'"
+      [controlName]="'numeroDocumento'"
+      [control]="form.controls['numeroDocumento']"
+      [messageErrors]="errorMessagesForm['numeroDocumento']"
+    >
+    </app-form-field-input>
+  </div>
+  <div class="form-item col-span-4">
+    <app-form-field-input
+      [label]="'Nombres'"
+      [placeholder]="'Ingrese nombre del usuario'"
+      [controlName]="'nombres'"
+      [control]="form.controls['nombres']"
+      [messageErrors]="errorMessagesForm['nombres']"
+    >
+    </app-form-field-input>
+  </div>
+
+  <div class="form-item col-span-4">
+    <app-form-field-input
+      [label]="'Apellidos'"
+      [placeholder]="'Ingrese apellidos del usuario'"
+      [controlName]="'apellidos'"
+      [control]="form.controls['apellidos']"
+      [messageErrors]="errorMessagesForm['apellidos']"
+    >
+    </app-form-field-input>
+  </div>
+
+  <div class="form-item col-span-4">
+    <app-form-field-input
+      [label]="'Nombre Usuario'"
+      [placeholder]="'Ingrese nombre de usuario del usuario'"
+      [controlName]="'username'"
+      [control]="form.controls['username']"
+      [messageErrors]="errorMessagesForm['username']"
+    >
+    </app-form-field-input>
+  </div>
+
+  <div class="form-item col-span-4">
+    <app-form-field-auto-complete-multiple
+      [label]="'Roles'"
+      [placeholder]="'Seleccione rol del usuario'"
+      [options]="listRole"
+      [isLoading]="isLoadingRole"
+      [controlName]="'roles'"
+      [control]="form.controls['roles']"
+      [messageErrors]="errorMessagesForm['roles']"
+    >
+    </app-form-field-auto-complete-multiple>
+  </div>
+
+  <div class="form-item col-span-4">
+    <app-form-field-input
+      [label]="'Correo del usuario'"
+      [placeholder]="'Ingrese correo del usuario'"
+      [controlName]="'correo'"
+      [control]="form.controls['correo']"
+      [messageErrors]="errorMessagesForm['correo']"
+    >
+    </app-form-field-input>
+  </div>
+
+  <div class="form-item col-span-4">
+    <app-form-field-date
+      [label]="'Fecha de nacimiento del usuario'"
+      [placeholder]="'Ingresa fecha de nacimiento del usuario'"
+      [controlName]="'fechaNacimiento'"
+      [control]="form.controls['fechaNacimiento']"
+      [messageErrors]="errorMessagesForm['fechaNacimiento']"
+    >
+    </app-form-field-date>
+  </div>
+
+  <div class="form-item col-span-8">
+    <app-form-field-input
+      [label]="'Dirección del usuario'"
+      [placeholder]="'Ingrese direccion del usuario'"
+      [controlName]="'direccion'"
+      [control]="form.controls['direccion']"
+      [messageErrors]="errorMessagesForm['direccion']"
+    >
+    </app-form-field-input>
+  </div>
+</form>

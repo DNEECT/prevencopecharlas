@@ -1,0 +1,336 @@
+<mat-accordion>
+  <mat-expansion-panel class="form-grid" [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title> Formato de Actividad </mat-panel-title>
+      <mat-panel-description>
+        Codigo: {{ codigo.length === 0 ? 'Selecciona datos del formato' : codigo }}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div class="form-grid">
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Proceso Electoral'"
+          [placeholder]="'Seleccione un proceso electoral'"
+          [controlName]="'procesoElectoral'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="form.controls['procesoElectoral']"
+          [options]="listElectoralProcess"
+          [isLoading]="isLoadingElectoralProcess"
+          [messageErrors]="errorMessagesForm['procesoElectoral']"
+        >
+        </app-form-field-auto-complete>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Jurado Electoral Especial'"
+          [placeholder]="'Seleccione un jurado electoral especial'"
+          [controlName]="'juradoEspecial'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="form.controls['juradoEspecial']"
+          [options]="listjuradoNacionalEspecial"
+          [isLoading]="isLoadingjuradoNacionalEspecial"
+          [messageErrors]="errorMessagesForm['juradoEspecial']"
+        >
+        </app-form-field-auto-complete>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Tipo de actividad'"
+          [placeholder]="'Seleccione un tipo de actividad'"
+          [controlName]="'tipoActividad'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="form.controls['tipoActividad']"
+          [options]="listActivityType"
+          [isLoading]="isLoadingActivityType"
+          [messageErrors]="errorMessagesForm['tipoActividad']"
+          (valueChanged)="selectTeme($event)"
+        >
+        </app-form-field-auto-complete>
+      </div>
+
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Tema de actividad'"
+          [placeholder]="'Seleccione un tema de actividad'"
+          [controlName]="'tema'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="form.controls['tema']"
+          [options]="listTheme"
+          [isLoading]="isLoadingTheme"
+          [messageErrors]="errorMessagesForm['tema']"
+          (valueChanged)="selectCodigo($event)"
+        >
+        </app-form-field-auto-complete>
+      </div>
+
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Tipo Asistente'"
+          [placeholder]="'Seleccione un tema de actividad'"
+          [controlName]="'tipoAsistente'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="form.controls['tipoAsistente']"
+          [options]="listAsistentType"
+          [isLoading]="isLoadingAsistentType"
+          [messageErrors]="errorMessagesForm['tipoAsistente']"
+        >
+        </app-form-field-auto-complete>
+      </div>
+
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Público objetivo'"
+          [placeholder]="'Seleccione público objetivo'"
+          [controlName]="'publicoObjetivo'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="form.controls['publicoObjetivo']"
+          [options]="listTargetAudience"
+          [isLoading]="isLoadingTargetAudience"
+          [messageErrors]="errorMessagesForm['publicoObjetivo']"
+        >
+        </app-form-field-auto-complete>
+      </div>
+
+      <div class="form-item col-span-4">
+        <app-form-field-input
+          [label]="'Lugar'"
+          [placeholder]="'Ingrese Lugar de la actividad'"
+          [control]="form.controls['lugar']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['lugar']"
+          [controlName]="'lugar'"
+        >
+        </app-form-field-input>
+      </div>
+
+      <div class="form-item col-span-4">
+        <app-form-field-date
+          [label]="'Fecha'"
+          [placeholder]="'Ingrese fecha de la actividad'"
+          [controlName]="'fecha'"
+          [control]="form.controls['fecha']"
+          [messageErrors]="errorMessagesForm['fecha']"
+        >
+        </app-form-field-date>
+      </div>
+
+      <div class="form-item col-span-4">
+        <app-form-field-time
+          [label]="'Hora'"
+          [placeholder]="'Ingrese hora de la actividad'"
+          [controlName]="'hora'"
+          [control]="form.controls['hora']"
+          [messageErrors]="errorMessagesForm['hora']"
+        >
+        </app-form-field-time>
+      </div>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel class="form-grid">
+    <mat-expansion-panel-header>
+      <mat-panel-title> Registro de participantes </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="form-grid">
+      <div class="form-item col-span-4">
+        <app-form-field-input
+          [label]="'DNI'"
+          [placeholder]="'Ingrese DNI del participante'"
+          [controlName]="'dni'"
+          [maxLength]="8"
+          [inputType]="'digitos'"
+          [control]="formDetailParticipantes.controls['dni']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['dni']"
+          (valueChanged)="consultParticipante($event)"
+        >
+        </app-form-field-input>
+      </div>
+      <div class="form-item col-span-8">
+        <app-form-field-input
+          [label]="'Nombres Completos'"
+          [placeholder]="'Ingrese DNI del participante'"
+          [controlName]="'nombresCompletos'"
+          [control]="formDetailParticipantes.controls['nombresCompletos']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['nombresCompletos']"
+        >
+        </app-form-field-input>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Sexo'"
+          [placeholder]="'Seleccione sexo del participante'"
+          [controlName]="'sexo'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="formDetailParticipantes.controls['sexo']"
+          [options]="listGender"
+          [messageErrors]="errorMessagesFormDetailParticipantes['sexo']"
+        >
+        </app-form-field-auto-complete>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-input
+          [label]="'Edad'"
+          [inputType]="'digitos'"
+          [maxLength]="2"
+          [placeholder]="'Ingrese edad del participante'"
+          [control]="formDetailParticipantes.controls['edad']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['edad']"
+          [controlName]="'edad'"
+        >
+        </app-form-field-input>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-input
+          [label]="'Organizacion'"
+          [placeholder]="'Ingrese organizacion del participante'"
+          [control]="formDetailParticipantes.controls['organizacion']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['organizacion']"
+          [controlName]="'organizacion'"
+        >
+        </app-form-field-input>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-input
+          [label]="'Cargo del participante'"
+          [placeholder]="'Ingrese cargo del participante'"
+          [control]="formDetailParticipantes.controls['cargo']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['cargo']"
+          [controlName]="'cargo'"
+        >
+        </app-form-field-input>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-input
+          [label]="'Telefono'"
+          [placeholder]="'Ingrese telefono del participante'"
+          [inputType]="'digitos'"
+          [control]="formDetailParticipantes.controls['telefono']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['telefono']"
+          [controlName]="'telefono'"
+        >
+        </app-form-field-input>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-input
+          [label]="'Correo'"
+          [placeholder]="'Ingrese correo del participante'"
+          [control]="formDetailParticipantes.controls['correo']"
+          [messageErrors]="errorMessagesFormDetailParticipantes['correo']"
+          [controlName]="'correo'"
+        >
+        </app-form-field-input>
+      </div>
+      <div class="form-item col-span-4">
+        <app-form-field-auto-complete
+          [label]="'Población'"
+          [placeholder]="'Seleccione población del participante'"
+          [controlName]="'poblacion'"
+          [keyField]="'key'"
+          [valueField]="'value'"
+          [control]="formDetailParticipantes.controls['poblacion']"
+          [options]="listPoblation"
+          [messageErrors]="errorMessagesFormDetailParticipantes['poblacion']"
+        >
+        </app-form-field-auto-complete>
+      </div>
+    </div>
+    <div class="container table-form">
+      <div class="title">
+        <h2>Participantes</h2>
+        <button
+          type="button"
+          mat-raised-button
+          class="button-prevencope"
+          [disabled]="formDetailParticipantes.invalid"
+          (click)="emitNewParticipant()"
+        >
+          Agregar
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <app-table-paginate
+          [loading]="false"
+          [enablePagination]="false"
+          [dataSource]="listDetailsParticipantsRegistro"
+          [headers]="headers"
+          (optionSelect)="onOptionSelect($event)"
+        >
+        </app-table-paginate>
+      </div>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel class="form-grid">
+    <mat-expansion-panel-header>
+      <mat-panel-title> Datos adicionales </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="form-grid">
+      <div class="form-item col-span-12">
+        <app-form-field-text-area
+          [label]="'Preguntas Frecuentes'"
+          [placeholder]="'Ingrese preguntas frecuentes de la actividad'"
+          [controlName]="'preguntas'"
+          [control]="form.controls['preguntas']"
+          [messageErrors]="errorMessagesForm['preguntas']"
+        >
+        </app-form-field-text-area>
+      </div>
+      <div class="form-item col-span-12">
+        <app-form-field-text-area
+          [label]="'Recomendaciones'"
+          [placeholder]="'Ingrese recomendaciones de la actividad'"
+          [controlName]="'recomendaciones'"
+          [control]="form.controls['recomendaciones']"
+          [messageErrors]="errorMessagesForm['recomendaciones']"
+        >
+        </app-form-field-text-area>
+      </div>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel class="form-grid">
+    <mat-expansion-panel-header>
+      <mat-panel-title> Adjuntos </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div class="form-grid">
+      <div class="form-item col-span-6">
+        <app-form-field-file
+          [label]="'Lista de Asistencia'"
+          [placeholder]="'Adjuntar la lista de asistencia de los participantes'"
+          [control]="form.controls['adjuntoListaAsistentes']"
+          [controlName]="'adjuntoListaAsistentes'"
+          [accept]="'.png,.jpg,.jpeg,.pdf,.xls,.xlsx'"
+          [multiple]="false"
+          [isEditable]="true"
+          [showClearButton]="true"
+          (valueChanged)="onAdjuntoListaAsistentesChange($event)"
+          (downloadExisting)="descargarAdjunto($event)"
+        >
+        </app-form-field-file>
+      </div>
+      <div class="form-item col-span-6">
+        <app-form-field-file
+          [label]="'Registro Fotográfico'"
+          [placeholder]="'Adjuntar el registro fotográfico'"
+          [control]="form.controls['adjuntoRegistroFotografico']"
+          [controlName]="'adjuntoRegistroFotografico'"
+          [accept]="'.png,.jpg,.jpeg,.pdf,.xls,.xlsx'"
+          [multiple]="false"
+          [isEditable]="true"
+          [showClearButton]="true"
+          (valueChanged)="onAdjuntoRegistroFotograficoChange($event)"
+          (downloadExisting)="descargarAdjunto($event)"
+        >
+        </app-form-field-file>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

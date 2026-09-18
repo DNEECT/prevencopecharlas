@@ -1,0 +1,38 @@
+<form class="form-grid">
+  <div class="form-item col-span-6">
+    <app-form-field-auto-complete
+      [label]="'Tipo de actividad'"
+      [keyField]="'key'"
+      [valueField]="'value'"
+      [control]="form.controls['tipoActividad']"
+      [placeholder]="'Seleccione un tipo de actividad'"
+      [controlName]="'tipoActividad'"
+      [options]="listActivityType"
+      [isLoading]="isLoadingActivityType"
+      [messageErrors]="errorMessagesForm['tipoActividad']"
+    >
+    </app-form-field-auto-complete>
+  </div>
+
+  <div class="form-item col-span-6">
+    <app-form-field-input
+      [label]="'Serie'"
+      [placeholder]="'Ingrese serie del formato de actividad'"
+      [controlName]="'serie'"
+      [control]="form.controls['serie']"
+      [messageErrors]="errorMessagesForm['serie']"
+    >
+    </app-form-field-input>
+  </div>
+
+  <div class="form-item col-span-12">
+    <app-form-field-text-area
+      [label]="'Tema'"
+      [placeholder]="'Ingrese tema de la actividad'"
+      [controlName]="'tema'"
+      [control]="form.controls['tema']"
+      [messageErrors]="errorMessagesForm['tema']"
+    >
+    </app-form-field-text-area>
+  </div>
+</form>

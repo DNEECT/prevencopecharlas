@@ -1,0 +1,132 @@
+<div class="container">
+  <div class="title-form">
+    <h2>Usuario</h2>
+  </div>
+  <form class="form-grid">
+    <div class="form-item col-span-4">
+      <app-form-field-input
+        [label]="'Numero Documento'"
+        [placeholder]="'Ingrese numero de documento del usuario'"
+        [controlName]="'numeroDocumento'"
+        [control]="userForm.controls['numeroDocumento']"
+        [messageErrors]="errorMessagesForm['numeroDocumento']"
+      >
+      </app-form-field-input>
+    </div>
+    <div class="form-item col-span-4">
+      <app-form-field-input
+        [label]="'Nombres'"
+        [placeholder]="'Ingrese nombre del usuario'"
+        [controlName]="'nombres'"
+        [control]="userForm.controls['nombres']"
+        [messageErrors]="errorMessagesForm['nombres']"
+      >
+      </app-form-field-input>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-input
+        [label]="'Apellidos'"
+        [placeholder]="'Ingrese apellidos del usuario'"
+        [controlName]="'apellidos'"
+        [control]="userForm.controls['apellidos']"
+        [messageErrors]="errorMessagesForm['apellidos']"
+      >
+      </app-form-field-input>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-input
+        [label]="'Nombre Usuario'"
+        [placeholder]="'Ingrese nombre de usuario del usuario'"
+        [isEditable]="false"
+        [controlName]="'username'"
+        [control]="userForm.controls['username']"
+        [messageErrors]="errorMessagesForm['username']"
+      >
+      </app-form-field-input>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-auto-complete-multiple
+        [label]="'Roles'"
+        [isEditable]="false"
+        [placeholder]="'Seleccione rol del usuario'"
+        [controlName]="'roles'"
+        [control]="userForm.controls['roles']"
+        [messageErrors]="errorMessagesForm['roles']"
+      >
+      </app-form-field-auto-complete-multiple>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-input
+        [label]="'Correo del usuario'"
+        [placeholder]="'Ingrese correo del usuario'"
+        [controlName]="'correo'"
+        [control]="userForm.controls['correo']"
+        [messageErrors]="errorMessagesForm['correo']"
+      >
+      </app-form-field-input>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-date
+        [label]="'Fecha de nacimiento del usuario'"
+        [placeholder]="'Ingresa fecha de nacimiento del usuario'"
+        [controlName]="'fechaNacimiento'"
+        [control]="userForm.controls['fechaNacimiento']"
+        [messageErrors]="errorMessagesForm['fechaNacimiento']"
+      >
+      </app-form-field-date>
+    </div>
+
+    <div class="form-item col-span-8">
+      <app-form-field-input
+        [label]="'Dirección del usuario'"
+        [placeholder]="'Ingrese direccion del usuario'"
+        [controlName]="'direccion'"
+        [control]="userForm.controls['direccion']"
+        [messageErrors]="errorMessagesForm['direccion']"
+      >
+      </app-form-field-input>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-password
+        [label]="'Contraseña Actual'"
+        [placeholder]="'Ingrese su Contraseña Actual'"
+        [control]="userForm.controls['contraseniaOld']"
+        [controlName]="'contraseniaOld'"
+        [messageErrors]="errorMessagesForm['contraseniaOld']"
+      >
+      </app-form-field-password>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-password
+        [label]="'Contraseña Nueva'"
+        [placeholder]="'Ingrese su nueva Contraseña'"
+        [control]="userForm.controls['contraseniaNew']"
+        [controlName]="'contraseniaNew'"
+        [messageErrors]="errorMessagesForm['contraseniaNew']"
+      >
+      </app-form-field-password>
+    </div>
+
+    <div class="form-item col-span-4">
+      <app-form-field-password
+        [label]="'Confirmar Contraseña'"
+        [placeholder]="'Confirme su nueva Contraseña'"
+        [control]="userForm.controls['contraseniaConfirm']"
+        [controlName]="'contraseniaConfirm'"
+        [messageErrors]="errorMessagesForm['contraseniaConfirm']"
+      >
+      </app-form-field-password>
+    </div>
+  </form>
+
+  <div class="button-container">
+    <button mat-raised-button class="button-prevencope" (click)="updateUser()">Actualizar</button>
+  </div>
+</div>

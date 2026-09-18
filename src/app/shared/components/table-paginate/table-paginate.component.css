@@ -1,0 +1,53 @@
+@charset "UTF-8";
+.small-action {
+  padding: 2px; /* reduce espacio del botón */
+  min-width: 0; /* evita mínimo amplio por defecto */
+  width: 28px; /* tamaño total del botón */
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color_text_body_main);
+}
+
+.small-action mat-icon {
+  font-size: 18px; /* tamaño del icono */
+  width: 18px;
+  height: 18px;
+  line-height: 1;
+  display: inline-block;
+  color: var(--color_text_body_main);
+}
+
+.estado-badge {
+  display: inline-block;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  vertical-align: middle;
+  text-transform: none;
+}
+
+/* Verde degradado para activo */
+.estado-badge.activo {
+  background: linear-gradient(135deg, #b6c094 0%, #b6c094 100%);
+}
+
+/* Gris degradado para inactivo */
+.estado-badge.inactivo {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+}
+
+/* Gris degradado para inactivo */
+.estado-badge.objeto {
+  background: linear-gradient(135deg, #f39323 0%, #f39323 100%);
+}
+
+/*# sourceMappingURL=table-paginate.component.css.map */

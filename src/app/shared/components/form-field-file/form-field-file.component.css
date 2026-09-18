@@ -1,0 +1,242 @@
+@charset "UTF-8";
+:host {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.form-field-file {
+  display: block;
+  width: 100%;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  color: var(--color_text_body_main);
+}
+.form-field-file .file-form-field {
+  width: 100%;
+  background: var(--bg_body_color_main);
+  border-radius: 8px;
+  box-shadow: none;
+  margin-bottom: 12px;
+}
+.form-field-file .file-form-field .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+.form-field-file .file-form-field input[matInput] {
+  cursor: pointer;
+  user-select: none;
+  color: var(--color_text_body_main);
+  background: transparent;
+}
+.form-field-file .file-form-field button[matPrefix] {
+  margin-right: 8px;
+  color: var(--color_text_body_main);
+}
+.form-field-file .file-form-field button[matSuffix] {
+  margin-left: 8px;
+  color: var(--color_text_body_main);
+}
+.form-field-file .real-file-input {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  display: none;
+}
+.form-field-file {
+  /* Lista de archivos */
+}
+.form-field-file .files-list {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.form-field-file .files-list .file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--bg_body_color_main);
+  border: 1px solid var(--color_text_body_main);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
+  transition: background 0.12s, transform 0.08s;
+  gap: 8px;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+.form-field-file .files-list .file-item:hover {
+  background: var(--bg_body_color_main);
+  opacity: 0.9;
+}
+.form-field-file .files-list .file-item .file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  max-width: calc(100% - 80px);
+}
+.form-field-file .files-list .file-item .file-info mat-icon {
+  color: var(--color_primary);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.form-field-file .files-list .file-item .file-info .meta {
+  display: block;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  width: 100%;
+}
+.form-field-file .files-list .file-item .file-info .meta .name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color_text_body_main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
+}
+.form-field-file .files-list .file-item .file-info .meta .size {
+  font-size: 0.75rem;
+  color: var(--color_text_body_main);
+  opacity: 0.7;
+  margin-top: 2px;
+}
+.form-field-file .files-list .file-item .actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.form-field-file .files-list .file-item .actions button {
+  color: var(--color_text_body_main);
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  flex-shrink: 0;
+}
+.form-field-file .files-list .file-item .actions button mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+.form-field-file .files-list .file-item .actions button:hover {
+  color: var(--color_primary);
+}
+.form-field-file .files-list .file-item .actions button[title=Eliminar] {
+  color: var(--color_primary);
+}
+.form-field-file .files-list .file-item .actions button[title=Eliminar]:hover {
+  color: var(--color_primary);
+}
+.form-field-file .files-list .file-item .actions button[title=Descargar] {
+  color: var(--color_primary);
+}
+.form-field-file .files-list .file-item .actions button[title=Descargar]:hover {
+  opacity: 0.8;
+}
+.form-field-file .files-list .controls {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+.form-field-file {
+  /* Spinner de carga */
+}
+.form-field-file .loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+.form-field-file {
+  /* Estados y utilidades */
+}
+.form-field-file.invalid .file-form-field {
+  border: 1px solid var(--color_primary);
+}
+.form-field-file {
+  /* Responsive - solo ajustar texto, iconos mantienen tamaño */
+}
+@media (max-width: 768px) {
+  .form-field-file .files-list .file-item .file-info {
+    max-width: calc(100% - 75px);
+  }
+  .form-field-file .files-list .file-item .file-info .meta .name {
+    font-size: 0.8rem;
+  }
+  .form-field-file .files-list .file-item .file-info .meta .size {
+    font-size: 0.7rem;
+  }
+}
+@media (max-width: 600px) {
+  .form-field-file .files-list .file-item {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .form-field-file .files-list .file-item .file-info {
+    gap: 6px;
+    max-width: calc(100% - 72px);
+  }
+  .form-field-file .files-list .file-item .file-info .meta .name {
+    font-size: 0.75rem;
+  }
+  .form-field-file .files-list .file-item .file-info .meta .size {
+    font-size: 0.65rem;
+  }
+}
+@media (max-width: 400px) {
+  .form-field-file .files-list .file-item {
+    padding: 6px 8px;
+  }
+  .form-field-file .files-list .file-item .file-info {
+    max-width: calc(100% - 70px);
+  }
+  .form-field-file .files-list .file-item .file-info .meta .name {
+    font-size: 0.7rem;
+  }
+  .form-field-file .files-list .file-item .file-info .meta .size {
+    font-size: 0.6rem;
+  }
+}
+
+/* Integración con Material Form Field - usar variables de tema */
+.form-field-file .mat-mdc-form-field .mdc-notched-outline__notch,
+.form-field-file .mat-mdc-form-field .mdc-notched-outline__leading,
+.form-field-file .mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: var(--color_text_body_main) !important;
+  border-width: 1px !important;
+}
+.form-field-file .mat-mdc-form-field .mdc-notched-outline__notch {
+  border-left: none !important;
+  border-right: none !important;
+}
+.form-field-file .mat-mdc-form-field .mdc-notched-outline__leading {
+  border-right: none !important;
+}
+.form-field-file .mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-left: none !important;
+}
+.form-field-file .mat-mdc-form-field .mat-mdc-floating-label.mdc-floating-label {
+  color: var(--color_text_body_main) !important;
+}
+.form-field-file .mat-mdc-form-field .mat-mdc-input-element {
+  color: var(--color_text_body_main) !important;
+}
+.form-field-file .mat-mdc-form-field .mat-mdc-form-field-icon-suffix,
+.form-field-file .mat-mdc-form-field .mat-mdc-form-field-icon-prefix {
+  color: var(--color_text_body_main) !important;
+}
+
+/*# sourceMappingURL=form-field-file.component.css.map */

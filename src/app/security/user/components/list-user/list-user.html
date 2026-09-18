@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="form-grid">
+    <div class="form-item col-span-10">
+      <h2>Usuarios</h2>
+    </div>
+    <div class="form-item col-span-2">
+      <button mat-raised-button class="button-prevencope" (click)="redirectToAddUser()">
+        Nuevo
+      </button>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-item col-span-3">
+      <app-form-field-input
+        [label]="'Buscar'"
+        [placeholder]="'Ingrese término de búsqueda'"
+        [control]="formFilter.controls['terminoBusqueda']"
+        [controlName]="'terminoBusqueda'"
+      >
+      </app-form-field-input>
+    </div>
+    <div class="form-item col-span-2">
+      <button mat-raised-button class="button-prevencope" (click)="paginar()" style="height: 56px !important;">
+        Filtrar
+      </button>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <app-table-paginate
+      [loading]="loading"
+      [dataSource]="dataSourceUser"
+      [pageSize]="paginationData.pageSize"
+      [pageIndex]="paginationData.pageIndex"
+      [length]="paginationData.length"
+      [headers]="headers"
+      (pageChange)="onPageChange($event)"
+      (optionSelect)="onOptionSelect($event)"
+    >
+    </app-table-paginate>
+  </div>
+</div>

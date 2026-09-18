@@ -1,0 +1,160 @@
+.mat-mdc-form-field-hint-wrapper,
+.mat-mdc-form-field-error-wrapper {
+  padding: 0 !important;
+  position: relative !important;
+}
+
+.form-field-input {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.mat-form-field {
+  width: 100%;
+  overflow: visible;
+  gap: 5px;
+}
+
+.mat-mdc-form-field-error {
+  font-size: 0.7rem;
+}
+
+.mat-mdc-form-field-bottom-align {
+  margin-top: -10px !important;
+}
+
+.mat-mdc-form-field-icon-suffix,
+.mat-mdc-form-field-icon-prefix {
+  padding: 0 0 0 0 !important;
+}
+
+.form-field-data-range .mat-mdc-form-field-icon-suffix {
+  width: auto !important;
+  display: flex !important;
+}
+
+.form-slide-toggle {
+  .mdc-switch .mdc-switch__icons {
+    background: #8e8578 !important;
+    border-radius: 40% !important;
+    color: #8e8578 !important;
+  }
+  .mdc-switch .mdc-switch__track::after {
+    background: #8e8578 !important;
+    color: #8e8578 !important;
+  }
+  .mdc-switch--selected .mdc-switch__icons {
+    background: var(--color_white) !important;
+    border-radius: 40% !important;
+    color: #8e8578 !important;
+  }
+  .mdc-switch--selected .mdc-switch__track::after {
+    background: #8e8578 !important;
+    color: #8e8578 !important;
+  }
+  .mdc-switch--selected .mdc-switch__icon path {
+    fill: #8e8578 !important;
+  }
+}
+
+.mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
+.mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background,
+.mdc-checkbox
+  .mdc-checkbox__native-control[data-indeterminate='true']:enabled
+  ~ .mdc-checkbox__background {
+  border-color: #8e8578 !important;
+  background-color: #8e8578 !important;
+  color: #8e8578 !important;
+}
+
+.mdc-checkbox .mdc-checkbox__native-control:focus:checked ~ .mdc-checkbox__ripple {
+  opacity: var(--mdc-checkbox-selected-focus-state-layer-opacity);
+  background-color: var(--color_primary) !important;
+}
+
+.mat-mdc-form-field {
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__trailing {
+    border-color: var(--color_text_body_main) !important;
+    border-width: 1px !important;
+  }
+  .mdc-notched-outline__notch {
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .mdc-notched-outline__leading {
+    border-right: none !important;
+  }
+  .mdc-notched-outline__trailing {
+    border-left: none !important;
+  }
+  .mat-mdc-floating-label.mdc-floating-label {
+    color: var(--color_text_body_main) !important;
+  }
+  .mat-mdc-input-element {
+    color: var(--color_text_body_main) !important;
+  }
+  .mat-mdc-form-field-icon-suffix {
+    color: var(--color_text_body_main) !important;
+  }
+}
+
+.mat-mdc-form-field.required.ng-valid {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: green !important;
+    color: green !important;
+    border-width: 1px !important;
+  }
+  .mdc-notched-outline__notch {
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .mdc-notched-outline__leading {
+    border-right: none !important;
+  }
+  .mdc-notched-outline__trailing {
+    border-left: none !important;
+  }
+  .mat-mdc-floating-label.mdc-floating-label {
+    color: green !important;
+  }
+}
+
+.mat-mdc-form-field.ng-invalid.mat-form-field-invalid.required {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: red !important;
+    color: red !important;
+    border-width: 1px !important;
+  }
+  .mdc-notched-outline__notch {
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .mdc-notched-outline__leading {
+    border-right: none !important;
+  }
+  .mdc-notched-outline__trailing {
+    border-left: none !important;
+  }
+  .mat-mdc-floating-label.mdc-floating-label {
+    color: red !important;
+  }
+}
+
+.mat-mdc-form-field-infix {
+  display: flex !important;
+  padding: 0 !important;
+  align-items: center !important;
+}
+
+.auto-complete-select-multiple {
+  .mdc-evolution-chip-set__chips {
+    margin-left: -15px !important;
+    margin-top: 10px !important;
+  }
+}

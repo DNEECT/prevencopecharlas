@@ -1,0 +1,12 @@
+.snackInfoContent {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  p {
+    margin: 0;
+  }
+}
+
+::ng-deep .mdc-snackbar__surface {
+  background-color: var(--bg_body_color_main) !important;
+}

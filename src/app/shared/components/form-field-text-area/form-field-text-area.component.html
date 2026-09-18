@@ -1,0 +1,21 @@
+<mat-form-field appearance="outline" class="form-field-text-area" [ngClass]="getClass()">
+  <mat-label>{{ label }}</mat-label>
+  <textarea
+    matInput
+    #textarea
+    [formControl]="control"
+    [placeholder]="placeholder"
+    [readonly]="!isEditable"
+    [id]="controlName"
+    autocomplete="off"
+    (input)="resizeTextArea()"
+    rows="1"
+  >
+  </textarea>
+
+  @for (error of messageErrors; track error) {
+    <mat-error *ngIf="control.hasError(objectKeys(error).toString())">
+      {{ error[objectKeys(error).toString()] }}
+    </mat-error>
+  }
+</mat-form-field>

@@ -1,0 +1,319 @@
+.Login,
+.RecoverPassword,
+.ChangePassword {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100dvh;
+  width: 100dvw;
+  gap: 20px;
+  background-color: var(--bg_body_color_main);
+  &__Form {
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    gap: 35px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &__Header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      &__Image {
+        width: 80vw;
+      }
+    }
+    &__Content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: fit-content;
+      gap: 15px;
+      justify-content: center;
+      app-form-field-input,
+      app-form-field-password,
+      app-form-field-data-range,
+      app-auto-complete-select,
+      app-auto-complete-select-multiple,
+      button {
+        height: auto;
+        width: 87%;
+      }
+      h1 {
+        font-size: 2.1rem;
+        color: #be1717;
+        font-weight: 1000;
+        text-align: center;
+      }
+      button {
+        height: 56px;
+      }
+    }
+  }
+  &__Background {
+    display: none;
+  }
+}
+
+@media (min-width: 512px) {
+  .Login,
+  .RecoverPassword,
+  .ChangePassword {
+    &__Form {
+      width: 85vw;
+      &__Content {
+        width: 90%;
+        app-form-field-input,
+        app-form-field-password,
+        app-form-field-data-range,
+        app-auto-complete-select,
+        app-auto-complete-select-multiple,
+        button {
+          height: auto;
+          width: 80%;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 641px) {
+  .Login,
+  .RecoverPassword,
+  .ChangePassword {
+    &__Form {
+      width: 75vw;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .Login,
+  .RecoverPassword,
+  .ChangePassword {
+    &__Form {
+      width: 65vw;
+    }
+  }
+}
+
+@media (min-width: 1025px) {
+  .Login,
+  .RecoverPassword,
+  .ChangePassword {
+    flex-direction: row !important;
+    overflow: hidden;
+    &__Form {
+      width: 60%;
+      &__Header {
+        width: inherit;
+        &__Title {
+          font-size: 2.5rem;
+        }
+        &__Image {
+          width: 450px;
+        }
+      }
+      &__Content {
+        app-form-field-input,
+        app-form-field-password,
+        app-form-field-data-range,
+        app-auto-complete-select,
+        app-auto-complete-select-multiple,
+        button {
+          width: 420px;
+        }
+      }
+    }
+    &__Background {
+      display: flex;
+      width: 60%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+      background-color: #be1717;
+      img {
+      }
+    }
+  }
+}
+
+@media (min-width: 1281px) {
+  .Login,
+  .RecoverPassword,
+  .ChangePassword {
+    &__Form {
+      width: 50%;
+    }
+  }
+}
+
+.mat-drawer-opened {
+  background-color: var(--bg_header_color_main) !important;
+  color: var(--color_text_header_main) !important;
+}
+mat-panel-title {
+  color: var(--color_text_header_main) !important;
+  mat-icon {
+    color: var(--color_text_header_main) !important;
+  }
+}
+
+.sidenav {
+  width: 280px !important;
+  padding-top: 12px;
+  z-index: 10040; /* elevado pero por debajo del overlay container */
+  background-color: var(--bg_header_color_main);
+  color: var(--color_text_header_main) !important;
+  ::ng-deep .mat-mdc-list-item-unscoped-content {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    color: var(--color_text_header_main) !important;
+  }
+  ::ng-deep .active-link {
+    font-weight: 600 !important;
+    color: var(--color_primary) !important;
+    .item-label {
+      color: var(--color_primary) !important;
+    }
+    mat-icon {
+      color: var(--color_primary) !important;
+    }
+  }
+}
+.sidenav-panel {
+  border-radius: 0 !important;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px !important;
+  background: var(--bg_header_color_main) !important;
+  color: var(--color_text_header_main);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  z-index: 1200;
+
+  .menu-icon {
+    color: var(--color_primary);
+    display: inline-flex;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: rotate(90deg);
+    }
+  }
+
+  .menu-desktop {
+    display: none;
+  }
+}
+
+.navbar .menu-icon,
+.navbar .logo,
+.navbar .menu-desktop {
+  align-self: center;
+  align-items: center;
+}
+
+.sidenav-container {
+  display: block !important;
+}
+
+.sidenav {
+  width: 250px;
+  background: white;
+  color: var(--text-dark);
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+
+  mat-list-item,
+  button {
+    transition: background 0.3s ease;
+    &:hover {
+      background: var(--pink-light);
+      color: var(--pink);
+    }
+  }
+
+  mat-expansion-panel {
+    background: transparent;
+  }
+
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  ::ng-deep .mat-mdc-list-item-unscoped-content {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+}
+
+/* Estilo del submenú */
+::ng-deep .cdk-overlay-connected-position-bounding-box {
+  //transform: translateY(20px) !important;
+
+  .mat-mdc-menu-content {
+    background-color: var(--bg_header_color_main) !important;
+    color: var(--color_text_header_main) !important;
+  }
+
+  .mat-mdc-menu-item {
+    color: var(--color_text_header_main) !important;
+    mat-icon {
+      color: var(--color_text_header_main) !important;
+    }
+  }
+  .active-link {
+    font-weight: 600;
+    color: var(--color_primary) !important;
+    mat-icon {
+      color: var(--color_primary) !important;
+    }
+  }
+}
+
+/* Contenedor del logo: mantiene icono + texto alineados */
+.logo {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+/* Icono principal (mobile first: más pequeño) */
+.logo-img {
+  display: flex;
+  height: 48px; /* tamaño para móviles */
+  width: auto;
+  padding-left: -3rem;
+  z-index: 1;
+}
+
+/* Imagen que contiene el texto del logo: oculta en móvil */
+.logo-text {
+  padding-left: -3rem;
+  display: flex;
+  width: 350px;
+  z-index: 2;
+  height: auto;
+}
+
+/* Accesibilidad: foco visible para el contenedor del logo */
+.logo:focus-visible {
+  outline: 2px solid rgba(25, 118, 210, 0.6);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

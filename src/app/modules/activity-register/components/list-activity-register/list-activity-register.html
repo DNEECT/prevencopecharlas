@@ -1,0 +1,61 @@
+<div class="container">
+
+  <div class="form-grid">
+    <div class="form-item col-span-8">
+      <h2>Registro de actividad</h2>
+    </div>
+    <div class="form-item col-span-2">
+      <button mat-raised-button class="button-border" (click)="exportRegistros()">
+        Exportar
+      </button>
+    </div>
+    <div class="form-item col-span-2">
+      <button mat-raised-button class="button-prevencope" (click)="redirectToAddRegisterActivity()">
+        Nuevo
+      </button>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-item col-span-3">
+      <app-form-field-input
+        [label]="'Buscar'"
+        [placeholder]="'Ingrese término de búsqueda'"
+        [control]="formFilter.controls['terminoBusqueda']"
+        [controlName]="'terminoBusqueda'"
+      >
+      </app-form-field-input>
+    </div>
+    <div class="form-item col-span-3">
+      <app-form-field-auto-complete
+        [label]="'Jurado Electoral Especial'"
+        [placeholder]="'Seleccione un jurado electoral especial'"
+        [controlName]="'juradoNacionalEspecial'"
+        [keyField]="'key'"
+        [valueField]="'value'"
+        [control]="formFilter.controls['juradoNacionalEspecial']"
+        [options]="listjuradoNacionalEspecial"
+      >
+      </app-form-field-auto-complete>
+    </div>
+    <div class="form-item col-span-2">
+      <button mat-raised-button class="button-prevencope" (click)="paginar()" style="height: 56px !important;">
+        Filtrar
+      </button>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <app-table-paginate
+      [loading]="loading"
+      [dataSource]="dataSourceRegistroActividades"
+      [pageSize]="paginationData.pageSize"
+      [pageIndex]="paginationData.pageIndex"
+      [length]="paginationData.length"
+      [headers]="headers"
+      (pageChange)="onPageChange($event)"
+      (optionSelect)="onOptionSelect($event)"
+    >
+    </app-table-paginate>
+  </div>
+</div>

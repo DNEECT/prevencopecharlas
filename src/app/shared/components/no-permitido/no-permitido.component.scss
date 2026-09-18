@@ -1,0 +1,51 @@
+.NoPermit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+
+  &__Card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--bg_modal_color_main);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  &__Icon {
+    font-size: 3.2rem;
+    color: #e74c3c; /* rojo para denegado */
+  }
+
+  &__Title {
+    margin: 0.5rem 0 0.25rem 0;
+    font-size: 1.5rem;
+    color: var(--color_text_header_main);
+  }
+
+  &__Text {
+    color: var(--color_text_body_main);
+    margin: 0.5rem 0 1rem 0;
+  }
+
+  &__Actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    .btn_standard {
+      padding: 10px 18px;
+      min-width: 160px;
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: var(--color_white);
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

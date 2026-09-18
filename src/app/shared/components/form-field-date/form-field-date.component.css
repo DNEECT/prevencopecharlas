@@ -1,0 +1,40 @@
+:host {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.form-field-data-range {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.icon-button {
+  position: absolute;
+  z-index: 10;
+  right: 30px;
+}
+
+button {
+  color: var(--color_text_body_main) !important;
+}
+
+.mat-datepicker-toggle {
+  color: var(--color_text_body_main) !important;
+}
+
+::ng-deep .mat-calendar-header {
+  background: var(--bg_body_color_main) !important;
+  color: var(--color_text_body_main) !important;
+}
+
+::ng-deep .mat-datepicker-content .mat-calendar {
+  background: var(--bg_body_color_main) !important;
+  color: var(--color_text_body_main) !important;
+}
+
+::ng-deep .mat-calendar-period-button {
+  color: var(--color_text_body_main) !important;
+}
+
+/*# sourceMappingURL=form-field-date.component.css.map */

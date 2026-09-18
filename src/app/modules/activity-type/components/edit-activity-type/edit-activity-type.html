@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="title-form">
+    <h2>Tipo de actividad</h2>
+  </div>
+
+  <app-form-activity-type [form]="tipoActividadForm" [errorMessagesForm]="errorMessagesForm">
+  </app-form-activity-type>
+
+  <div class="button-container">
+    <button mat-raised-button (click)="cancelTipoActividad()" class="button-border">
+      Cancelar
+    </button>
+    <button
+      mat-raised-button
+      (click)="updateTipoActividad()"
+      [disabled]="tipoActividadForm.invalid"
+      class="button-prevencope"
+    >
+      Actualizar
+    </button>
+  </div>
+</div>

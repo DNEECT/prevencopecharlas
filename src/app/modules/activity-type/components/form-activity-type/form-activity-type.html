@@ -1,0 +1,23 @@
+<form class="form-grid">
+  <div class="form-item col-span-6">
+    <app-form-field-input
+      [label]="'Nombre'"
+      [placeholder]="'Ingrese nombre del tipo de actividad'"
+      [controlName]="'nombre'"
+      [control]="form.controls['nombre']"
+      [messageErrors]="errorMessagesForm['nombre']"
+    >
+    </app-form-field-input>
+  </div>
+
+  <div class="form-item col-span-6">
+    <app-form-field-text-area
+      [label]="'Descripción'"
+      [placeholder]="'Ingrese descripción del tipo de actividad'"
+      [controlName]="'descripcion'"
+      [control]="form.controls['descripcion']"
+      [messageErrors]="errorMessagesForm['descripcion']"
+    >
+    </app-form-field-text-area>
+  </div>
+</form>

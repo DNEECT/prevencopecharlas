@@ -1,0 +1,88 @@
+// typescript
+// `src/app/shared/components/form-field-drag-drop/form-field-drag-drop.component.scss`
+.form-field-drag-drop {
+  .label {
+    font-size: 0.9rem;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .drop-zone {
+    border: 2px dashed #7dd3fc;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+    background: #fff;
+
+    &.hover {
+      background: #f0f9ff;
+      border-color: #06b6d4;
+    }
+
+    .content {
+      .title {
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .hint {
+        color: #94a3b8;
+        margin-top: 8px;
+        font-size: 0.85rem;
+      }
+      button {
+        margin-top: 10px;
+      }
+    }
+  }
+
+  .files-list {
+    margin-top: 12px;
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #fff;
+      border: 1px solid #e6eef2;
+      margin-bottom: 8px;
+
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        mat-icon {
+          color: #06b6d4;
+        }
+        .meta {
+          .name {
+            font-weight: 600;
+          }
+          .size {
+            color: #64748b;
+            font-size: 0.9rem;
+          }
+        }
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+    }
+
+    .controls {
+      margin-top: 8px;
+    }
+  }
+
+  .errors {
+    color: #dc2626;
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+}
