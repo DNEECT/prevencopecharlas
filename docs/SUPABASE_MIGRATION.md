@@ -26,7 +26,9 @@ leaving the unrelated `gptcg` stack and its Vercel CLI identities alone.
    For the older synthetic authorization fixture, reset with `--no-seed`, then run
    the transactional SQL fixture
    `supabase/tests/authorization.sql` through the local `supabase_db_prevencopecharlas`
-   container. Run `node supabase/tests/auth-catalog-flow.mjs` or
+   container. Run `supabase/tests/import-ledger.sql` the same way to check
+   private import provenance and repeated mappings. Run
+   `node supabase/tests/auth-catalog-flow.mjs` or
    `node supabase/tests/storage-flow.mjs` independently after another fresh
    reset; these HTTP checks commit disposable fixtures. Reset once more after
    testing.
@@ -43,8 +45,11 @@ Use the institutional Supabase account with access to
 On 21 September 2026, `supabase projects list` showed the linked project and
 the hosted project was healthy. A `supabase db push --dry-run --linked
 --include-seed --skip-vault` preview listed all 12 reviewed migrations and
-`supabase/seed.sql`; the subsequent push applied them. `supabase migration
-list --linked` then showed all 12 local and remote versions matched. Hosted
+`supabase/seed.sql`; the subsequent push applied them. A later empty private
+`legacy_import` ledger migration also passed local replay and was pushed, so
+`supabase migration list --linked` shows all 13 local and remote versions
+matched. The ledger stores batch IDs, source hashes, user UUID mappings, and
+record outcomes; it contains no staged legacy records yet. Hosted
 read-only checks found 17 public tables, all 17 with RLS, and 17 public
 policies. The seed contains 2 roles, 8 modules, 6 actions, 42 role/action
 grants (18 inactive), 61 juries, and one `ACT009` format with next number
@@ -104,6 +109,13 @@ for each role. Keep browser writes to role membership denied.
 ## Import and evidence
 
 Use [LEGACY_INVENTORY.md](LEGACY_INVENTORY.md) as the reconciliation baseline.
+Run `scripts/audit-legacy-evidence.py --dump <reviewed-dump> --pg-restore
+<pg-restore-executable> --evidence-root <candidate-directory>` for aggregate
+name, kind, extension-derived MIME, and availability counts. A filename match
+is only a candidate until its bytes and provenance are verified; the supplied
+Charlas source tree yielded zero matches across 2,632 references. The Spring
+backend's configured upload directory is `/var/www/files/ventas/public/images`
+on the legacy host, outside that shared source tree.
 Stage the dump in a non-exposed schema outside Git, map source UUIDs and Auth
 users, preserve inactive flags and historical validation exceptions, and dry
 run twice to prove idempotency. Reconcile each format's next number against

@@ -5,9 +5,11 @@ the PREVENCOPE network share, alongside the Spring Boot source. A local copy
 at `Downloads/JNE/Modulo Charlas/backup.dump` has SHA-256
 `388f1f5c054cc4e682261a8fc3b09b23d141c65ec2e9a19232ee9b15b2d67c8a`.
 Its table counts match the earlier inventory. This document records counts and
-relationships, not personal records or the dump itself. The network share
-remained inaccessible to the Codex Windows identity (account lockout error
-1909), so confirm source freshness before production import.
+relationships, not personal records or the dump itself. On 21 September 2026,
+the network share was reachable again. The shared dump, backend ZIP, frontend
+ZIP, and `modelo_charlas` matched the local copies by SHA-256. The shared dump
+is dated 27 August 2026; confirm freshness against the live legacy database
+before production import.
 
 | Item | Read-only finding |
 | --- | ---: |
@@ -51,11 +53,19 @@ the transactional API enforces stronger validation only on new writes.
 Reconcile active/inactive flags, activity codes, and each format's next counter
 against the highest imported code before enabling writes.
 
-The supplied source tree did not contain the 2,632 referenced evidence objects.
-In particular, 77 historical photographic references are PDFs, which the new
-browser upload policy intentionally rejects. Search the original attachment
-volume or a verified backup using the reference inventory; record name, kind,
-size, MIME, and checksum for each recovered object. Import those PDFs through
-a trusted service role only. Unrecovered references remain unavailable and
-must not be displayed as downloadable evidence. Database reconciliation does
-not establish evidence parity.
+The repeatable [evidence audit](../scripts/audit-legacy-evidence.py) reconciled
+all 2,632 distinct attachment names from the dump by kind and extension-derived
+MIME type against all 639 files in the supplied shared Charlas source tree.
+None matched: 1,332 attendance lists and 1,300 photographic records remain
+unavailable in that tree. Of the attendance references, 1,118 are PDFs, 131
+XLSX, 50 JPEG, and 33 PNG. Of the photographic references, 77 are PDFs, 1,138
+JPEG, and 85 PNG. These are MIME inferences from filenames, not verified file
+content. The only three PNGs in the source tree are frontend logos. The Spring
+backend config points uploads to `/var/www/files/ventas/public/images`, an
+IONOS host path outside the share. Search that original volume or a verified
+backup using the reference inventory; record name, kind, size, actual MIME,
+and checksum for each recovered object. The new browser upload policy rejects
+photographic PDFs, so import recovered historical PDFs through a trusted
+service role only. Unrecovered references remain unavailable and must not be
+displayed as downloadable evidence. Database reconciliation does not establish
+evidence parity.
