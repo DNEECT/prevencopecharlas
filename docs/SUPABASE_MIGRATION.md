@@ -34,14 +34,19 @@ The publishable key is browser-public; RLS is the authorization boundary.
 ## Hosted project and Vercel
 
 Use the institutional Supabase account with access to
-`betgsxbtyckbbiepmols`. Authenticate the Supabase CLI independently, run
-`supabase projects list`, then `supabase link --project-ref betgsxbtyckbbiepmols`
-from this repository. Compare local and remote migration history and preview
-with `supabase db push --dry-run` before applying `supabase db push`. Check
+`betgsxbtyckbbiepmols`. The Supabase CLI is authenticated as
+`jne.dneect@jne.gob.pe` and this repository is linked to that project.
+On 21 September 2026, `supabase projects list` showed the expected project,
+the hosted project was healthy, and `supabase migration list --linked` showed
+none of the 12 local migrations applied. `supabase db push --dry-run --linked
+--skip-vault` listed all 12 for application. This was a preview only; the
+source-derived seed and legacy import are still pending. Recheck the remote
+history and preview before applying `supabase db push`. Check
 tables, explicit grants, RLS, the private `activity-evidence` bucket, and
-security/performance advisors after application. A linked project and reviewed
-source-derived seed are prerequisites; the local CLI currently has no access
-token and the connected project tool reported insufficient permission. Do not
+security/performance advisors after application. The reviewed source-derived
+seed is still a prerequisite. The Codex Supabase connector remains connected
+to a different account and reports insufficient permission for this project;
+use the institutional CLI for project checks. Do not
 run `vercel login`, `vercel link`, or alter the separate
 `patrickcast`/`gamersproject`/`gptcg` CLI session.
 
