@@ -40,20 +40,45 @@ The publishable key is browser-public; RLS is the authorization boundary.
 Use the institutional Supabase account with access to
 `betgsxbtyckbbiepmols`. The Supabase CLI is authenticated as
 `jne.dneect@jne.gob.pe` and this repository is linked to that project.
-On 21 September 2026, `supabase projects list` showed the expected project,
-the hosted project was healthy, and `supabase migration list --linked` showed
-none of the 12 local migrations applied. After source-seed generation, a
-`supabase db push --dry-run --linked --include-seed --skip-vault` preview listed
-all 12 migrations and `supabase/seed.sql`. Recheck the remote history and
-preview before applying with `--include-seed --skip-vault`. Check
-tables, explicit grants, RLS, the private `activity-evidence` bucket, and
-security/performance advisors after application. The reviewed source-derived
-seed is ready, but the legacy user/activity import and evidence reconciliation
-remain separate gates. The Codex Supabase connector remains connected
+On 21 September 2026, `supabase projects list` showed the linked project and
+the hosted project was healthy. A `supabase db push --dry-run --linked
+--include-seed --skip-vault` preview listed all 12 reviewed migrations and
+`supabase/seed.sql`; the subsequent push applied them. `supabase migration
+list --linked` then showed all 12 local and remote versions matched. Hosted
+read-only checks found 17 public tables, all 17 with RLS, and 17 public
+policies. The seed contains 2 roles, 8 modules, 6 actions, 42 role/action
+grants (18 inactive), 61 juries, and one `ACT009` format with next number
+1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
+restrictions, and currently contains no objects. The hosted activity and
+participant tables each contain zero rows: the legacy personal-data import
+and evidence reconciliation remain separate cutover gates. The Codex Supabase connector remains connected
 to a different account and reports insufficient permission for this project;
 use the institutional CLI for project checks. Do not
 run `vercel login`, `vercel link`, or alter the separate
 `patrickcast`/`gamersproject`/`gptcg` CLI session.
+
+The post-deployment Supabase advisors reported zero security errors, zero
+performance errors, and zero performance warnings. The eight security warnings
+are the intentionally authenticated, `SECURITY DEFINER` RPCs
+`archive_activity`, `archive_activity_format`, `archive_activity_type`,
+`archive_evidence`, `create_activity`, `my_permissions`, `my_roles`, and
+`replace_activity`. These expose only the current actor's roles/permissions or
+perform authorized mutations across RLS-hidden rows; their bodies derive the
+actor from `auth.uid()`, check active profile and/or specific action/ownership,
+use a fixed `search_path`, and grant execution only to `authenticated`.
+`supabase/tests/authorization.sql` and the HTTP flow tests cover actor scope,
+disabled grants, and denial of unauthorized calls. Reassess these warnings if
+any RPC body or grant changes. Seven informational security suggestions are
+RLS-enabled permission tables intentionally lacking direct client policies;
+clients use the scoped `my_roles()` and `my_permissions()` RPCs instead.
+Of 51 informational performance suggestions, 38 are uncovered foreign keys
+(predominantly audit-user references) and 13 are indexes not yet used by the
+small seeded workload. Review query plans and foreign-key
+delete/update costs after import before adding indexes solely to silence
+informational advice; retain the existing lookup/creator indexes for intended
+activity searches. `supabase db query --linked` stalled during this check, so
+the hosted counts and bucket state were verified in the dashboard SQL Editor
+and Storage settings.
 
 In the institutional Vercel project set `SUPABASE_URL` to
 `https://betgsxbtyckbbiepmols.supabase.co` and
