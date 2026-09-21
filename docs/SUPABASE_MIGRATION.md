@@ -137,6 +137,9 @@ found 53 blank sex values, one blank organization, 5,248 blank positions,
 participants. None of the 92 users has a verified Auth mapping yet. The dry
 run made no hosted changes; it does not complete the destination-aware import
 or establish evidence parity.
+An aggregate read-only query in the institutional dashboard on 21 September
+2026 returned zero rows in `auth.users`, `public.profiles`, and
+`legacy_import.auth_user_map`. No onboarding invitations have been sent.
 
 Run `scripts/audit-legacy-evidence.py --dump <reviewed-dump> --pg-restore
 <pg-restore-executable> --evidence-root <candidate-directory>` for aggregate
