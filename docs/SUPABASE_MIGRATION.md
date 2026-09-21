@@ -122,6 +122,12 @@ prints personal rows. Its Auth mapping is only a proposal: verify every mapped
 Auth ID exists in the institutional project and that its email corresponds to
 the legacy user before importing. Its projected insert counts assume an empty
 destination and are not a destination-aware insert/update/skip report.
+For an offline account review, run `python -B scripts/prepare-legacy-onboarding.py
+--dump <reviewed-dump> --pg-restore <pg-restore-executable> --output
+<private-path-outside-repository>`. The output contains legacy UUIDs, emails,
+usernames, roles, and proposed invite flags. It deliberately excludes password
+hashes. Review recipients and institutional ownership before using an Auth
+administration flow; this command sends no email and makes no database change.
 
 The confirmed snapshot's dry run found 92 users (89 active), 92 role
 memberships, 1,637 activities (1,455 active), and 32,042 participants, with
