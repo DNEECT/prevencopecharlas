@@ -57,7 +57,9 @@ The repeatable [evidence audit](../scripts/audit-legacy-evidence.py) reconciled
 all 2,632 distinct attachment names from the dump by kind and extension-derived
 MIME type against all 639 files in the supplied shared Charlas source tree.
 None matched: 1,332 attendance lists and 1,300 photographic records remain
-unavailable in that tree. Of the attendance references, 1,118 are PDFs, 131
+unavailable in that tree. The same audit across the broader `08.Agosto`
+handoff searched 1,676 files and also found zero filename matches. Of the
+attendance references, 1,118 are PDFs, 131
 XLSX, 50 JPEG, and 33 PNG. Of the photographic references, 77 are PDFs, 1,138
 JPEG, and 85 PNG. These are MIME inferences from filenames, not verified file
 content. The only three PNGs in the source tree are frontend logos. The Spring
