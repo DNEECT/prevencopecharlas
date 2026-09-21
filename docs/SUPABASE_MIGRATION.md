@@ -12,7 +12,8 @@ Use Node.js 20 or later, Docker Desktop, and `npm ci`. The dedicated local
 Supabase stack uses ports 55321 (API), 55322 (Postgres), and 55323 (Studio),
 leaving the unrelated `gptcg` stack and its Vercel CLI identities alone.
 
-1. Run `npm run supabase:start` and `npx supabase db reset --local --no-seed`.
+1. Run `npm run supabase:start` and `npx supabase db reset --local` to replay
+   migrations and the reviewed non-sensitive source seed.
 2. Read `PUBLISHABLE_KEY` and `API_URL` from `npx supabase status --output json`
    without pasting the complete status output into logs. Set
    `SUPABASE_PUBLISHABLE_KEY` and `SUPABASE_URL` in the shell or a local ignored
@@ -20,7 +21,10 @@ leaving the unrelated `gptcg` stack and its Vercel CLI identities alone.
 3. Run `npm start`. The `prestart` script generates the ignored
    `src/environments/supabase.generated.ts`; production builds use the same
    public-only configuration through `prebuild`.
-4. From a fresh reset, run the transactional SQL fixture
+4. Run `supabase/tests/seed-parity.sql` against the seeded local database and
+   execute `supabase/seed.sql` a second time to verify zero duplicate inserts.
+   For the older synthetic authorization fixture, reset with `--no-seed`, then run
+   the transactional SQL fixture
    `supabase/tests/authorization.sql` through the local `supabase_db_prevencopecharlas`
    container. Run `node supabase/tests/auth-catalog-flow.mjs` or
    `node supabase/tests/storage-flow.mjs` independently after another fresh
@@ -38,13 +42,14 @@ Use the institutional Supabase account with access to
 `jne.dneect@jne.gob.pe` and this repository is linked to that project.
 On 21 September 2026, `supabase projects list` showed the expected project,
 the hosted project was healthy, and `supabase migration list --linked` showed
-none of the 12 local migrations applied. `supabase db push --dry-run --linked
---skip-vault` listed all 12 for application. This was a preview only; the
-source-derived seed and legacy import are still pending. Recheck the remote
-history and preview before applying `supabase db push`. Check
+none of the 12 local migrations applied. After source-seed generation, a
+`supabase db push --dry-run --linked --include-seed --skip-vault` preview listed
+all 12 migrations and `supabase/seed.sql`. Recheck the remote history and
+preview before applying with `--include-seed --skip-vault`. Check
 tables, explicit grants, RLS, the private `activity-evidence` bucket, and
 security/performance advisors after application. The reviewed source-derived
-seed is still a prerequisite. The Codex Supabase connector remains connected
+seed is ready, but the legacy user/activity import and evidence reconciliation
+remain separate gates. The Codex Supabase connector remains connected
 to a different account and reports insufficient permission for this project;
 use the institutional CLI for project checks. Do not
 run `vercel login`, `vercel link`, or alter the separate

@@ -1,10 +1,13 @@
 # Read-only legacy inventory and reconciliation gates
 
 The source reviewed on 18 September 2026 was the PostgreSQL custom dump in
-the PREVENCOPE network share, alongside the Spring Boot source. This document
-records counts and relationships, not personal records or the dump itself.
-The share was unavailable during the 21 September implementation session;
-recheck its contents before an import.
+the PREVENCOPE network share, alongside the Spring Boot source. A local copy
+at `Downloads/JNE/Modulo Charlas/backup.dump` has SHA-256
+`388f1f5c054cc4e682261a8fc3b09b23d141c65ec2e9a19232ee9b15b2d67c8a`.
+Its table counts match the earlier inventory. This document records counts and
+relationships, not personal records or the dump itself. The network share
+remained inaccessible to the Codex Windows identity (account lockout error
+1909), so confirm source freshness before production import.
 
 | Item | Read-only finding |
 | --- | ---: |
@@ -15,15 +18,18 @@ recheck its contents before an import.
 | Distinct referenced attachment names | 2,632 |
 
 The source role graph has 8 modules, 6 actions, 21 module/action combinations,
-12 role/module associations, and 42 role/module/action rows. Monitor has active
-LIST/ADD/EDIT/DELETE/APROVE/OBSERVE on `GREGACT`, active LIST/ADD/EDIT/DELETE
-on `GFORACT`, `GTIPACT`, and `GUSU`, LIST/ADD on `GPRM`, and LIST on `GTOD`.
+12 role/module associations, and 42 role/module/action rows (18 inactive).
+Monitor has active LIST/ADD/EDIT/DELETE/APROVE/OBSERVE on `GREGACT`, active
+LIST/ADD/EDIT/DELETE on `GFORACT`, `GTIPACT`, and `GUSU`, inactive LIST/ADD
+on `GPRM`, and active LIST on `GTOD`.
 Gestor has active LIST/ADD/EDIT/DELETE on `GREGACT`, inactive APROVE/OBSERVE
 there, inactive LIST/ADD/EDIT/DELETE on `GFORACT`, `GTIPACT`, and `GUSU`,
 inactive LIST/ADD on `GPRM`, and active LIST on `GTOD`. Preserve every disabled
-row as disabled on import. Compare all 42 source IDs and flags before seeding
-production; the current local SQL fixtures use synthetic IDs and are not a
-substitute for the source seed.
+row as disabled on import. The generated [source seed](../supabase/seed.sql)
+preserves the 42 grant UUIDs and flags, and [seed-parity.sql](../supabase/tests/seed-parity.sql)
+checks the effective matrix. The single source format has series `ACT009`
+and next number 1642; all 1,637 source registration codes are unique and the
+highest suffix is 1641. Reconcile this again before enabling hosted writes.
 
 Business primary keys for catalogs, formats, juries, registrations, and
 participants are UUIDs and should remain unchanged. Map the original user UUID
@@ -32,6 +38,11 @@ Audit creator/updater references must resolve through that mapping. Source
 `juradonacionalespecial.codprocesoelectoral` is an integer, while the process
 primary key is a UUID; it is metadata, not a verified foreign key. No
 user-to-jury assignment table was found. Do not infer either relationship.
+
+The reviewed dump has 1 activity type, 7 assistant types, 11 target audiences,
+1 electoral process, 61 special juries, and 1 activity format. Its non-sensitive
+catalog UUIDs and names are retained in the source seed; source users and
+activities are excluded from that file.
 
 Historical participant exceptions include 53 blank sex values, one blank
 organization, 5,248 blank positions, 25,657 blank emails, and 26,494 blank

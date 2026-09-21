@@ -7,7 +7,7 @@
 - [x] 1.3 Add activity types, assistant types, target audiences, electoral processes, juries, formats, registrations, participants, and evidence metadata using legacy business UUIDs and soft-active state; verify valid fixtures insert and invalid references fail without inventing a jury/process foreign key.
 - [x] 1.4 Add archival safeguards, including protection against disabling or demoting the final active Monitor administrator; verify the last-Monitor operation is rejected while ordinary profile updates succeed.
 - [x] 1.5 Add atomic activity-code generation using series plus a four-digit padded counter, transactional registration/participant RPCs, and invoker-security read views; verify concurrent calls cannot create duplicate codes and imported sequence state is respected.
-- [ ] 1.6 Seed the 42 source role/action grants, module hierarchy, Monitor/Gestor roles, and known non-sensitive catalogs; verify disabled grants remain disabled and repeated seeds do not duplicate rows.
+- [x] 1.6 Seed the 42 source role/action grants, module hierarchy, Monitor/Gestor roles, and known non-sensitive catalogs; verify disabled grants remain disabled and repeated seeds do not duplicate rows.
 
 ## 2. Database and Storage Authorization
 
@@ -36,7 +36,7 @@
 
 ## 5. Legacy Import and Cutover
 
-- [ ] 5.1 Record the verified read-only dump inventory (19 tables, 92 users, 1,637 activities, 32,042 participants), source UUID/permission mappings, inactive state, and historical validation exceptions without committing source payloads or secrets.
+- [x] 5.1 Record the verified read-only dump inventory (19 tables, 92 users, 1,637 activities, 32,042 participants), source UUID/permission mappings, inactive state, and historical validation exceptions without committing source payloads or secrets.
 - [ ] 5.2 Locate the 2,632 referenced evidence objects or document their absence; reconcile name, kind, MIME type, and availability before claiming evidence parity.
 - [ ] 5.3 Add non-exposed staging and idempotent import tooling keyed by source UUID and Auth user mapping; verify a fixture import can be repeated without duplicate users, activities, participants, or evidence metadata.
 - [ ] 5.4 Run a legacy dry import and report inserts, updates, skips, historical-validation exceptions, unresolved relationships, and missing objects; block affected database rows on unresolved relationships and keep evidence parity incomplete while objects are absent.
