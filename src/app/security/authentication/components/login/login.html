@@ -7,13 +7,14 @@
     </h1>
     <form
       [formGroup]="loginForm"
+      (ngSubmit)="login()"
       class="Login__Form__Content"
       autocomplete="off"
       matAutocompleteOrigin
     >
       <app-form-field-input
-        [label]="'Usuario'"
-        [placeholder]="'Ingrese su Usuario'"
+        [label]="'Correo institucional'"
+        [placeholder]="'Ingrese su correo'"
         [controlName]="'usuario'"
         [control]="loginForm.controls['usuario']"
         [messageErrors]="errorMessagesForm['usuario']"
@@ -29,7 +30,7 @@
       >
       </app-form-field-password>
 
-      <button mat-raised-button class="button-border" (click)="login()" id="login">
+      <button mat-raised-button type="submit" class="button-border" id="login">
         INICIAR SESIÓN
       </button>
     </form>

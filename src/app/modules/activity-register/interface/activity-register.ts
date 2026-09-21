@@ -30,6 +30,7 @@ export interface RegistroActividadResponse {
   nombrePublicoObjetivo: string;
   lugar: string;
   tema: string;
+  codFormatoActividad: string;
   serie: string;
   numeracion: number;
   fecha: string;
@@ -40,6 +41,7 @@ export interface RegistroActividadResponse {
   adjuntoListaAsistentes?: string | null;
   adjuntoRegistroFotografico?: string | null;
   participantes: RegistroActividadParticipanteResponse[];
+  cantidadParticipantes?: number;
 }
 
 export interface RegistroActividadParticipanteResponse {
@@ -314,7 +316,7 @@ export function convertirRegistroActividadFormDtoToRegistroActividadRequest(
 ): RegistroActividadRequest {
   return {
     codTipoActividad: registroActividadForm.value.tipoActividad?.key ?? null,
-    tema: registroActividadForm.value.tema?.value ?? null,
+    tema: registroActividadForm.value.tema?.key ?? null,
     codTipoAsistentes: registroActividadForm.value.tipoAsistente?.key ?? null,
     codPublicoObjetivo: registroActividadForm.value.publicoObjetivo?.key ?? null,
     lugar: registroActividadForm.value.lugar ?? null,
@@ -369,7 +371,7 @@ export function convertirRegistroActividadResponseToRegistroActividadFormDto(
       key: registroActividadResponse.codTipoAsistente,
       value: registroActividadResponse.nombreTipoAsistente,
     },
-    tema: { key: registroActividadResponse.tema, value: registroActividadResponse.tema },
+    tema: { key: registroActividadResponse.codFormatoActividad, value: registroActividadResponse.tema },
     lugar: registroActividadResponse.lugar,
     procesoElectoral: {
       key: registroActividadResponse.codProcesoElectoral,

@@ -2,20 +2,20 @@
 
 ## 1. Database Foundation
 
-- [ ] 1.1 Add the core migration with required extensions, protected helper schema, audit timestamp helpers, and explicit privilege defaults; verify a schema-only database reset completes without SQL errors.
-- [ ] 1.2 Add Auth-linked profiles with unique legacy user UUIDs; roles, hierarchical modules, actions, role-module-action grants, and profile-role membership; verify the source permission relationships and uniqueness constraints.
-- [ ] 1.3 Add activity types, assistant types, target audiences, electoral processes, juries, formats, registrations, participants, and evidence metadata using legacy business UUIDs and soft-active state; verify valid fixtures insert and invalid references fail without inventing a jury/process foreign key.
-- [ ] 1.4 Add archival safeguards, including protection against disabling or demoting the final active Monitor administrator; verify the last-Monitor operation is rejected while ordinary profile updates succeed.
-- [ ] 1.5 Add atomic activity-code generation using series plus a four-digit padded counter, transactional registration/participant RPCs, and invoker-security read views; verify concurrent calls cannot create duplicate codes and imported sequence state is respected.
+- [x] 1.1 Add the core migration with required extensions, protected helper schema, audit timestamp helpers, and explicit privilege defaults; verify a schema-only database reset completes without SQL errors.
+- [x] 1.2 Add Auth-linked profiles with unique legacy user UUIDs; roles, hierarchical modules, actions, role-module-action grants, and profile-role membership; verify the source permission relationships and uniqueness constraints.
+- [x] 1.3 Add activity types, assistant types, target audiences, electoral processes, juries, formats, registrations, participants, and evidence metadata using legacy business UUIDs and soft-active state; verify valid fixtures insert and invalid references fail without inventing a jury/process foreign key.
+- [x] 1.4 Add archival safeguards, including protection against disabling or demoting the final active Monitor administrator; verify the last-Monitor operation is rejected while ordinary profile updates succeed.
+- [x] 1.5 Add atomic activity-code generation using series plus a four-digit padded counter, transactional registration/participant RPCs, and invoker-security read views; verify concurrent calls cannot create duplicate codes and imported sequence state is respected.
 - [ ] 1.6 Seed the 42 source role/action grants, module hierarchy, Monitor/Gestor roles, and known non-sensitive catalogs; verify disabled grants remain disabled and repeated seeds do not duplicate rows.
 
 ## 2. Database and Storage Authorization
 
-- [ ] 2.1 Add protected active-profile, effective-action, Monitor-administrator, and Gestor-creator-scope helpers with fixed search paths; verify ordinary authenticated users cannot alter privileged helpers or spoof an actor.
-- [ ] 2.2 Revoke anonymous application privileges, enable RLS on every exposed application table, and add profile and authorization policies; verify an anonymous client and an authenticated identity without a profile receive no application rows.
-- [ ] 2.3 Add Monitor administrative/global policies and Gestor creator-scoped policies for catalogs, formats, registrations, participants, and evidence metadata; verify direct cross-user reads/writes and inactive grants follow the source matrix.
-- [ ] 2.4 Create the private `activity-evidence` bucket with 20 MiB and MIME restrictions plus path-based object policies; verify normal uploads, historical photographic PDF import, anonymous denial, creator scope, and authorized signed downloads.
-- [ ] 2.5 Add SQL verification scripts for constraints, grants, RLS, role changes, archival behavior, and storage policy helpers; verify all scripts pass against a freshly reset database.
+- [x] 2.1 Add protected active-profile, effective-action, Monitor-administrator, and Gestor-creator-scope helpers with fixed search paths; verify ordinary authenticated users cannot alter privileged helpers or spoof an actor.
+- [x] 2.2 Revoke anonymous application privileges, enable RLS on every exposed application table, and add profile and authorization policies; verify an anonymous client and an authenticated identity without a profile receive no application rows.
+- [x] 2.3 Add Monitor administrative/global policies and Gestor creator-scoped policies for catalogs, formats, registrations, participants, and evidence metadata; verify direct cross-user reads/writes and inactive grants follow the source matrix.
+- [x] 2.4 Create the private `activity-evidence` bucket with 20 MiB and MIME restrictions plus path-based object policies; verify normal uploads, historical photographic PDF import, anonymous denial, creator scope, and authorized signed downloads.
+- [x] 2.5 Add SQL verification scripts for constraints, grants, RLS, role changes, archival behavior, and storage policy helpers; verify all scripts pass against a freshly reset database.
 
 ## 3. Supabase Project Deployment
 

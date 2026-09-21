@@ -50,9 +50,9 @@ export class Login implements OnInit, AfterContentInit {
   }
 
   private isAuthenticating(): void {
-    if (this.authenticationService.isAuthenticated()) {
-      this.router.navigate([this.authenticationService.getRouteDefault()]).then();
-    }
+    this.authenticationService.hasActiveSession().then((active) => {
+      if (active) this.router.navigate([this.authenticationService.getRouteDefault()]).then();
+    });
   }
 
   public login() {
@@ -71,10 +71,15 @@ export class Login implements OnInit, AfterContentInit {
           }),
         )
         .subscribe({
-          next: (response: LoginResponse) => {
+          next: async (response: LoginResponse) => {
             this.snackBarService.openSuccessSnackBar('Inicio de sesión exitoso');
             this.authenticationService.setUsuarioLogueado(response);
-            this.router.navigate([response.pathDefault]).then();
+            if (await this.authenticationService.hasActiveSession()) {
+              this.router.navigate([response.pathDefault]).then();
+            }
+          },
+          error: (error: Error) => {
+            this.snackBarService.openErrorSnackBar(error.message || 'No se pudo iniciar sesión');
           },
         });
     }

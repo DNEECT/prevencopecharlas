@@ -14,7 +14,7 @@ import {
   RegistroActividadResponse,
   RegistroActividadResponseTable,
 } from '@modules/activity-register/interface/activity-register';
-import { finalize } from 'rxjs';
+import { finalize, firstValueFrom } from 'rxjs';
 import { MENU_ACTIONS_ITEM } from '@shared/const/menu-acciones.const';
 import { Sort } from '@angular/material/sort';
 import { ExcelService } from '@shared/service/excel/excel.service';
@@ -152,7 +152,7 @@ class ListActivityRegister implements OnInit {
       return {
         ...item,
         opciones: options,
-        cantidadParticipantes: item.participantes?.length,
+        cantidadParticipantes: item.cantidadParticipantes ?? item.participantes?.length ?? 0,
       };
     });
   }
@@ -223,6 +223,7 @@ class ListActivityRegister implements OnInit {
   }
 
   public async exportRegistroConParticipantes(registro: RegistroActividadResponse): Promise<void> {
+    registro = await firstValueFrom(this.activityRegisterService.obtener(registro.codigoRegistroActividad));
     const details = {
       Código: registro.codigo,
       Proceso: registro.nombreProcesoElectoral,

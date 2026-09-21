@@ -19,7 +19,7 @@ import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import { ErrorFields } from '@shared/interface/error-field.interface';
-import { finalize, forkJoin, of, switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { MENU_ACTIONS_ITEM } from '@shared/const/menu-acciones.const';
 import { FileService } from '@modules/activity-register/service/file.service';
 
@@ -98,51 +98,51 @@ export class EditActivityRegister implements OnInit, OnDestroy {
     ]);
   }
 
-  public createActivityRegister() {
+  public async createActivityRegister() {
+    if (this.activityRegisterForm.invalid) return;
     this.dialogService.openLoadingWindow();
-
     const adjuntoListaAsistentes = this.activityRegisterForm.get('adjuntoListaAsistentes')?.value;
     const adjuntoRegistroFotografico = this.activityRegisterForm.get('adjuntoRegistroFotografico')?.value;
-
-    // Solo subir si es un File nuevo, de lo contrario mantener la URL original o la existente
-    const uploadListaAsistentes$ = adjuntoListaAsistentes instanceof File
-      ? this.fileService.uploadFile(adjuntoListaAsistentes)
-      : of(typeof adjuntoListaAsistentes === 'string' ? adjuntoListaAsistentes : this.originalAdjuntoListaAsistentes);
-
-    const uploadRegistroFotografico$ = adjuntoRegistroFotografico instanceof File
-      ? this.fileService.uploadFile(adjuntoRegistroFotografico)
-      : of(typeof adjuntoRegistroFotografico === 'string' ? adjuntoRegistroFotografico : this.originalAdjuntoRegistroFotografico);
-
-    forkJoin({
-      adjuntoListaAsistentesUrl: uploadListaAsistentes$,
-      adjuntoRegistroFotograficoUrl: uploadRegistroFotografico$,
-    }).pipe(
-      switchMap((urls) => {
-        const request: RegistroActividadRequest =
-          convertirRegistroActividadFormDtoToRegistroActividadRequest(
-            this.activityRegisterForm,
-            this.listDetailsParticipantsRegistro,
-            urls.adjuntoListaAsistentesUrl,
-            urls.adjuntoRegistroFotograficoUrl,
-          );
-        return this.activityRegisterService.actualizar(request, this.codigoRegistroActividad);
-      }),
-      finalize(() => {
-        this.dialogService.closeDialog();
-        this.cdr.detectChanges();
-      }),
-    ).subscribe({
-      next: () => {
-        this.snackBarService.openSuccessSnackBar(
-          'Registro de actividad actualizado correctamente',
-        );
-        this.cancelActivityRegister();
-      },
-      error: (err) => {
-        console.error('Error al actualizar registro:', err);
-        this.snackBarService.openErrorSnackBar('Error al actualizar el registro de actividad');
-      },
-    });
+    let updated = false;
+    try {
+      const request: RegistroActividadRequest = convertirRegistroActividadFormDtoToRegistroActividadRequest(
+        this.activityRegisterForm, this.listDetailsParticipantsRegistro,
+      );
+      await firstValueFrom(this.activityRegisterService.actualizar(request, this.codigoRegistroActividad));
+      updated = true;
+      if (adjuntoListaAsistentes instanceof File) {
+        const path = await firstValueFrom(this.fileService.replaceFile(
+          adjuntoListaAsistentes, this.codigoRegistroActividad, 'attendance-list',
+          this.originalAdjuntoListaAsistentes));
+        this.originalAdjuntoListaAsistentes = path;
+        this.activityRegisterForm.controls.adjuntoListaAsistentes.setValue(path);
+      } else if (adjuntoListaAsistentes == null && this.originalAdjuntoListaAsistentes) {
+        await firstValueFrom(this.fileService.removeFile(
+          this.codigoRegistroActividad, this.originalAdjuntoListaAsistentes));
+        this.originalAdjuntoListaAsistentes = null;
+      }
+      if (adjuntoRegistroFotografico instanceof File) {
+        const path = await firstValueFrom(this.fileService.replaceFile(
+          adjuntoRegistroFotografico, this.codigoRegistroActividad, 'photographic-record',
+          this.originalAdjuntoRegistroFotografico));
+        this.originalAdjuntoRegistroFotografico = path;
+        this.activityRegisterForm.controls.adjuntoRegistroFotografico.setValue(path);
+      } else if (adjuntoRegistroFotografico == null && this.originalAdjuntoRegistroFotografico) {
+        await firstValueFrom(this.fileService.removeFile(
+          this.codigoRegistroActividad, this.originalAdjuntoRegistroFotografico));
+        this.originalAdjuntoRegistroFotografico = null;
+      }
+      this.snackBarService.openSuccessSnackBar('Registro de actividad actualizado correctamente');
+      this.cancelActivityRegister();
+    } catch (error) {
+      this.snackBarService.openErrorSnackBar(updated
+        ? 'Los datos se guardaron, pero un adjunto falló. Reintente el archivo.'
+        : 'Error al actualizar el registro de actividad');
+      console.error('Error al actualizar registro o adjunto:', error);
+    } finally {
+      this.dialogService.closeDialog();
+      this.cdr.detectChanges();
+    }
   }
 
   public cancelActivityRegister() {

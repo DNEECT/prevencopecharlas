@@ -16,7 +16,7 @@ import {
   RegistroActividadParticipanteResponseTable,
   RegistroActividadRequest,
 } from '@modules/activity-register/interface/activity-register';
-import { finalize, forkJoin, of, switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { FileService } from '@modules/activity-register/service/file.service';
 
 @Component({
@@ -58,50 +58,41 @@ export class AddActivityRegister implements OnInit, OnDestroy {
     ]);
   }
 
-  public createActivityRegister() {
+  public async createActivityRegister() {
+    if (this.activityRegisterForm.invalid) return;
     this.dialogService.openLoadingWindow();
-
     const adjuntoListaAsistentes = this.activityRegisterForm.get('adjuntoListaAsistentes')?.value;
     const adjuntoRegistroFotografico = this.activityRegisterForm.get('adjuntoRegistroFotografico')?.value;
-
-    // Preparar observables para subir archivos
-    const uploadListaAsistentes$ = adjuntoListaAsistentes instanceof File
-      ? this.fileService.uploadFile(adjuntoListaAsistentes)
-      : of(typeof adjuntoListaAsistentes === 'string' ? adjuntoListaAsistentes : null);
-
-    const uploadRegistroFotografico$ = adjuntoRegistroFotografico instanceof File
-      ? this.fileService.uploadFile(adjuntoRegistroFotografico)
-      : of(typeof adjuntoRegistroFotografico === 'string' ? adjuntoRegistroFotografico : null);
-
-    // Subir archivos primero, luego crear el registro
-    forkJoin({
-      adjuntoListaAsistentesUrl: uploadListaAsistentes$,
-      adjuntoRegistroFotograficoUrl: uploadRegistroFotografico$,
-    }).pipe(
-      switchMap((urls) => {
-        const request: RegistroActividadRequest =
-          convertirRegistroActividadFormDtoToRegistroActividadRequest(
-            this.activityRegisterForm,
-            this.listDetailsParticipantsRegistro,
-            urls.adjuntoListaAsistentesUrl,
-            urls.adjuntoRegistroFotograficoUrl,
-          );
-        return this.activityRegisterService.crear(request);
-      }),
-      finalize(() => {
-        this.dialogService.closeDialog();
-        this.cdr.detectChanges();
-      }),
-    ).subscribe({
-      next: () => {
-        this.snackBarService.openSuccessSnackBar('Registro de actividad creado correctamente');
-        this.cancelActivityRegister();
-      },
-      error: (err) => {
-        console.error('Error al crear registro:', err);
+    let activityId: string | null = null;
+    try {
+      const request: RegistroActividadRequest = convertirRegistroActividadFormDtoToRegistroActividadRequest(
+        this.activityRegisterForm, this.listDetailsParticipantsRegistro,
+      );
+      const created = await firstValueFrom(this.activityRegisterService.crear(request));
+      activityId = created.codigo;
+      if (adjuntoListaAsistentes instanceof File) {
+        await firstValueFrom(this.fileService.uploadFile(
+          adjuntoListaAsistentes, activityId, 'attendance-list'));
+      }
+      if (adjuntoRegistroFotografico instanceof File) {
+        await firstValueFrom(this.fileService.uploadFile(
+          adjuntoRegistroFotografico, activityId, 'photographic-record'));
+      }
+      this.snackBarService.openSuccessSnackBar('Registro de actividad creado correctamente');
+      this.cancelActivityRegister();
+    } catch (error) {
+      if (activityId) {
+        this.snackBarService.openWarningSnackBar(
+          'El registro se creó, pero un adjunto falló. Puede reintentarlo al editar.');
+        this.router.navigate(['/registro-actividad', activityId]).then();
+      } else {
         this.snackBarService.openErrorSnackBar('Error al crear el registro de actividad');
-      },
-    });
+      }
+      console.error('Error al guardar registro o adjunto:', error);
+    } finally {
+      this.dialogService.closeDialog();
+      this.cdr.detectChanges();
+    }
   }
 
   public cancelActivityRegister() {

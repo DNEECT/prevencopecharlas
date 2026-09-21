@@ -45,7 +45,7 @@ export interface LoginForm {
 // inicializar formulario y mensajes
 export const loginFormGroup: FormGroup<LoginForm> = new FormGroup<LoginForm>({
   usuario: new FormControl<string>('', {
-    validators: [Validators.required, Validators.maxLength(50)],
+    validators: [Validators.required, Validators.email, Validators.maxLength(100)],
   }),
   contrasenia: new FormControl<string>('', {
     validators: [Validators.required, Validators.minLength(8)],
@@ -54,8 +54,9 @@ export const loginFormGroup: FormGroup<LoginForm> = new FormGroup<LoginForm>({
 
 export const errorMessagesLoginForm: ErrorFields = {
   usuario: [
-    { required: 'Usuario es un dato obligatorio.' },
-    { maxlength: 'El maximo de caracteres es 50.' },
+    { required: 'El correo es obligatorio.' },
+    { email: 'Ingrese un correo válido.' },
+    { maxlength: 'El máximo de caracteres es 100.' },
   ],
   contrasenia: [
     { required: 'Contrasenia es un dato obligatorio.' },

@@ -205,16 +205,16 @@ export class FormActivityRegister implements OnInit, OnDestroy {
       this.listTheme = [];
     }
     const selectedCodigoTipoActividad = activityType?.key;
-    const uniqueMap = new Map<any, AutoCompleteData>();
+    const uniqueMap = new Map<string, AutoCompleteData>();
 
     for (const activityFormat of this.listActivityFormat) {
       if (activityFormat.codTipoActividad !== selectedCodigoTipoActividad) {
         continue;
       }
 
-      if (!uniqueMap.has(activityFormat.tema)) {
-        uniqueMap.set(activityFormat.tema, {
-          key: activityFormat.tema,
+      if (!uniqueMap.has(activityFormat.codigoFormatoActividad)) {
+        uniqueMap.set(activityFormat.codigoFormatoActividad, {
+          key: activityFormat.codigoFormatoActividad,
           value: activityFormat.tema,
           aux1: selectedCodigoTipoActividad,
         });

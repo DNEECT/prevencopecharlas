@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prestart": "node scripts/configure-supabase.mjs",
     "start": "ng serve",
+    "prebuild": "node scripts/configure-supabase.mjs",
     "build": "ng build",
+    "pretest": "node scripts/configure-supabase.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:app-prevencope": "node dist/app-prevencope/server/server.mjs",
