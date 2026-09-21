@@ -109,6 +109,29 @@ for each role. Keep browser writes to role membership denied.
 ## Import and evidence
 
 Use [LEGACY_INVENTORY.md](LEGACY_INVENTORY.md) as the reconciliation baseline.
+The owner confirmed the 27 August 2026 dump (SHA-256
+`388f1f5c054cc4e682261a8fc3b09b23d141c65ec2e9a19232ee9b15b2d67c8a`)
+as the final legacy database snapshot. Run the read-only planner with
+`python -B scripts/plan-legacy-import.py --dump <reviewed-dump>
+--pg-restore <pg-restore-executable>`. It checks the checksum, expected source
+counts, source foreign keys, duplicate keys, destination field lengths and
+required values, inactive flags, historical blanks, and evidence references.
+An optional private `--auth-map <csv>` has exactly the columns
+`legacy_user_id,auth_user_id`; keep this CSV outside Git. The planner never
+prints personal rows. Its Auth mapping is only a proposal: verify every mapped
+Auth ID exists in the institutional project and that its email corresponds to
+the legacy user before importing. Its projected insert counts assume an empty
+destination and are not a destination-aware insert/update/skip report.
+
+The confirmed snapshot's dry run found 92 users (89 active), 92 role
+memberships, 1,637 activities (1,455 active), and 32,042 participants, with
+zero broken source relationships or destination field-limit violations. It
+found 53 blank sex values, one blank organization, 5,248 blank positions,
+25,657 blank emails, and 26,494 blank population values in historical
+participants. None of the 92 users has a verified Auth mapping yet. The dry
+run made no hosted changes; it does not complete the destination-aware import
+or establish evidence parity.
+
 Run `scripts/audit-legacy-evidence.py --dump <reviewed-dump> --pg-restore
 <pg-restore-executable> --evidence-root <candidate-directory>` for aggregate
 name, kind, extension-derived MIME, and availability counts. A filename match

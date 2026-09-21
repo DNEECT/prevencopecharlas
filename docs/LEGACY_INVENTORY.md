@@ -8,8 +8,8 @@ Its table counts match the earlier inventory. This document records counts and
 relationships, not personal records or the dump itself. On 21 September 2026,
 the network share was reachable again. The shared dump, backend ZIP, frontend
 ZIP, and `modelo_charlas` matched the local copies by SHA-256. The shared dump
-is dated 27 August 2026; confirm freshness against the live legacy database
-before production import.
+is dated 27 August 2026. The project owner confirmed this is the final legacy
+database snapshot for migration.
 
 | Item | Read-only finding |
 | --- | ---: |
