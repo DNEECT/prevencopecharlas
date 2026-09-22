@@ -14,7 +14,8 @@
     "start:proxy": "node proxy-server.js",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
-    "supabase:status": "supabase status"
+    "supabase:status": "supabase status",
+    "vercel:cli": "node scripts/vercel-cli.mjs"
   },
   "prettier": {
     "printWidth": 100,
@@ -80,6 +81,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.6.2",
     "supabase": "2.117.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vercel": "59.25.2"
   }
 }

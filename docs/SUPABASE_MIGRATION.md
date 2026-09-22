@@ -63,17 +63,28 @@ environment without any private legacy payload:
    then reset with `npx supabase db reset --local` to restore the standard
    non-sensitive seed.
 
-For hosted deployment, link the institutional GitHub repository in the Vercel
-web dashboard and configure only `SUPABASE_URL` and
-`SUPABASE_PUBLISHABLE_KEY` for the intended environments. This flow does not
-need the local Vercel CLI and therefore does not disturb the separate
-`patrickcast` / `gamersproject` / `gptcg` session.
+For hosted deployment, the institutional GitHub repository can be managed in
+the Vercel dashboard or with `npm run vercel:cli -- <command>`. The wrapper uses
+a PREVENCOPE-only credential directory (`%APPDATA%\com.vercel.cli-prevencope`
+on Windows, or `PREVENCOPE_VERCEL_CONFIG_DIR` when explicitly overridden), so
+it does not read or replace the separate `patrickcast` / `gamersproject` /
+`gptcg` CLI credentials. The project-local `.vercel` metadata and `.env.local`
+OIDC token are ignored by Git.
 
 ## Hosted project and Vercel
 
 Use the institutional Supabase account with access to
 `betgsxbtyckbbiepmols`. The Supabase CLI is authenticated as
 `jne.dneect@jne.gob.pe` and this repository is linked to that project.
+On 22 September 2026, `supabase projects list` showed the linked, healthy
+`prevencopecharlas` project, while the isolated Vercel CLI reported user
+`jnedneect-9144`, team `charlas` (`CHARLAS`), and linked project
+`charlas/prevencopecharlas`. The unrelated Vercel CLI credential directory was
+not changed. Run `npm run vercel:cli -- whoami` and
+`npm run vercel:cli -- projects ls --scope charlas` to recheck that identity
+before any deployment. The Vercel project currently resolves to
+`https://prevencopecharlas.vercel.app`.
+
 On 21 September 2026, `supabase projects list` showed the linked project and
 the hosted project was healthy. A `supabase db push --dry-run --linked
 --include-seed --skip-vault` preview listed all 12 reviewed migrations and
@@ -88,11 +99,12 @@ grants (18 inactive), 61 juries, and one `ACT009` format with next number
 1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
 restrictions, and currently contains no objects. The hosted activity and
 participant tables each contain zero rows: the legacy personal-data import
-and evidence reconciliation remain separate cutover gates. The Codex Supabase connector remains connected
-to a different account and reports insufficient permission for this project;
-use the institutional CLI for project checks. Do not
-run `vercel login`, `vercel link`, or alter the separate
-`patrickcast`/`gamersproject`/`gptcg` CLI session.
+and evidence reconciliation remain separate cutover gates. The Codex Supabase
+connector remains connected to a different account and reports insufficient
+permission for this project; use the institutional CLI for project checks.
+Run Vercel commands only through the repository's
+`npm run vercel:cli -- ...` wrapper; do not run the global `vercel` command or
+alter the separate `patrickcast`/`gamersproject`/`gptcg` credential directory.
 
 The post-deployment Supabase advisors reported zero security errors, zero
 performance errors, and zero performance warnings. The eight security warnings
@@ -117,12 +129,13 @@ activity searches. `supabase db query --linked` stalled during this check, so
 the hosted counts and bucket state were verified in the dashboard SQL Editor
 and Storage settings.
 
-In the institutional Vercel project set `SUPABASE_URL` to
+The institutional Vercel project now has `SUPABASE_URL` set to
 `https://betgsxbtyckbbiepmols.supabase.co` and
-`SUPABASE_PUBLISHABLE_KEY` to an active `sb_publishable_` key from that same
-project. Set them for the intended environments before deploying; `prebuild`
-fails on Vercel when the publishable key is absent. Do not use the secret or
-service-role key in Vercel's Angular build. If a trusted import job needs one,
+`SUPABASE_PUBLISHABLE_KEY` set to the active `sb_publishable_` key from that
+same project for Production, Preview, and Development. Earlier preview builds
+failed at `prebuild` because those variables were absent; the failure confirmed
+that incomplete deployments stop before compiling. No secret or service-role
+key is present in Vercel's Angular build. If a trusted import job needs one,
 run it separately from the frontend deployment with narrowly managed secrets.
 Verify the deployed browser bundle contains only the project URL and
 publishable key, and test real Monitor/Gestor accounts before changing traffic.
@@ -268,6 +281,12 @@ critical findings. It reported two moderate findings in ExcelJS's transitive
 `uuid` package; npm offers only a breaking ExcelJS downgrade, and the affected
 buffer-taking UUID v3/v5/v6 APIs are not used by this application, so the
 moderate transitive finding is accepted pending an upstream ExcelJS update.
+The full development audit now also reports 2 low, 9 moderate, 20 high, and 1
+critical advisory in the official Vercel CLI 59.25.2 dependency graph. That CLI
+is pinned as a development-only dependency and is excluded from the deployed
+Angular bundle; `npm audit --omit=dev --audit-level=high` still exits successfully
+with no high or critical production finding. Retest the full audit when Vercel
+publishes a CLI release with updated transitive packages.
 
 For a full local rehearsal before institutional Auth onboarding, run
 `python -B scripts/rehearse-legacy-import.py --dump <reviewed-dump>

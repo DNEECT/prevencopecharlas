@@ -27,6 +27,8 @@ Aplicación Angular (con soporte SSR) para administración de formatos y registr
 - `npm run build` — generar build de producción
 - `npm test -- --watch=false` — ejecutar tests Angular
 - `npm run supabase:stop` — detener el stack local
+- `npm run vercel:cli -- <comando>` — ejecutar el Vercel CLI local con las
+  credenciales aisladas de PREVENCOPE (por ejemplo, `whoami`, `link` o `pull`)
 
 La configuración completa, las variables públicas, las verificaciones SQL,
 el despliegue, la importación y la recuperación están en
