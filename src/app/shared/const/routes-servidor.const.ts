@@ -1,21 +1,13 @@
 export const ROUTES_SERVIDOR_PATH = {
+  // Temporary legacy routes: institutional user administration and the
+  // secret-bearing DNI lookup have not moved to a trusted Supabase server flow.
   BASE_URL: 'https://prevencope.actividades.api.fordevs.pe/ne-pre-gestionactividades/v1',
   // BASE_URL: 'http://localhost:9099/ne-pre-gestionactividades/v1',
-  TIPO_ACTIVIDADES: '/tipo-actividades',
-  TIPO_ASISTENTES: '/tipo-asistentes',
-  PUBLICO_OBJETIVO: '/publico-objetivo',
-  FORMATO_ACTIVIDADES: '/formato-actividades',
-  REGISTRO_ACTIVIDADES: '/registro-actividades',
-  PROCESOS_ELECTORALES: '/procesos-electorales',
-  JURADO_NACIONAL_ESPECIAL: '/jurados-nacionales-especiales',
-  FILES: '/files',
   ROLES: '/roles',
   ACCIONES: '/acciones',
   USUARIO: '/usuarios',
   CONSULTAS: '/consultas',
   PERMISOS: '/permisos',
-  LOGIN: '/auth/login',
-  MENUS: '/menus',
 };
 
 export const ROUTES_WEB = {

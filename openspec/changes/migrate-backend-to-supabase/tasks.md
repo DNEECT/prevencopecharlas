@@ -29,15 +29,15 @@
 - [x] 4.1 Configure the public Supabase project URL and publishable key through Angular environment handling without committing secrets; verify local and production builds contain no secret or service-role value.
 - [x] 4.2 Replace legacy login, logout, session persistence, and password update calls with Supabase Auth and active-profile loading; verify valid, invalid, disabled-profile, refresh, and sign-out flows.
 - [x] 4.3 Replace JWT parsing and permission guards with effective hierarchical module/action permissions while retaining database RLS as enforcement; verify navigation hides disabled grants and direct requests are still denied.
-- [ ] 4.4 Migrate catalog and activity-format repositories to typed Supabase queries and RPCs with Spanish interface mapping; verify list, create, edit, archive, and generated-code screens behave as before.
-- [ ] 4.5 Migrate registration and participant repositories to transactional Supabase operations and scoped read views; verify code search, optional jury filter, creator-scoped Gestor results, global Monitor results, detail, edit, and archive.
-- [ ] 4.6 Migrate evidence upload, signed download, replacement, and deletion to private Supabase Storage with metadata compensation on failure; verify file-type, size, creator scope, missing-object display, and orphan cleanup.
-- [ ] 4.7 Remove migrated Spring endpoints from the active Angular path while retaining only explicitly documented external lookup fallbacks; verify the production build and end-to-end migrated flows do not call IONOS.
+- [x] 4.4 Migrate catalog and activity-format repositories to typed Supabase queries and RPCs with Spanish interface mapping; verify list, create, edit, archive, and generated-code screens behave as before.
+- [x] 4.5 Migrate registration and participant repositories to transactional Supabase operations and scoped read views; verify code search, optional jury filter, creator-scoped Gestor results, global Monitor results, detail, edit, and archive.
+- [x] 4.6 Migrate evidence upload, signed download, replacement, and deletion to private Supabase Storage with metadata compensation on failure; verify file-type, size, creator scope, missing-object display, and orphan cleanup.
+- [x] 4.7 Remove migrated Spring endpoints from the active Angular path while retaining only explicitly documented external lookup fallbacks; verify the production build and end-to-end migrated flows do not call IONOS.
 
 ## 5. Legacy Import and Cutover
 
 - [x] 5.1 Record the verified read-only dump inventory (19 tables, 92 users, 1,637 activities, 32,042 participants), source UUID/permission mappings, inactive state, and historical validation exceptions without committing source payloads or secrets.
-- [ ] 5.2 Locate the 2,632 referenced evidence objects or document their absence; reconcile name, kind, MIME type, and availability before claiming evidence parity.
+- [x] 5.2 Locate the 2,632 referenced evidence objects or document their absence; reconcile name, kind, MIME type, and availability before claiming evidence parity.
 - [x] 5.3 Add non-exposed staging and idempotent import tooling keyed by source UUID and Auth user mapping; verify a fixture import can be repeated without duplicate users, activities, participants, or evidence metadata.
 - [x] 5.4 Run a legacy dry import and report inserts, updates, skips, historical-validation exceptions, unresolved relationships, and missing objects; block affected database rows on unresolved relationships and keep evidence parity incomplete while objects are absent.
 - [ ] 5.5 Execute the approved production database import, invite or reset migrated users through Supabase Auth, and reconcile active/inactive counts, representative records, and the 42 role/action grants.
@@ -45,5 +45,5 @@
 
 ## 6. Documentation and Delivery
 
-- [ ] 6.1 Update setup, environment, deployment, bootstrap, backup, restore, and incident recovery documentation; verify a maintainer can reproduce a fresh environment without undocumented secrets.
+- [x] 6.1 Update setup, environment, deployment, bootstrap, backup, restore, and incident recovery documentation; verify a maintainer can reproduce a fresh environment without undocumented secrets.
 - [ ] 6.2 Run OpenSpec strict validation, SQL verification, Angular tests, production build, dependency audit, and GitHub Actions; verify every required check passes or has a documented accepted limitation.

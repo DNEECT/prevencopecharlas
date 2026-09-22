@@ -20,12 +20,18 @@ Aplicación Angular (con soporte SSR) para administración de formatos y registr
 
 ## Comandos habituales
 
-- `npm install` — instalar dependencias
-- `npm run start` — ejecutar en modo desarrollo (según `package.json`)
+- `npm ci` — instalar exactamente las dependencias bloqueadas
+- `npm run supabase:start` — iniciar el stack local dedicado
+- `npx supabase db reset --local` — recrear el esquema y el seed local
+- `npm start` — ejecutar Angular en modo desarrollo
 - `npm run build` — generar build de producción
-- `npm run build:ssr` / `npm run serve:ssr` — build y servir SSR (si están definidos)
-- `npm test` — ejecutar tests
-- `npm run lint` — ejecutar linters
+- `npm test -- --watch=false` — ejecutar tests Angular
+- `npm run supabase:stop` — detener el stack local
+
+La configuración completa, las variables públicas, las verificaciones SQL,
+el despliegue, la importación y la recuperación están en
+[`docs/SUPABASE_MIGRATION.md`](docs/SUPABASE_MIGRATION.md). No use una clave
+`service_role` en Angular ni cambie la sesión Vercel de otros proyectos.
 
 ## Estructura principal (resumen)
 

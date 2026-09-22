@@ -6,6 +6,13 @@ DNI/RUC lookups and user administration while those flows are migrated. Do not
 declare a production cutover until the OpenSpec checklist, legacy import, and
 evidence reconciliation are complete.
 
+The active activity-type, assistant-type, target-audience, process, jury,
+format, registration, participant, authentication, permission-navigation, and
+evidence paths use Supabase directly. Their former Spring route constants have
+been removed. The remaining legacy URL is referenced only by the documented
+DNI lookup and unfinished user/role administration repositories; it is not
+used by migrated activity or evidence flows.
+
 ## Local development
 
 Use Node.js 20 or later, Docker Desktop, and `npm ci`. The dedicated local
@@ -36,6 +43,31 @@ leaving the unrelated `gptcg` stack and its Vercel CLI identities alone.
 The source dump, account passwords, service-role key, database password, and
 external lookup tokens must never be committed or included in browser builds.
 The publishable key is browser-public; RLS is the authorization boundary.
+
+### Fresh maintainer bootstrap
+
+From a new checkout, a maintainer can reproduce the current non-production
+environment without any private legacy payload:
+
+1. Install Node.js 20 or later, Docker Desktop, and Supabase CLI 2.117.0 or a
+   reviewed compatible version. Run `npm ci`.
+2. Run `npm run supabase:start`, then `npx supabase db reset --local`. Confirm
+   the local API is on port 55321 before running any destructive local test.
+3. Read the local public `API_URL` and `PUBLISHABLE_KEY` from
+   `npx supabase status --output json`. Export them as `SUPABASE_URL` and
+   `SUPABASE_PUBLISHABLE_KEY`; do not export the service-role key to Angular.
+4. Run `npm start` for development or `npm run build` for the production
+   bundle. The generated environment file is ignored by Git and recreated by
+   the prestart/prebuild script.
+5. Run the verification commands in this document on disposable local data,
+   then reset with `npx supabase db reset --local` to restore the standard
+   non-sensitive seed.
+
+For hosted deployment, link the institutional GitHub repository in the Vercel
+web dashboard and configure only `SUPABASE_URL` and
+`SUPABASE_PUBLISHABLE_KEY` for the intended environments. This flow does not
+need the local Vercel CLI and therefore does not disturb the separate
+`patrickcast` / `gamersproject` / `gptcg` session.
 
 ## Hosted project and Vercel
 
@@ -212,6 +244,17 @@ advisor found no error after the new audit-link migration. The hosted migration
 history includes that migration; the hosted security-advisor CLI stalled and
 the connected advisor returned a permission error, so the post-change hosted
 advisor result remains unavailable.
+
+The Angular Supabase repository contract suite covers active catalog and
+format mapping, pagination, create/edit/archive payloads, generated-code
+delegation, activity code and optional-jury filters, detail and participant
+mapping, transactional create/edit/archive RPCs, missing legacy evidence, file
+kind and 20 MiB checks, signed downloads, replacement/removal, and compensation
+when metadata or replacement fails. All 19 focused checks passed together, and
+the production Angular build completed. The older full Angular suite still
+mixes zoneless Angular 20 setup with Zone.js-only `fakeAsync` tests; those old
+specs fail in their test harness before assertions and remain a delivery check
+to repair rather than evidence against the focused Supabase repository suite.
 
 For a full local rehearsal before institutional Auth onboarding, run
 `python -B scripts/rehearse-legacy-import.py --dump <reviewed-dump>
