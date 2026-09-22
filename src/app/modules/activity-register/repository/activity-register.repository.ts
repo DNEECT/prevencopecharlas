@@ -18,6 +18,26 @@ interface ActivityRow {
   next_number: number; participant_count: number;
 }
 
+interface EvidenceRow {
+  kind: 'attendance-list' | 'photographic-record';
+  object_path: string | null;
+  legacy_reference: string | null;
+  original_name: string | null;
+  is_available: boolean;
+}
+
+export function evidenceForKind(evidence: EvidenceRow[], kind: EvidenceRow['kind'],
+  legacyPath: string | null | undefined): { path: string | null; unavailable: string | null } {
+  const rows = evidence.filter((item) => item.kind === kind);
+  const available = rows.find((item) => item.is_available && item.object_path);
+  if (available) return { path: available.object_path, unavailable: null };
+  const unavailable = rows.find((item) => !item.is_available);
+  return {
+    path: null,
+    unavailable: unavailable?.original_name ?? unavailable?.legacy_reference ?? legacyPath ?? null,
+  };
+}
+
 function mapRow(row: ActivityRow): RegistroActividadResponse {
   return {
     codigoRegistroActividad: row.id, codigo: row.code,
@@ -84,9 +104,11 @@ export class ActivityRegisterRepository {
       const [{ data: detail, error: detailError },
         { data: evidence, error: evidenceError }] = await Promise.all([
         this.client.from('activity_registrations')
-          .select('observations,questions,recommendations').eq('id', id).single(),
-        this.client.from('activity_evidence').select('kind,object_path')
-          .eq('activity_id', id).eq('is_active', true).eq('is_available', true)
+          .select('observations,questions,recommendations,legacy_attendance_path,legacy_photo_path')
+          .eq('id', id).single(),
+        this.client.from('activity_evidence')
+          .select('kind,object_path,is_available,legacy_reference,original_name')
+          .eq('activity_id', id).eq('is_active', true)
           .order('created_at', { ascending: false }),
       ]);
       if (detailError || evidenceError) throw detailError ?? evidenceError;
@@ -104,8 +126,14 @@ export class ActivityRegisterRepository {
       mapped.preguntas = detail?.questions;
       mapped.recomendaciones = detail?.recommendations;
       mapped.participantes = people.map(mapParticipant);
-      mapped.adjuntoListaAsistentes = evidence?.find((item) => item.kind === 'attendance-list')?.object_path;
-      mapped.adjuntoRegistroFotografico = evidence?.find((item) => item.kind === 'photographic-record')?.object_path;
+      const attendance = evidenceForKind((evidence ?? []) as EvidenceRow[],
+        'attendance-list', detail?.legacy_attendance_path);
+      const photographic = evidenceForKind((evidence ?? []) as EvidenceRow[],
+        'photographic-record', detail?.legacy_photo_path);
+      mapped.adjuntoListaAsistentes = attendance.path;
+      mapped.adjuntoRegistroFotografico = photographic.path;
+      mapped.adjuntoListaAsistentesNoDisponible = attendance.unavailable;
+      mapped.adjuntoRegistroFotograficoNoDisponible = photographic.unavailable;
       return { datos: mapped };
     })());
   }

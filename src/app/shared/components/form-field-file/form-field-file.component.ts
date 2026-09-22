@@ -50,6 +50,7 @@ export class FormFieldFileComponent implements OnInit {
   @Input() public controlName: string = '';
   @Input() public accept: string = '.png,.jpg,.jpeg';
   @Input() public multiple: boolean = false;
+  @Input() public unavailableFileName: string | null = null;
 
   @Output() public valueChanged = new EventEmitter<File[] | File | null>();
   @Output() public downloadExisting = new EventEmitter<string>();
@@ -73,6 +74,10 @@ export class FormFieldFileComponent implements OnInit {
 
   public get hasFile(): boolean {
     return this.selectedFiles.length > 0 || !!this.existingFileUrl;
+  }
+
+  public get unavailableDisplayName(): string {
+    return this.unavailableFileName?.split(/[\\/]/).pop() || 'Adjunto histórico';
   }
 
   public objectKeys(obj: ErrorField): string[] {

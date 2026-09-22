@@ -50,6 +50,8 @@ export class EditActivityRegister implements OnInit, OnDestroy {
   // URLs originales de los adjuntos para comparar si cambiaron
   private originalAdjuntoListaAsistentes: string | null = null;
   private originalAdjuntoRegistroFotografico: string | null = null;
+  public adjuntoListaAsistentesNoDisponible: string | null = null;
+  public adjuntoRegistroFotograficoNoDisponible: string | null = null;
 
   ngOnInit(): void {
     this.setPageData();
@@ -62,6 +64,10 @@ export class EditActivityRegister implements OnInit, OnDestroy {
         // Guardar URLs originales de los adjuntos
         this.originalAdjuntoListaAsistentes = registroActividad.adjuntoListaAsistentes ?? null;
         this.originalAdjuntoRegistroFotografico = registroActividad.adjuntoRegistroFotografico ?? null;
+        this.adjuntoListaAsistentesNoDisponible =
+          registroActividad.adjuntoListaAsistentesNoDisponible ?? null;
+        this.adjuntoRegistroFotograficoNoDisponible =
+          registroActividad.adjuntoRegistroFotograficoNoDisponible ?? null;
 
         this.activityRegisterForm.patchValue(
           convertirRegistroActividadResponseToRegistroActividadFormDto(registroActividad),
@@ -115,6 +121,7 @@ export class EditActivityRegister implements OnInit, OnDestroy {
           adjuntoListaAsistentes, this.codigoRegistroActividad, 'attendance-list',
           this.originalAdjuntoListaAsistentes));
         this.originalAdjuntoListaAsistentes = path;
+        this.adjuntoListaAsistentesNoDisponible = null;
         this.activityRegisterForm.controls.adjuntoListaAsistentes.setValue(path);
       } else if (adjuntoListaAsistentes == null && this.originalAdjuntoListaAsistentes) {
         await firstValueFrom(this.fileService.removeFile(
@@ -126,6 +133,7 @@ export class EditActivityRegister implements OnInit, OnDestroy {
           adjuntoRegistroFotografico, this.codigoRegistroActividad, 'photographic-record',
           this.originalAdjuntoRegistroFotografico));
         this.originalAdjuntoRegistroFotografico = path;
+        this.adjuntoRegistroFotograficoNoDisponible = null;
         this.activityRegisterForm.controls.adjuntoRegistroFotografico.setValue(path);
       } else if (adjuntoRegistroFotografico == null && this.originalAdjuntoRegistroFotografico) {
         await firstValueFrom(this.fileService.removeFile(

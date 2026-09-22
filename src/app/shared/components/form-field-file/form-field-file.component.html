@@ -92,4 +92,16 @@
       </div>
     </div>
   </div>
+
+  <div class="files-list" *ngIf="unavailableFileName && !hasFile">
+    <div class="file-item unavailable" role="status">
+      <div class="file-info">
+        <mat-icon>hide_source</mat-icon>
+        <div class="meta">
+          <div class="name">{{ unavailableDisplayName }}</div>
+          <div class="size">Archivo histórico no disponible. Puede adjuntar un reemplazo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

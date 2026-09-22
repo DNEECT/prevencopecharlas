@@ -159,6 +159,14 @@ database-only import is not evidence parity. New private objects use
 historical photographic PDFs. Archive old metadata on replacement, delete
 old objects, and periodically compare active metadata paths with bucket
 objects to identify orphaned uploads or deletions that failed.
+The activity edit form shows a historical filename as "Archivo histórico no
+disponible" when an active evidence record has `is_available = false`, or when
+the imported registration retains a `legacy_attendance_path` or
+`legacy_photo_path` without a verified available Storage object. It exposes no
+download action for that reference and allows an authorized user to upload a
+replacement. Preserve the legacy path fields during the pending activity
+import; the hosted project has no historical activity rows yet, so the status
+will appear only after those rows are imported.
 
 ## Backup and recovery
 

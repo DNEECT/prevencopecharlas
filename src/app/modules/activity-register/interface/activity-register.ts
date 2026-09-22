@@ -40,6 +40,8 @@ export interface RegistroActividadResponse {
   preguntas?: string | null;
   adjuntoListaAsistentes?: string | null;
   adjuntoRegistroFotografico?: string | null;
+  adjuntoListaAsistentesNoDisponible?: string | null;
+  adjuntoRegistroFotograficoNoDisponible?: string | null;
   participantes: RegistroActividadParticipanteResponse[];
   cantidadParticipantes?: number;
 }

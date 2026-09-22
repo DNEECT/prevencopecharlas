@@ -78,6 +78,8 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     [];
   @Input() public codigo: string = '';
   @Input() public isEdit: boolean = false;
+  @Input() public adjuntoListaAsistentesNoDisponible: string | null = null;
+  @Input() public adjuntoRegistroFotograficoNoDisponible: string | null = null;
 
   @Output() addParticipant = new EventEmitter<RegistroActividadParticipanteResponseTable>();
   @Output() removeParticipant = new EventEmitter<RegistroActividadParticipanteResponseTable>();
