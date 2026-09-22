@@ -198,6 +198,20 @@ login, refresh, password update, disabled-profile RLS, and sign-out, then
 removes the account. Never supply hosted service-role credentials to this
 test or to Angular.
 
+On 22 September 2026, the local Auth smoke test also passed a Gestor
+activity create/list/edit/archive flow, including generated code and
+participant count. The separate unseeded `supabase/tests/auth-catalog-flow.mjs`
+passed its catalog, grant, and activity RPC exercise. The local database was
+reset to the standard seed afterward. The Storage exercise remains open:
+the local Storage API returned PostgreSQL `42P10` on its first upload because
+it issued `ON CONFLICT (name, bucket_id)` against a `storage.objects` table
+without a matching unique index. This is a local Storage service/schema
+mismatch, so it is not evidence of a successful hosted upload. The local
+security advisor found no error after the new audit-link migration. The
+hosted migration history includes that migration; the hosted security-advisor
+CLI stalled and the connected advisor returned a permission error, so the
+post-change hosted advisor result remains unavailable.
+
 For a full local rehearsal before institutional Auth onboarding, run
 `python -B scripts/rehearse-legacy-import.py --dump <reviewed-dump>
 --pg-restore <pg-restore-executable> --psql <psql-executable>
