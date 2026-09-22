@@ -96,8 +96,7 @@ matched. The ledger stores batch IDs, source hashes, user UUID mappings, and
 record outcomes; it contains no staged legacy records yet. Hosted
 read-only checks found 17 public tables, all 17 with RLS, and 17 public
 policies. The seed contains 2 roles, 8 modules, 6 actions, 42 role/action
-grants (18 inactive), 61 juries, and one `ACT009` format with next number
-1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
+grants (18 inactive), 61 juries, and one `ACT009` format with next number 1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
 restrictions, and currently contains no objects. The hosted activity and
 participant tables each contain zero rows: the legacy personal-data import
 and evidence reconciliation remain separate cutover gates. The Codex Supabase
@@ -151,6 +150,25 @@ credentials to Angular. The final active Monitor cannot be disabled or
 demoted. Invite migrated users or issue password resets; legacy hashes and
 JWTs are not reusable. Verify sign-in, active profile, and `my_permissions()`
 for each role. Keep browser writes to role membership denied.
+
+The repeatable bootstrap command is `npm run supabase:bootstrap-monitor`. Pass
+`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,
+`BOOTSTRAP_MONITOR_EMAIL`, `BOOTSTRAP_MONITOR_USERNAME`, and a temporary
+`BOOTSTRAP_MONITOR_PASSWORD` of at least 20 characters through the process
+environment. Optional `BOOTSTRAP_MONITOR_FIRST_NAMES` and
+`BOOTSTRAP_MONITOR_LAST_NAMES` values populate the display name. The command is
+restricted to the reviewed PREVENCOPE project and `@jne.gob.pe` addresses. It
+creates no invitation, verifies password sign-in and effective permissions,
+and confirms that the browser session cannot edit its role membership. Keep
+the temporary password outside Git and replace it after first use.
+
+On 22 September 2026, the first institutional Monitor was bootstrapped with
+this command. The hosted verification confirmed an active Auth identity,
+active profile and Monitor membership, 19 effective permissions, successful
+password sign-in, and denial of browser role-membership updates. No invitation
+or password-reset email was sent. The temporary credential is stored outside
+the repository in the local restricted PREVENCOPE credentials directory and
+must be changed after first use.
 
 ## Import and evidence
 
