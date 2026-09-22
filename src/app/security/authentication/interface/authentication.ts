@@ -12,7 +12,6 @@ export interface LoginDatosRequest {
 }
 
 export interface LoginResponse {
-  token: string;
   pathDefault: string;
 }
 

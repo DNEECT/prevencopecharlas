@@ -27,8 +27,8 @@
 ## 4. Angular Authentication and Data Access
 
 - [x] 4.1 Configure the public Supabase project URL and publishable key through Angular environment handling without committing secrets; verify local and production builds contain no secret or service-role value.
-- [ ] 4.2 Replace legacy login, logout, session persistence, and password update calls with Supabase Auth and active-profile loading; verify valid, invalid, disabled-profile, refresh, and sign-out flows.
-- [ ] 4.3 Replace JWT parsing and permission guards with effective hierarchical module/action permissions while retaining database RLS as enforcement; verify navigation hides disabled grants and direct requests are still denied.
+- [x] 4.2 Replace legacy login, logout, session persistence, and password update calls with Supabase Auth and active-profile loading; verify valid, invalid, disabled-profile, refresh, and sign-out flows.
+- [x] 4.3 Replace JWT parsing and permission guards with effective hierarchical module/action permissions while retaining database RLS as enforcement; verify navigation hides disabled grants and direct requests are still denied.
 - [ ] 4.4 Migrate catalog and activity-format repositories to typed Supabase queries and RPCs with Spanish interface mapping; verify list, create, edit, archive, and generated-code screens behave as before.
 - [ ] 4.5 Migrate registration and participant repositories to transactional Supabase operations and scoped read views; verify code search, optional jury filter, creator-scoped Gestor results, global Monitor results, detail, edit, and archive.
 - [ ] 4.6 Migrate evidence upload, signed download, replacement, and deletion to private Supabase Storage with metadata compensation on failure; verify file-type, size, creator scope, missing-object display, and orphan cleanup.

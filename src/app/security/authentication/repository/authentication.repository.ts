@@ -59,7 +59,7 @@ export class AuthenticationRepository {
       await this.supabase.auth.signOut();
       throw new Error('La cuenta no tiene permisos activos. Consulte al administrador.');
     }
-    return { datos: { token: data.session.access_token, pathDefault: first } };
+    return { datos: { pathDefault: first } };
   }
 
   getMenuItems(): Observable<MenuItemDatosRespone> {

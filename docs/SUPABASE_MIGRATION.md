@@ -188,6 +188,16 @@ An existing row with different values requires review and a corrective
 transaction, not an automatic overwrite. Production execution and account
 invitations remain separate approval and onboarding steps.
 
+The Auth flow can be verified against the local stack with
+`scripts/test-local-auth.mjs`. Supply the local API URL, publishable key, and
+service-role key as `PREVENCOPE_LOCAL_SUPABASE_URL`,
+`PREVENCOPE_LOCAL_PUBLISHABLE_KEY`, and `PREVENCOPE_LOCAL_SECRET_KEY` from
+`supabase status`. The script refuses non-local port 55321, creates a
+disposable local account without sending an invitation, checks valid/invalid
+login, refresh, password update, disabled-profile RLS, and sign-out, then
+removes the account. Never supply hosted service-role credentials to this
+test or to Angular.
+
 For a full local rehearsal before institutional Auth onboarding, run
 `python -B scripts/rehearse-legacy-import.py --dump <reviewed-dump>
 --pg-restore <pg-restore-executable> --psql <psql-executable>
