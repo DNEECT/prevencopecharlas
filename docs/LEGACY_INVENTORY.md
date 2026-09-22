@@ -71,3 +71,11 @@ photographic PDFs, so import recovered historical PDFs through a trusted
 service role only. Unrecovered references remain unavailable and must not be
 displayed as downloadable evidence. Database reconciliation does not establish
 evidence parity.
+
+The owner confirmed this is the final supplied snapshot and accepted these
+2,632 references as unavailable for the migration. This acceptance closes the
+object-recovery attempt for the supplied handoff; it does not claim that the
+objects existed in Supabase or that evidence parity was achieved. If a verified
+IONOS volume or backup appears later, reconcile its bytes, actual MIME type,
+size, checksum, activity, and kind before importing it through the controlled
+legacy compatibility path.
