@@ -141,6 +141,61 @@ An aggregate read-only query in the institutional dashboard on 21 September
 2026 returned zero rows in `auth.users`, `public.profiles`, and
 `legacy_import.auth_user_map`. No onboarding invitations have been sent.
 
+### Private SQL import rehearsal
+
+`scripts/build-legacy-import.py` creates a transactional SQL file outside Git.
+It stages only allowlisted source fields in temporary tables; the source
+`password` field is excluded. It verifies every mapped Auth ID and matching
+email, seeded roles and catalogs, and existing row consistency before writing
+business rows. It preserves source UUIDs, activity codes, inactive state,
+audit links and timestamps, and historical participant blanks. Every missing
+attachment becomes unavailable metadata with no object path or download URL.
+The SQL records a private batch and per-record ledger; a repeated run skips
+the same records. A conflicting existing row blocks the transaction instead
+of silently overwriting it. No invitation or Auth user is created.
+
+First create a **private** CSV outside this repository with exactly
+`legacy_user_id,auth_user_id` columns. Verify the 92 identities and email
+matches in the intended Supabase project. Until that mapping exists, the
+builder refuses to generate import SQL. Generate a rehearsal file in a private
+directory with:
+
+```powershell
+python -B scripts/build-legacy-import.py --dump <reviewed-dump> `
+  --pg-restore <pg-restore-executable> --auth-map <private-auth-map.csv> `
+  --output <private-dry-run.sql> --mode dry-run
+```
+
+Review the aggregate planner result and the target project before running the
+file with a trusted direct PostgreSQL connection:
+
+```powershell
+psql -X -q -t -A -v ON_ERROR_STOP=1 <database-url> -f <private-dry-run.sql>
+```
+
+The last SQL result is an aggregate reconciliation report; `dry-run` rolls
+everything back. After reviewing it, generate a fresh output path with
+`--mode apply` and execute that SQL once. The apply transaction fails closed
+if any Auth identity, email, role, catalog, or pre-existing record conflicts.
+Store and delete the generated SQL as sensitive personal data. Never commit
+the SQL, Auth map, dump, or database URL. On local Supabase only, run
+`scripts/test-build-legacy-import.py` with `PREVENCOPE_LOCAL_DB_URL` pointing
+to port 55322 and `PREVENCOPE_PSQL` set to the psql executable; it checks a
+dry run, two consecutive applies, and cleanup using synthetic rows.
+
+The builder reports zero updates because this final snapshot is immutable.
+An existing row with different values requires review and a corrective
+transaction, not an automatic overwrite. Production execution and account
+invitations remain separate approval and onboarding steps.
+
+For a full local rehearsal before institutional Auth onboarding, run
+`python -B scripts/rehearse-legacy-import.py --dump <reviewed-dump>
+--pg-restore <pg-restore-executable> --psql <psql-executable>
+--db-url <local-supabase-database-url>`. It accepts only localhost port 55322,
+creates disposable local Auth identities, runs the dry SQL, removes those
+identities, and prints aggregate counts only. The verified 22 September 2026
+result is recorded in [LEGACY_DRY_RUN.md](LEGACY_DRY_RUN.md).
+
 Run `scripts/audit-legacy-evidence.py --dump <reviewed-dump> --pg-restore
 <pg-restore-executable> --evidence-root <candidate-directory>` for aggregate
 name, kind, extension-derived MIME, and availability counts. A filename match

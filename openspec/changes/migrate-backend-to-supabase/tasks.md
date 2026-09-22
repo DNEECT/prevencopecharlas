@@ -38,8 +38,8 @@
 
 - [x] 5.1 Record the verified read-only dump inventory (19 tables, 92 users, 1,637 activities, 32,042 participants), source UUID/permission mappings, inactive state, and historical validation exceptions without committing source payloads or secrets.
 - [ ] 5.2 Locate the 2,632 referenced evidence objects or document their absence; reconcile name, kind, MIME type, and availability before claiming evidence parity.
-- [ ] 5.3 Add non-exposed staging and idempotent import tooling keyed by source UUID and Auth user mapping; verify a fixture import can be repeated without duplicate users, activities, participants, or evidence metadata.
-- [ ] 5.4 Run a legacy dry import and report inserts, updates, skips, historical-validation exceptions, unresolved relationships, and missing objects; block affected database rows on unresolved relationships and keep evidence parity incomplete while objects are absent.
+- [x] 5.3 Add non-exposed staging and idempotent import tooling keyed by source UUID and Auth user mapping; verify a fixture import can be repeated without duplicate users, activities, participants, or evidence metadata.
+- [x] 5.4 Run a legacy dry import and report inserts, updates, skips, historical-validation exceptions, unresolved relationships, and missing objects; block affected database rows on unresolved relationships and keep evidence parity incomplete while objects are absent.
 - [ ] 5.5 Execute the approved production database import, invite or reset migrated users through Supabase Auth, and reconcile active/inactive counts, representative records, and the 42 role/action grants.
 - [ ] 5.6 Import recovered evidence through the controlled compatibility path, or explicitly record irrecoverable gaps; complete role and evidence parity testing before removing obsolete legacy backend URL configuration and migrated proxy endpoints.
 
