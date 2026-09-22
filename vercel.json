@@ -9,8 +9,8 @@
     }
   ],
   "routes": [
+    { "src": "/api/health", "dest": "/api/health.js" },
     { "src": "/api/proxy", "dest": "/api/proxy.js" },
-    { "src": "/api/(.*)", "dest": "/api/$1" },
     { "handle": "filesystem" },
     { "src": "(.*)", "dest": "/index.csr.html" }
   ]

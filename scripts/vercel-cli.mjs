@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { mkdirSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,12 +19,23 @@ const defaultDir =
     ? join(process.env['APPDATA'], 'com.vercel.cli-prevencope')
     : join(homedir(), '.config', 'vercel-prevencope');
 const configDir = configuredDir || defaultDir;
+const xdgDataRoot = join(configDir, 'data');
+const xdgConfigRoot = join(configDir, 'config');
+const xdgCacheRoot = join(configDir, 'cache');
+const xdgStateRoot = join(configDir, 'state');
+mkdirSync(join(xdgDataRoot, 'com.vercel.cli'), { recursive: true });
 const repositoryRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 const cliEntry = join(repositoryRoot, 'node_modules', 'vercel', 'dist', 'vc.js');
 
-const child = spawn(process.execPath, [cliEntry, ...args, '--global-config', configDir], {
+const child = spawn(process.execPath, [cliEntry, ...args], {
   cwd: process.cwd(),
-  env: process.env,
+  env: {
+    ...process.env,
+    XDG_CACHE_HOME: xdgCacheRoot,
+    XDG_CONFIG_HOME: xdgConfigRoot,
+    XDG_DATA_HOME: xdgDataRoot,
+    XDG_STATE_HOME: xdgStateRoot,
+  },
   stdio: 'inherit',
   windowsHide: true,
 });
