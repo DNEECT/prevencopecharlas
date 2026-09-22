@@ -193,17 +193,44 @@ usernames, roles, and proposed invite flags. It deliberately excludes password
 hashes. Review recipients and institutional ownership before using an Auth
 administration flow; this command sends no email and makes no database change.
 
-The confirmed snapshot's dry run found 92 users (89 active), 92 role
+Validate that private review file with
+`npm run supabase:provision-legacy-auth -- --mode dry-run --input
+<private-onboarding.csv>`. To create the reviewed identities, also pass
+`--output <private-auth-map.csv> --confirm-project betgsxbtyckbbiepmols
+--mode apply` with `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in the process
+environment. The trusted command uses `createUser`, never an invitation or
+password-reset operation. It assigns a discarded random password, keeps the
+legacy UUID in trusted application metadata, writes the private two-column Auth
+map, and prints aggregate counts only. Role authorization remains in the
+database, never in user-editable Auth metadata.
+
+The confirmed snapshot's planner found 92 users (89 active), 92 role
 memberships, 1,637 activities (1,455 active), and 32,042 participants, with
 zero broken source relationships or destination field-limit violations. It
 found 53 blank sex values, one blank organization, 5,248 blank positions,
 25,657 blank emails, and 26,494 blank population values in historical
-participants. None of the 92 users has a verified Auth mapping yet. The dry
-run made no hosted changes; it does not complete the destination-aware import
-or establish evidence parity.
-An aggregate read-only query in the institutional dashboard on 21 September
-2026 returned zero rows in `auth.users`, `public.profiles`, and
-`legacy_import.auth_user_map`. No onboarding invitations have been sent.
+participants.
+
+On 22 September 2026, all 92 legacy Auth identities were created and verified
+against the reviewed emails and a private UUID mapping. They have confirmed
+email fields and unknown random passwords; no invitation or password-reset
+email was sent. Trusted legacy UUID metadata is present for all 92 identities,
+and legacy role or active-state values are absent from user-editable metadata.
+The hosted atomic dry run then reported 92 profile inserts, 92 membership
+inserts, 1,637 activity inserts, 32,042 participant inserts, and 2,632
+unavailable-evidence inserts, with zero updates and zero skips. The matching
+apply transaction committed those counts. Its 30,843 historical-validation
+exceptions describe preserved blanks and do not block the imported rows.
+
+Post-import reconciliation found 93 profiles and memberships in total,
+including the separately bootstrapped institutional Monitor. The 92 legacy
+profiles comprise 89 active and 3 inactive accounts with 11 Monitor and 81
+Gestor memberships. It also confirmed 1,637 activities (1,455 active), 32,042
+participants, 2,632 unavailable evidence records, 92 private Auth mappings,
+one applied import batch, all 42 role/action grants (24 active), and an
+`ACT009` next number of 1642. The temporary database importer was removed and
+derived SQL containing personal data was deleted after reconciliation. The
+private Auth mapping remains outside Git with a restricted local ACL.
 
 ### Private SQL import rehearsal
 
@@ -249,8 +276,9 @@ dry run, two consecutive applies, and cleanup using synthetic rows.
 
 The builder reports zero updates because this final snapshot is immutable.
 An existing row with different values requires review and a corrective
-transaction, not an automatic overwrite. Production execution and account
-invitations remain separate approval and onboarding steps.
+transaction, not an automatic overwrite. Production execution is complete;
+invitation or password-reset delivery remains a separate approved onboarding
+step. Until then, the migrated users cannot know their random credentials.
 
 The Auth flow can be verified against the local stack with
 `scripts/test-local-auth.mjs`. Supply the local API URL, publishable key, and
