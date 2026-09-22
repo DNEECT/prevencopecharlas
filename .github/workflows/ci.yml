@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - "codex/**"
+      - supabase-migration
 
 permissions:
   contents: read
