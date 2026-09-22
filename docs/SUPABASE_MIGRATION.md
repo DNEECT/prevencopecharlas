@@ -79,8 +79,9 @@ Use the institutional Supabase account with access to
 On 22 September 2026, `supabase projects list` showed the linked, healthy
 `prevencopecharlas` project, while the isolated Vercel CLI reported user
 `jnedneect-9144`, team `charlas` (`CHARLAS`), and linked project
-`charlas/prevencopecharlas`. The unrelated Vercel CLI credential directory was
-not changed. Run `npm run vercel:cli -- whoami` and
+`charlas/prevencopecharlas`. The default Vercel credential directory remains
+separate and still resolves to `patrickcast`; it was not repointed to the
+institutional account. Run `npm run vercel:cli -- whoami` and
 `npm run vercel:cli -- projects ls --scope charlas` to recheck that identity
 before any deployment. The Vercel project currently resolves to
 `https://prevencopecharlas.vercel.app`.
