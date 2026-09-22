@@ -26,5 +26,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify proxy origin policy
+        run: npm run test:proxy
+
       - name: Build Angular application
         run: npm run build

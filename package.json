@@ -17,6 +17,7 @@
     "supabase:status": "supabase status",
     "supabase:bootstrap-monitor": "node scripts/bootstrap-monitor.mjs",
     "supabase:provision-legacy-auth": "node scripts/provision-legacy-auth.mjs",
+    "test:proxy": "node scripts/test-api-proxy.cjs",
     "vercel:cli": "node scripts/vercel-cli.mjs"
   },
   "prettier": {

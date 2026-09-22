@@ -93,13 +93,14 @@ the hosted project was healthy. A `supabase db push --dry-run --linked
 `legacy_import` ledger migration also passed local replay and was pushed, so
 `supabase migration list --linked` shows all 13 local and remote versions
 matched. The ledger stores batch IDs, source hashes, user UUID mappings, and
-record outcomes; it contains no staged legacy records yet. Hosted
+record outcomes. It now contains the reconciled production import batch; no
+temporary staging tables or generated import SQL remain. Hosted
 read-only checks found 17 public tables, all 17 with RLS, and 17 public
 policies. The seed contains 2 roles, 8 modules, 6 actions, 42 role/action
 grants (18 inactive), 61 juries, and one `ACT009` format with next number 1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
 restrictions, and currently contains no objects. The hosted activity and
-participant tables each contain zero rows: the legacy personal-data import
-and evidence reconciliation remain separate cutover gates. The Codex Supabase
+participant tables contain the reconciled legacy import described below; all
+2,632 legacy evidence references remain unavailable metadata. The Codex Supabase
 connector remains connected to a different account and reports insufficient
 permission for this project; use the institutional CLI for project checks.
 Run Vercel commands only through the repository's
@@ -137,6 +138,11 @@ failed at `prebuild` because those variables were absent; the failure confirmed
 that incomplete deployments stop before compiling. No secret or service-role
 key is present in Vercel's Angular build. If a trusted import job needs one,
 run it separately from the frontend deployment with narrowly managed secrets.
+`ALLOWED_ORIGINS` is also set separately for each environment: the production
+aliases, the stable migration-preview alias, and localhost development. Keep
+this explicit origin list synchronized with any future domain change; otherwise
+the temporary `/api/proxy` bridge returns `403 Origin not allowed` before it
+contacts the allowlisted backend host.
 Verify the deployed browser bundle contains only the project URL and
 publishable key, and test real Monitor/Gestor accounts before changing traffic.
 

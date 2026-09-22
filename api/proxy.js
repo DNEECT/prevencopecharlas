@@ -21,11 +21,27 @@ function getAllowedHosts() {
 
 function getAllowedOrigins() {
   const env =
-    process.env.ALLOWED_ORIGINS || 'https://app-prevencope.vercel.app,http://localhost:4200';
+    process.env.ALLOWED_ORIGINS ||
+    [
+      'https://prevencopecharlas.vercel.app',
+      'https://prevencopecharlas-charlas.vercel.app',
+      'https://prevencopecharlas-git-supabase-migration-charlas.vercel.app',
+      'https://app-prevencope.vercel.app',
+      'http://localhost:4200',
+    ].join(',');
   return env
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean);
+}
+
+function isOriginAllowed(origin) {
+  try {
+    const normalized = new URL(origin).origin;
+    return getAllowedOrigins().includes(normalized);
+  } catch {
+    return false;
+  }
 }
 
 function isHostAllowed(targetUrl) {
@@ -72,7 +88,8 @@ module.exports = async (req, res) => {
   try {
     // This proxy is a temporary migration bridge. Only known frontends may call it.
     const origin = req.headers.origin;
-    if (origin && !getAllowedOrigins().includes(origin)) {
+    if (origin && !isOriginAllowed(origin)) {
+      console.warn('[api/proxy] rejected origin', { origin });
       res.statusCode = 403;
       return res.end('Origin not allowed');
     }
