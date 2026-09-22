@@ -46,4 +46,4 @@
 ## 6. Documentation and Delivery
 
 - [x] 6.1 Update setup, environment, deployment, bootstrap, backup, restore, and incident recovery documentation; verify a maintainer can reproduce a fresh environment without undocumented secrets.
-- [ ] 6.2 Run OpenSpec strict validation, SQL verification, Angular tests, production build, dependency audit, and GitHub Actions; verify every required check passes or has a documented accepted limitation.
+- [x] 6.2 Run OpenSpec strict validation, SQL verification, Angular tests, production build, dependency audit, and GitHub Actions; verify every required check passes or has a documented accepted limitation.
