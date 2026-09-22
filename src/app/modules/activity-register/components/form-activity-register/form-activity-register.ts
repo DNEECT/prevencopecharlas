@@ -42,6 +42,7 @@ import { FormFieldFileComponent } from '@shared/components/form-field-file/form-
 import { FileService } from '@modules/activity-register/service/file.service';
 import { AsistentTypeService } from '@modules/activity-format/service/asistent-type.service';
 import { TargetAudienceService } from '@modules/activity-format/service/target-audience.service';
+import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-form-activity-register',
@@ -71,6 +72,7 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   private readonly consultService: ConsultService = inject(ConsultService);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly fileService: FileService = inject(FileService);
+  private readonly snackbarService: SnackbarService = inject(SnackbarService);
 
   @Input() public form: FormGroup<RegistroActividadForm> = registroActividadFormGroup;
   @Input() public errorMessagesForm: ErrorFields = errorMessagesRegistroActividadForm;
@@ -110,7 +112,7 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     this.selectElectoralProcess();
     this.selectSpecialNationalJury();
     this.selectAsistentType();
-    this.selectTargetAudience()
+    this.selectTargetAudience();
   }
 
   ngOnDestroy(): void {
@@ -227,7 +229,6 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     this.isLoadingTheme = false;
   }
 
-
   public selectTargetAudience() {
     this.listTargetAudience = [];
     this.isLoadingTargetAudience = true;
@@ -273,27 +274,18 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   protected selectCodigo(tema: AutoCompleteData) {
     if (!tema) {
       this.codigo = '';
-      return
+      return;
     }
     const selectedTeme = tema?.key ?? '';
     const selectedCodigoTipoActividad = tema?.aux1 ?? '';
     if (!this.isEdit) {
-      this.consultCodeRegistroActivity(
-        selectedCodigoTipoActividad,
-        selectedTeme
-      );
+      this.consultCodeRegistroActivity(selectedCodigoTipoActividad, selectedTeme);
     }
   }
 
-  public consultCodeRegistroActivity(
-    codigoTipoActividad: string,
-    tema: string
-  ) {
+  public consultCodeRegistroActivity(codigoTipoActividad: string, tema: string) {
     this.activityFormatService
-      .consultarCodigoSiguiente(
-        codigoTipoActividad,
-        tema
-      )
+      .consultarCodigoSiguiente(codigoTipoActividad, tema)
       .pipe()
       .subscribe({
         next: (response: string) => {
@@ -337,8 +329,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
           this.formDetailParticipantes.patchValue(cleanData);
           this.cdr.detectChanges();
         },
-        error: () => {
-          this.codigo = '';
+        error: (error: Error) => {
+          this.ultimoDniConsultado = '';
+          this.snackbarService.openWarningSnackBar(
+            error.message || 'No se encontraron datos previos para el DNI.',
+          );
         },
       });
   }

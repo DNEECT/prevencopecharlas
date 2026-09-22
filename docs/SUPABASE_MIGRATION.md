@@ -1,17 +1,18 @@
 # PREVENCOPE Charlas: Supabase migration runbook
 
 The Angular client is moving from Spring/IONOS to Vercel and Supabase project
-`betgsxbtyckbbiepmols`. The legacy proxy is retained for explicitly unresolved
-DNI/RUC lookups and user administration while those flows are migrated. Do not
-declare a production cutover until the OpenSpec checklist, legacy import, and
-evidence reconciliation are complete.
+`betgsxbtyckbbiepmols`. The legacy proxy is retained for unfinished user
+administration while that flow is migrated. Do not declare a production
+cutover until the OpenSpec checklist, legacy import, and evidence reconciliation
+are complete.
 
 The active activity-type, assistant-type, target-audience, process, jury,
 format, registration, participant, authentication, permission-navigation, and
 evidence paths use Supabase directly. Their former Spring route constants have
-been removed. The remaining legacy URL is referenced only by the documented
-DNI lookup and unfinished user/role administration repositories; it is not
-used by migrated activity or evidence flows.
+been removed. Participant DNI autocomplete reuses the most recently updated
+participant visible through Supabase RLS and leaves a new DNI available for
+manual entry. The remaining legacy URL is referenced only by unfinished
+user/role administration repositories.
 
 ## Local development
 

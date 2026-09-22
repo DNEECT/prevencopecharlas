@@ -1,12 +1,11 @@
 export const ROUTES_SERVIDOR_PATH = {
-  // Temporary legacy routes: institutional user administration and the
-  // secret-bearing DNI lookup have not moved to a trusted Supabase server flow.
+  // Temporary legacy routes retained only by administrative screens that have
+  // not yet moved to Supabase repositories.
   BASE_URL: 'https://prevencope.actividades.api.fordevs.pe/ne-pre-gestionactividades/v1',
   // BASE_URL: 'http://localhost:9099/ne-pre-gestionactividades/v1',
   ROLES: '/roles',
   ACCIONES: '/acciones',
   USUARIO: '/usuarios',
-  CONSULTAS: '/consultas',
   PERMISOS: '/permisos',
 };
 

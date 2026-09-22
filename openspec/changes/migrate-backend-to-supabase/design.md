@@ -54,7 +54,7 @@ Use one private `activity-evidence` bucket with paths `<activity-id>/<attendance
 
 ### Preserve Angular behavior through typed repositories
 
-Angular authentication moves to Supabase Auth. Repositories call RLS-safe tables, invoker views, and narrow RPCs through `SupabaseService`, mapping snake_case fields to the existing Spanish interfaces. Registration listing keeps active-only rows, pagination, code search, optional JEE filtering, and the actor's permitted creator scope. Module/action permissions drive navigation; direct database requests remain protected independently of the UI. The legacy proxy remains only for secret-bearing external lookups until that integration has its own migration.
+Angular authentication moves to Supabase Auth. Repositories call RLS-safe tables, invoker views, and narrow RPCs through `SupabaseService`, mapping snake_case fields to the existing Spanish interfaces. Registration listing keeps active-only rows, pagination, code search, optional JEE filtering, and the actor's permitted creator scope. Module/action permissions drive navigation; direct database requests remain protected independently of the UI. Participant DNI autocomplete reuses the latest accessible imported participant record through the same RLS scope; unknown DNIs remain available for manual entry without calling IONOS. The legacy proxy remains only for unfinished administrative repositories until they are migrated.
 
 ### Import through staging and reconciliation
 
