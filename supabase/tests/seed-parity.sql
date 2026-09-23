@@ -4,13 +4,13 @@ do $$
 declare
   bad_rows integer;
 begin
-  if (select count(*) from public.roles) <> 2
+  if (select count(*) from public.roles where name in ('Monitor', 'Gestor')) <> 2
     or (select count(*) from public.actions) <> 6
     or (select count(*) from public.modules) <> 8
     or (select count(*) from public.module_actions) <> 21
-    or (select count(*) from public.role_modules) <> 12
-    or (select count(*) from public.role_module_actions) <> 42
-    or (select count(*) from public.role_module_actions where not is_active) <> 18 then
+    or (select count(*) from public.role_modules rm join public.roles r on r.id = rm.role_id where r.name in ('Monitor', 'Gestor')) <> 12
+    or (select count(*) from public.role_module_actions rma join public.role_modules rm on rm.id = rma.role_module_id join public.roles r on r.id = rm.role_id where r.name in ('Monitor', 'Gestor')) <> 42
+    or (select count(*) from public.role_module_actions rma join public.role_modules rm on rm.id = rma.role_module_id join public.roles r on r.id = rm.role_id where r.name in ('Monitor', 'Gestor') and not rma.is_active) <> 18 then
     raise exception 'Source role/action counts or inactive grants differ';
   end if;
 
@@ -24,6 +24,7 @@ begin
     join public.modules m on m.id = rm.module_id
     join public.module_actions ma on ma.id = g.module_action_id
     join public.actions a on a.id = ma.action_id
+    where r.name in ('Monitor', 'Gestor')
     group by r.name, m.abbreviation
   ), expected(role_name, module_code, actions) as (values
     ('Monitor','GREGACT','ADD=on;APROVE=on;DELETE=on;EDIT=on;LIST=on;OBSERVE=on'),
@@ -46,6 +47,22 @@ begin
   ) differences;
   if bad_rows <> 0 then
     raise exception 'Source role/module/action matrix differs in % groups', bad_rows;
+  end if;
+
+  if not exists (
+    select 1 from public.roles
+    where id = 'a8f42e1c-9f7d-4f3c-8b5a-2d7e6c9a1042'
+      and name = 'Administrador' and is_active
+  ) or (
+    select count(*)
+    from public.role_module_actions rma
+    join public.role_modules rm on rm.id = rma.role_module_id and rm.is_active
+    join public.module_actions ma on ma.id = rma.module_action_id and ma.is_active
+    join public.actions a on a.id = ma.action_id and a.is_active
+    where rm.role_id = 'a8f42e1c-9f7d-4f3c-8b5a-2d7e6c9a1042'
+      and rma.is_active
+  ) <> 21 then
+    raise exception 'Administrator role does not have every active module action';
   end if;
 
   if (select count(*) from public.activity_types) <> 1

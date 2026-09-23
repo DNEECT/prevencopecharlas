@@ -96,8 +96,11 @@ matched. The ledger stores batch IDs, source hashes, user UUID mappings, and
 record outcomes. It now contains the reconciled production import batch; no
 temporary staging tables or generated import SQL remain. Hosted
 read-only checks found 17 public tables, all 17 with RLS, and 17 public
-policies. The seed contains 2 roles, 8 modules, 6 actions, 42 role/action
-grants (18 inactive), 61 juries, and one `ACT009` format with next number 1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
+policies. The imported source matrix contains 2 roles and 42 role/action grants
+(18 inactive). The institution-specific Administrator role adds 21 active
+grants, producing 3 roles and 63 grants in the hosted configuration. The seed
+also contains 8 modules, 6 actions, 61 juries, and one `ACT009` format with next
+number 1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
 restrictions, and currently contains no objects. The hosted activity and
 participant tables contain the reconciled legacy import described below; all
 2,632 legacy evidence references remain unavailable metadata. The Codex Supabase
@@ -168,8 +171,17 @@ On 23 September 2026, migration `20260923164059_admin_user_management.sql`
 and version 1 of `admin-directory` were deployed. The hosted migration list is
 matched, the function is active with JWT verification enabled, remote schema
 lint reports no errors, and an authenticated read-only check as
-`sfernandeza@jne.gob.pe` returned that profile plus both active role choices.
+`sfernandeza@jne.gob.pe` returned that profile plus the active role choices.
 No production user or role was changed during this check.
+
+After explicit owner authorization on 23 September 2026, migration
+`20260923181855_grant_sfernandeza_administrator.sql` added a dedicated
+Administrator role and assigned it only to `sfernandeza@jne.gob.pe`. The
+account retains Monitor for global record scope and now has all 21 active
+module/action pairs, including `GPRM` access to the Permissions view. The
+hosted verification returned Monitor plus Administrator membership, all six
+permission-bearing modules, the six-action catalog, and the complete
+eight-module Administrator matrix. Existing Monitor accounts were not changed.
 
 The repeatable bootstrap command is `npm run supabase:bootstrap-monitor`. Pass
 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,

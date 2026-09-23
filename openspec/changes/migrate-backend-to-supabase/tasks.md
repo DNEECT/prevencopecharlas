@@ -34,6 +34,7 @@
 - [x] 4.6 Migrate evidence upload, signed download, replacement, and deletion to private Supabase Storage with metadata compensation on failure; verify file-type, size, creator scope, missing-object display, and orphan cleanup.
 - [x] 4.7 Remove migrated Spring endpoints from the active Angular path, including user, role, action, and permission administration; verify the production build and end-to-end migrated flows do not call IONOS.
 - [x] 4.8 Add an authenticated administrative Edge Function and transactional service-role-only RPCs for user lifecycle and role membership; verify local create, edit, deactivate, reactivate, and rollback behavior without sending invitations.
+- [x] 4.9 Add a dedicated Administrator role without modifying the imported Monitor matrix, assign it only to the designated institutional Monitor, and verify all active views and actions are effective.
 
 ## 5. Legacy Import and Cutover
 

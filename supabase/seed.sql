@@ -7,6 +7,11 @@ insert into public.roles (id, name, description, is_active) values
   ('636e220a-a80a-4f02-912b-642d2579a99d', 'Gestor', 'Rol con permisos para registrar actividades en el sistema', true)
 on conflict (id) do nothing;
 
+-- Institution-specific role added after the source matrix was reconciled.
+insert into public.roles (id, name, description, is_active) values
+  ('a8f42e1c-9f7d-4f3c-8b5a-2d7e6c9a1042', 'Administrador', 'Acceso institucional completo a todos los módulos activos', true)
+on conflict (id) do nothing;
+
 insert into public.actions (id, abbreviation, description, is_active) values
   ('77799fe0-ebae-4d34-90ec-06aec9c8fdb0', 'LIST', 'Listar', true),
   ('62cd4be2-ec33-41cc-ba5c-d3514bf13fb7', 'ADD', 'Agregar', true),
@@ -110,6 +115,25 @@ insert into public.role_module_actions (id, module_id, role_module_id, module_ac
   ('c7fcfbc1-247b-4ad4-835b-845cf0b196a0', '866e3ea1-39d9-4740-b466-f04a1763043b', '4cba465e-e4cb-4f7c-b29e-1392e8c83190', 'd3e6625f-19e3-423f-832f-08970cefaa4c', false),
   ('992425c4-3277-4a91-bd55-173a0ea3b23d', '9c6a4925-97e7-4dcf-8696-ee146d62998d', 'c1bf4ae6-104d-4144-8bbf-d51eb77825f1', '0359fbe8-f638-4960-95ef-c2a26737d442', true)
 on conflict (id) do nothing;
+
+-- Fresh environments receive the same complete Administrator matrix after the
+-- source modules and actions exist. Re-seeding does not overwrite later edits.
+insert into public.role_modules (role_id, module_id, is_active)
+select 'a8f42e1c-9f7d-4f3c-8b5a-2d7e6c9a1042', m.id, true
+from public.modules m
+where m.is_active
+on conflict (role_id, module_id) do nothing;
+
+insert into public.role_module_actions (
+  module_id, role_module_id, module_action_id, is_active
+)
+select rm.module_id, rm.id, ma.id, true
+from public.role_modules rm
+join public.modules m on m.id = rm.module_id and m.is_active
+join public.module_actions ma on ma.module_id = rm.module_id and ma.is_active
+join public.actions a on a.id = ma.action_id and a.is_active
+where rm.role_id = 'a8f42e1c-9f7d-4f3c-8b5a-2d7e6c9a1042'
+on conflict (role_module_id, module_action_id) do nothing;
 
 insert into public.activity_types (id, name, description, is_active) values
   ('745abaf0-d612-49aa-a7cb-371aab77692a', 'Charla informativa', 'Voto informado para la prevención de conflictos electorales', true)
