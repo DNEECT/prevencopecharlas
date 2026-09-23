@@ -183,6 +183,16 @@ hosted verification returned Monitor plus Administrator membership, all six
 permission-bearing modules, the six-action catalog, and the complete
 eight-module Administrator matrix. Existing Monitor accounts were not changed.
 
+On 23 September 2026, migration
+`20260923191030_group_permission_navigation.sql` updated `my_permissions()` to
+return authorized hierarchy-only parent modules while excluding non-functional
+route-less modules. The deployed desktop header now groups Formato de actividad
+and Tipo de actividad under Administración, and Usuarios and Permisos under
+Seguridad. The responsive drawer exposes the same permitted hierarchy. The
+obsolete Todos item is no longer shown. Local authorization SQL, the focused
+Angular navigation tests, the production build, and live desktop/mobile browser
+checks passed; the linked local and hosted migration histories match.
+
 The repeatable bootstrap command is `npm run supabase:bootstrap-monitor`. Pass
 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,
 `BOOTSTRAP_MONITOR_EMAIL`, `BOOTSTRAP_MONITOR_USERNAME`, and a temporary
@@ -398,9 +408,9 @@ disponible" when an active evidence record has `is_available = false`, or when
 the imported registration retains a `legacy_attendance_path` or
 `legacy_photo_path` without a verified available Storage object. It exposes no
 download action for that reference and allows an authorized user to upload a
-replacement. Preserve the legacy path fields during the pending activity
-import; the hosted project has no historical activity rows yet, so the status
-will appear only after those rows are imported.
+replacement. The hosted project retains the imported legacy path fields, so
+the unavailable status is shown for historical rows until an authorized user
+uploads a replacement.
 
 ## Backup and recovery
 

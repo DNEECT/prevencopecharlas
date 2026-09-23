@@ -98,6 +98,12 @@ The system SHALL expose the effective hierarchical modules and actions for the s
 - **WHEN** an active user loads the application shell
 - **THEN** the system returns only modules and actions granted to that user's roles
 
+#### Scenario: UI preserves the legacy navigation hierarchy
+
+- **WHEN** an active user can list a child module below Administración or Seguridad
+- **THEN** the header groups that route below its authorized parent menu
+- **AND** a non-functional module without a route is not rendered as a navigation item
+
 #### Scenario: Disabled permission grant
 
 - **WHEN** a user invokes an action whose role-module-action grant is inactive

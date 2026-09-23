@@ -73,6 +73,42 @@ describe('AuthenticationRepository', () => {
     expect(result.datos[0].isVisible).toBeTrue();
   });
 
+  it('groups permitted child routes under hierarchy-only parent menus', async () => {
+    rpc.and.resolveTo({
+      data: [
+        {
+          module_id: '00000000-0000-4000-8000-000000000110',
+          parent_module_id: null,
+          module_abbreviation: 'GADM',
+          module_name: 'Administración',
+          route: null,
+          icon: 'list_alt',
+          sort_order: 2,
+          action_abbreviation: 'LIST',
+        },
+        {
+          module_id: '00000000-0000-4000-8000-000000000111',
+          parent_module_id: '00000000-0000-4000-8000-000000000110',
+          module_abbreviation: 'GFORACT',
+          module_name: 'Formato de actividad',
+          route: '/formato-actividad',
+          icon: null,
+          sort_order: 1,
+          action_abbreviation: 'LIST',
+        },
+      ],
+      error: null,
+    });
+
+    const result = await firstValueFrom(repository.getMenuItems());
+
+    expect(result.datos.length).toBe(1);
+    expect(result.datos[0].title).toBe('Administración');
+    expect(result.datos[0].link).toBeUndefined();
+    expect(result.datos[0].items?.map((item) => item.abreviatura)).toEqual(['GFORACT']);
+    expect(result.datos[0].items?.[0].link).toBe('/formato-actividad');
+  });
+
   it('rejects invalid credentials before querying application data', async () => {
     signIn.and.resolveTo({
       data: { user: null, session: null },
