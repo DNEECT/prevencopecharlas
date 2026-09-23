@@ -68,10 +68,17 @@ begin
   if (select count(*) from public.activity_types) <> 1
     or (select count(*) from public.assistant_types) <> 7
     or (select count(*) from public.target_audiences) <> 11
-    or (select count(*) from public.electoral_processes) <> 1
+    or (select count(*) from public.electoral_processes) <> 2
     or (select count(*) from public.activity_formats) <> 1
     or (select count(*) from public.special_juries) <> 61 then
     raise exception 'Source lookup catalog counts differ';
+  end if;
+  if not exists (
+    select 1 from public.electoral_processes
+    where name = 'Elecciones Regionales Municipales 2026'
+      and is_active and is_default
+  ) or (select count(*) from public.electoral_processes where is_default) <> 1 then
+    raise exception 'Current electoral-process default differs';
   end if;
   if not exists (
     select 1 from public.activity_formats

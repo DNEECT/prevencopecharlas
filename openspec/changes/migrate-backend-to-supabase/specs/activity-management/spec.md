@@ -14,6 +14,12 @@ The system SHALL expose active activity types, assistant types, target audiences
 - **THEN** the system returns every active catalog entry the user is allowed to use
 - **AND** each entry includes a stable code and display name
 
+#### Scenario: Default the current electoral process on a new registration
+
+- **WHEN** an authenticated active user opens a new activity registration
+- **THEN** the active catalog entry marked as the default process is preselected
+- **AND** opening an existing activity retains its stored electoral process
+
 #### Scenario: Anonymous catalog request
 - **WHEN** a request without a valid authenticated session reads an application catalog
 - **THEN** the system returns no catalog rows

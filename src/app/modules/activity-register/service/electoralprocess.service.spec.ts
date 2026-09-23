@@ -1,16 +1,28 @@
-import { TestBed } from '@angular/core/testing';
-
-import { ElectoralprocessService } from './electoralprocess.service';
+import { getDefaultElectoralProcess, mapElectoralProcesses } from './electoralprocess.service';
 
 describe('ElectoralprocessService', () => {
-  let service: ElectoralprocessService;
+  it('maps and identifies the configured default electoral process', () => {
+    const options = mapElectoralProcesses({
+      datos: [
+        {
+          codigoProcesoElectoral: 'general',
+          nombre: 'Elecciones Generales 2026',
+          descripcion: '',
+          esPredeterminado: false,
+        },
+        {
+          codigoProcesoElectoral: 'regional',
+          nombre: 'Elecciones Regionales Municipales 2026',
+          descripcion: '',
+          esPredeterminado: true,
+        },
+      ],
+    });
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(ElectoralprocessService);
-  });
-
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(getDefaultElectoralProcess(options)).toEqual({
+      key: 'regional',
+      value: 'Elecciones Regionales Municipales 2026',
+      isDefault: true,
+    });
   });
 });

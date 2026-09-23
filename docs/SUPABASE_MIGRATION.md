@@ -193,6 +193,15 @@ obsolete Todos item is no longer shown. Local authorization SQL, the focused
 Angular navigation tests, the production build, and live desktop/mobile browser
 checks passed; the linked local and hosted migration histories match.
 
+Later on 23 September 2026, migration
+`20260923201148_add_regional_municipal_process.sql` added Elecciones Regionales
+Municipales 2026 to the active electoral-process catalog and marked it as the
+single current default. New activity forms preselect the catalog default after
+loading it from Supabase. Edit forms do not apply that default and retain the
+process stored on the activity. The final legacy snapshot still contained only
+Elecciones Generales 2026; this migration records the subsequent operational
+catalog change.
+
 The repeatable bootstrap command is `npm run supabase:bootstrap-monitor`. Pass
 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,
 `BOOTSTRAP_MONITOR_EMAIL`, `BOOTSTRAP_MONITOR_USERNAME`, and a temporary

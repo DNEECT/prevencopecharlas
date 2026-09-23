@@ -352,6 +352,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
       .subscribe({
         next: (response: AutoCompleteData[]) => {
           this.listElectoralProcess = response;
+          const processControl = this.form.controls.procesoElectoral;
+          if (!this.isEdit && !processControl.value) {
+            const defaultProcess = this.electoralProcessService.getDefault(response);
+            if (defaultProcess) processControl.setValue(defaultProcess);
+          }
         },
         error: () => {
           this.listElectoralProcess = [];

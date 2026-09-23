@@ -36,6 +36,7 @@
 - [x] 4.8 Add an authenticated administrative Edge Function and transactional service-role-only RPCs for user lifecycle and role membership; verify local create, edit, deactivate, reactivate, and rollback behavior without sending invitations.
 - [x] 4.9 Add a dedicated Administrator role without modifying the imported Monitor matrix, assign it only to the designated institutional Monitor, and verify all active views and actions are effective.
 - [x] 4.10 Restore the legacy grouped header by returning authorized Administración and Seguridad parent containers, hide non-functional route-less modules, and verify desktop and mobile navigation retain only permitted child routes.
+- [x] 4.11 Add Elecciones Regionales Municipales 2026 to the active process catalog, mark it as the single current default, and verify new registrations preselect it without changing edit-form values.
 
 ## 5. Legacy Import and Cutover
 
