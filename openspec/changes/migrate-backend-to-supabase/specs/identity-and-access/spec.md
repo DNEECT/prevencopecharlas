@@ -108,3 +108,9 @@ The system SHALL expose the effective hierarchical modules and actions for the s
 
 - **WHEN** a user invokes an action whose role-module-action grant is inactive
 - **THEN** the database rejects the operation even if the client displays that action
+
+#### Scenario: Controlled institutional test account
+
+- **WHEN** a dedicated test account is provisioned before general user onboarding
+- **THEN** it uses an institutional email identity and only the explicitly approved roles
+- **AND** its temporary credential is retained outside source control without sending an invitation or password-reset email

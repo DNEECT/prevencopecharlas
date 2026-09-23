@@ -183,6 +183,14 @@ hosted verification returned Monitor plus Administrator membership, all six
 permission-bearing modules, the six-action catalog, and the complete
 eight-module Administrator matrix. Existing Monitor accounts were not changed.
 
+On 23 September 2026, the dedicated institutional test identity
+`pruebasdneect@jne.gob.pe` was provisioned with the same active Monitor and
+Administrador memberships as `sfernandeza@jne.gob.pe`. A password sign-in,
+both effective roles, and 22 effective permission/navigation rows were verified.
+No invitation or password-reset email was sent. Its temporary credential is
+stored outside Git in the restricted local PREVENCOPE credentials directory
+and must be distributed only to the approved test group.
+
 On 23 September 2026, migration
 `20260923191030_group_permission_navigation.sql` updated `my_permissions()` to
 return authorized hierarchy-only parent modules while excluding non-functional

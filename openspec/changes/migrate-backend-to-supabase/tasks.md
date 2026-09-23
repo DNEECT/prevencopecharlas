@@ -23,6 +23,7 @@
 - [x] 3.2 Preview the remote migration plan, apply the reviewed migrations and seeds, and verify the hosted migration history, tables, policies, private bucket, and project health.
 - [x] 3.3 Bootstrap the first institutional Monitor administrator through a documented administrative flow and verify sign-in while role membership remains protected from browser self-editing.
 - [x] 3.4 Run Supabase security and performance advisors after deployment, resolve findings introduced by this change, and record a clean or explained advisor result.
+- [x] 3.5 Provision and verify the dedicated `pruebasdneect@jne.gob.pe` account with the same Monitor and Administrador roles as the designated institutional administrator, store its temporary credential outside Git, and send no invitation or password-reset email.
 
 ## 4. Angular Authentication and Data Access
 
