@@ -11,13 +11,11 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:app-prevencope": "node dist/app-prevencope/server/server.mjs",
-    "start:proxy": "node proxy-server.js",
     "supabase:start": "supabase start",
     "supabase:stop": "supabase stop",
     "supabase:status": "supabase status",
     "supabase:bootstrap-monitor": "node scripts/bootstrap-monitor.mjs",
     "supabase:provision-legacy-auth": "node scripts/provision-legacy-auth.mjs",
-    "test:proxy": "node scripts/test-api-proxy.cjs",
     "vercel:cli": "node scripts/vercel-cli.mjs"
   },
   "prettier": {
@@ -53,7 +51,6 @@
     "express": "^5.2.1",
     "file-saver": "^2.0.5",
     "ngx-sharebuttons": "^17.0.0",
-    "node-fetch": "^2.7.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "uuid": "^13.0.0"

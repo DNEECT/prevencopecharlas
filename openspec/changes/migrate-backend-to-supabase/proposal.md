@@ -13,7 +13,7 @@ PREVENCOPE Charlas currently depends on a Spring Boot and PostgreSQL backend hos
 - Add stable database functions and views needed by the Angular application for generated activity codes, joined display data, and permission checks.
 - Seed non-sensitive role, permission, and lookup catalog data required for a fresh environment.
 - Adapt the Angular data and authentication layer to Supabase while preserving the current user-facing workflows and Spanish field semantics.
-- Keep the legacy proxy only for functionality that still requires an external secret-bearing integration, then remove it after parity verification.
+- Replace the legacy proxy with authenticated Supabase data access and a narrow administrative Edge Function, then remove the IONOS URL and proxy implementation after parity verification.
 - Add validation for migration replay, RLS isolation, role permissions, storage access, and the production Angular build.
 - Use the now-readable legacy PostgreSQL dump and Spring Boot source as the migration contract. The dump has 19 tables, 92 users, 1,637 activities, and 32,042 participants. Recover referenced evidence objects separately: 2,632 distinct attachment names occur in the dump, but none of the corresponding files is present in the supplied source tree.
 

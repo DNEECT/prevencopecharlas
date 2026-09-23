@@ -83,13 +83,13 @@ export const usuarioFormGroup: FormGroup<UsuarioForm> = new FormGroup<UsuarioFor
     validators: [Validators.required, Validators.maxLength(100)],
   }),
   username: new FormControl<string>('', {
-    validators: [Validators.required, Validators.maxLength(50)],
+    validators: [Validators.required, Validators.maxLength(20)],
   }),
   correo: new FormControl<string>('', {
     validators: [Validators.required, Validators.maxLength(100), Validators.email],
   }),
   direccion: new FormControl<string>('', {
-    validators: [Validators.required, Validators.maxLength(250)],
+    validators: [Validators.required, Validators.maxLength(100)],
   }),
   fechaNacimiento: new FormControl<string>('', {
     validators: [Validators.required],
@@ -114,7 +114,7 @@ export const errorMessagesUsuarioForm: ErrorFields = {
   ],
   username: [
     { required: 'El nombre de usuario es obligatorio.' },
-    { maxlength: 'El máximo de caracteres permitidos es 50.' },
+    { maxlength: 'El máximo de caracteres permitidos es 20.' },
   ],
   correo: [
     { required: 'El correo electrónico es obligatorio.' },
@@ -123,7 +123,7 @@ export const errorMessagesUsuarioForm: ErrorFields = {
   ],
   direccion: [
     { required: 'La dirección es obligatoria.' },
-    { maxlength: 'El máximo de caracteres permitidos es 250.' },
+    { maxlength: 'El máximo de caracteres permitidos es 100.' },
   ],
   fechaNacimiento: [{ required: 'La fecha de nacimiento es obligatoria.' }],
   roles: [{ required: 'Seleccione al menos un rol.' }],

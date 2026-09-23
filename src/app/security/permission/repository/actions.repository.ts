@@ -1,17 +1,19 @@
 import { inject, Injectable } from '@angular/core';
-import { ApiService } from '@shared/service/api/api.service';
-import { ROUTES_SERVIDOR_PATH } from '@shared/const/routes-servidor.const';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { AccionesDatosResponse } from '../interface/permission';
+import { SupabaseService } from '@shared/service/supabase/supabase.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ActionsRepository {
-  private readonly apiService: ApiService = inject(ApiService);
-  private readonly uriAcciones = `${ROUTES_SERVIDOR_PATH.BASE_URL}${ROUTES_SERVIDOR_PATH.ACCIONES}`;
+  private readonly supabaseService = inject(SupabaseService);
 
   public listar(): Observable<AccionesDatosResponse> {
-    return this.apiService.get(`${this.uriAcciones}`, {}, {}, {}, true);
+    return from(
+      this.supabaseService.invoke<AccionesDatosResponse>('admin-directory', {
+        action: 'list-actions',
+      }),
+    );
   }
 }

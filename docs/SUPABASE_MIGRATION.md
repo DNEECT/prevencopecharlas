@@ -1,18 +1,17 @@
 # PREVENCOPE Charlas: Supabase migration runbook
 
-The Angular client is moving from Spring/IONOS to Vercel and Supabase project
-`betgsxbtyckbbiepmols`. The legacy proxy is retained for unfinished user
-administration while that flow is migrated. Do not declare a production
-cutover until the OpenSpec checklist, legacy import, and evidence reconciliation
-are complete.
+The Angular client has moved from Spring/IONOS to Vercel and Supabase project
+`betgsxbtyckbbiepmols`. The application no longer contains an active IONOS URL
+or legacy API proxy. Do not declare user onboarding complete until the owner
+approves invitation or password-reset delivery and the migrated users complete
+their first sign-in checks.
 
-The active activity-type, assistant-type, target-audience, process, jury,
-format, registration, participant, authentication, permission-navigation, and
-evidence paths use Supabase directly. Their former Spring route constants have
-been removed. Participant DNI autocomplete reuses the most recently updated
-participant visible through Supabase RLS and leaves a new DNI available for
-manual entry. The remaining legacy URL is referenced only by unfinished
-user/role administration repositories.
+The activity-type, assistant-type, target-audience, process, jury, format,
+registration, participant, authentication, permission-navigation, user,
+role-administration, and evidence paths now use Supabase. Their former Spring
+route constants and Vercel proxy have been removed. Participant DNI autocomplete
+reuses the most recently updated participant visible through Supabase RLS and
+leaves a new DNI available for manual entry.
 
 ## Local development
 
@@ -139,11 +138,9 @@ failed at `prebuild` because those variables were absent; the failure confirmed
 that incomplete deployments stop before compiling. No secret or service-role
 key is present in Vercel's Angular build. If a trusted import job needs one,
 run it separately from the frontend deployment with narrowly managed secrets.
-`ALLOWED_ORIGINS` is also set separately for each environment: the production
-aliases, the stable migration-preview alias, and localhost development. Keep
-this explicit origin list synchronized with any future domain change; otherwise
-the temporary `/api/proxy` bridge returns `403 Origin not allowed` before it
-contacts the allowlisted backend host.
+`ALLOWED_ORIGINS` remains in the Vercel environment from the retired proxy and
+is no longer read by the application. It can be removed during routine
+environment maintenance.
 Verify the deployed browser bundle contains only the project URL and
 publishable key, and test real Monitor/Gestor accounts before changing traffic.
 
@@ -157,6 +154,22 @@ credentials to Angular. The final active Monitor cannot be disabled or
 demoted. Invite migrated users or issue password resets; legacy hashes and
 JWTs are not reusable. Verify sign-in, active profile, and `my_permissions()`
 for each role. Keep browser writes to role membership denied.
+
+The `admin-directory` Edge Function provides the Angular user and role screens
+with authenticated, permission-checked list, create, edit, activate, and
+deactivate operations. It checks the actor's live `GUSU` or `GPRM` action grant
+before using the server-only Auth administration API, and performs profile and
+role changes through service-role-only transactional RPCs. Creating a user sets
+an unknown random password and `onboarding_state=pending_invitation`; it does
+not send an invitation or password-reset email. Deliver credentials only after
+the owner approves the onboarding procedure.
+
+On 23 September 2026, migration `20260923164059_admin_user_management.sql`
+and version 1 of `admin-directory` were deployed. The hosted migration list is
+matched, the function is active with JWT verification enabled, remote schema
+lint reports no errors, and an authenticated read-only check as
+`sfernandeza@jne.gob.pe` returned that profile plus both active role choices.
+No production user or role was changed during this check.
 
 The repeatable bootstrap command is `npm run supabase:bootstrap-monitor`. Pass
 `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`,
