@@ -24,6 +24,7 @@ import { AuthenticationService } from '../../security/authentication/service/aut
 import { MenuItemResponse } from '../../security/authentication/interface/authentication';
 import { UserService } from '../../security/user/service/user.service';
 import { ROUTES_WEB } from '@shared/const/routes-servidor.const';
+import { PermisionDataService } from '@shared/service/permision-data/permision-data.service';
 
 @Component({
   selector: 'app-header',
@@ -50,6 +51,7 @@ export class Header implements AfterViewInit, OnDestroy, OnInit {
   private readonly breakpointObserver: BreakpointObserver = inject(BreakpointObserver);
   private readonly authenticationService: AuthenticationService = inject(AuthenticationService);
   private readonly usuarioService: UserService = inject(UserService);
+  private readonly permissionDataService = inject(PermisionDataService);
 
   @ViewChildren('subTrigger') subTriggers!: QueryList<MatMenuTrigger>;
   @ViewChild('userTrigger') userTrigger!: MatMenuTrigger;
@@ -121,6 +123,11 @@ export class Header implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
+    this.permissionDataService.data$.pipe(takeUntil(this.destroy$)).subscribe((menuItems) => {
+      this.menuItems = menuItems ?? [];
+      this.updateActiveFromUrl(this.router.url);
+      this.cdr.detectChanges();
+    });
     this.cargarMenuItems();
     this.usuarioService.usuario$.subscribe((usuario) => {
       if (usuario) {
@@ -198,11 +205,7 @@ export class Header implements AfterViewInit, OnDestroy, OnInit {
   menuItems: MenuItemResponse[] = [];
 
   private cargarMenuItems() {
-    this.authenticationService.getMenuItems().subscribe((menuItems: MenuItemResponse[]) => {
-      this.menuItems = menuItems;
-      this.cdr.detectChanges();
-    });
-    this.cdr.detectChanges();
+    this.authenticationService.updateMenuItems();
   }
 
   protected closeSession() {

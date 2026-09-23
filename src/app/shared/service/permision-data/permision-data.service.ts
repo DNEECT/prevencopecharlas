@@ -7,6 +7,7 @@ import { MenuItemResponse } from '../../../security/authentication/interface/aut
 })
 export class PermisionDataService {
   private readonly dataSubject = new BehaviorSubject<MenuItemResponse[] | null>(null);
+  public readonly data$ = this.dataSubject.asObservable();
 
   public setData(data: MenuItemResponse[]): void {
     this.dataSubject.next(data);

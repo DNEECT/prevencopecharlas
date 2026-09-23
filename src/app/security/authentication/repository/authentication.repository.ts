@@ -2,7 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { ROUTES_WEB } from '@shared/const/routes-servidor.const';
 import { SupabaseService } from '@shared/service/supabase/supabase.service';
 import { from, Observable } from 'rxjs';
-import { LoginDatosRequest, LoginDatosResponse, MenuItemDatosRespone, MenuItemResponse } from '../interface/authentication';
+import {
+  LoginDatosRequest,
+  LoginDatosResponse,
+  MenuItemDatosRespone,
+  MenuItemResponse,
+} from '../interface/authentication';
 
 interface PermissionRow {
   module_id: string;
@@ -26,7 +31,9 @@ const MODULE_ROUTES: Record<string, string> = {
 @Injectable({ providedIn: 'root' })
 export class AuthenticationRepository {
   private readonly supabaseService = inject(SupabaseService);
-  private get supabase() { return this.supabaseService.client; }
+  private get supabase() {
+    return this.supabaseService.client;
+  }
 
   public login(request: LoginDatosRequest): Observable<LoginDatosResponse> {
     return from(this.signIn(request));
@@ -39,7 +46,11 @@ export class AuthenticationRepository {
     });
     if (error) throw error;
     const { data: profile, error: profileError } = await this.supabase
-      .from('profiles').select('id').eq('id', data.user.id).eq('is_active', true).maybeSingle();
+      .from('profiles')
+      .select('id')
+      .eq('id', data.user.id)
+      .eq('is_active', true)
+      .maybeSingle();
     if (profileError || !profile) {
       await this.supabase.auth.signOut();
       throw new Error('La cuenta no tiene un perfil activo. Consulte al administrador.');
@@ -51,10 +62,13 @@ export class AuthenticationRepository {
       await this.supabase.auth.signOut();
       throw menuError;
     }
-    const links = menus.flatMap((item) => [item, ...(item.items ?? [])])
-      .map((item) => item.link).filter((link): link is string => !!link);
+    const links = menus
+      .flatMap((item) => [item, ...(item.items ?? [])])
+      .map((item) => item.link)
+      .filter((link): link is string => !!link);
     const first = links.includes(`/${ROUTES_WEB.REGISTRO_ACTIVIDADES}`)
-      ? `/${ROUTES_WEB.REGISTRO_ACTIVIDADES}` : links[0];
+      ? `/${ROUTES_WEB.REGISTRO_ACTIVIDADES}`
+      : links[0];
     if (!first) {
       await this.supabase.auth.signOut();
       throw new Error('La cuenta no tiene permisos activos. Consulte al administrador.');
@@ -77,21 +91,30 @@ export class AuthenticationRepository {
         item = {
           title: row.module_name,
           abreviatura: row.module_abbreviation,
+          isVisible: true,
           icon: row.icon ?? undefined,
           link: MODULE_ROUTES[row.module_abbreviation]
-            ? `/${MODULE_ROUTES[row.module_abbreviation]}` : undefined,
+            ? `/${MODULE_ROUTES[row.module_abbreviation]}`
+            : undefined,
           order: row.sort_order,
           permisos: [],
           parent: row.parent_module_id,
         };
         modules.set(row.module_id, item);
       }
-      if (!item.permisos?.some((permission) => permission.abreviatura === row.action_abbreviation)) {
-        item.permisos?.push({ codigoAccion: '', descripcion: '', abreviatura: row.action_abbreviation });
+      if (
+        !item.permisos?.some((permission) => permission.abreviatura === row.action_abbreviation)
+      ) {
+        item.permisos?.push({
+          codigoAccion: '',
+          descripcion: '',
+          abreviatura: row.action_abbreviation,
+        });
       }
     }
     const visible = [...modules.entries()].filter(([, item]) =>
-      item.permisos?.some((permission) => permission.abreviatura === 'LIST'));
+      item.permisos?.some((permission) => permission.abreviatura === 'LIST'),
+    );
     const result: MenuItemResponse[] = [];
     for (const [, item] of visible) {
       const parent = item.parent ? modules.get(item.parent) : undefined;

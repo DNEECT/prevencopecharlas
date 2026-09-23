@@ -20,18 +20,28 @@ describe('AuthenticationRepository', () => {
       error: null,
     });
     signOut = jasmine.createSpy('signOut').and.resolveTo({ error: null });
-    maybeSingle = jasmine.createSpy('maybeSingle').and.resolveTo({ data: { id: userId }, error: null });
+    maybeSingle = jasmine
+      .createSpy('maybeSingle')
+      .and.resolveTo({ data: { id: userId }, error: null });
     const profileQuery: { eq: jasmine.Spy; maybeSingle: jasmine.Spy } = {
-      eq: jasmine.createSpy('eq'), maybeSingle,
+      eq: jasmine.createSpy('eq'),
+      maybeSingle,
     };
     profileQuery.eq.and.returnValue(profileQuery);
     rpc = jasmine.createSpy('rpc').and.resolveTo({
-      data: [{
-        module_id: '00000000-0000-4000-8000-000000000102',
-        parent_module_id: null,
-        module_abbreviation: 'GREGACT', module_name: 'Registro de actividades',
-        route: null, icon: null, sort_order: 1, action_abbreviation: 'LIST',
-      }], error: null,
+      data: [
+        {
+          module_id: '00000000-0000-4000-8000-000000000102',
+          parent_module_id: null,
+          module_abbreviation: 'GREGACT',
+          module_name: 'Registro de actividades',
+          route: null,
+          icon: null,
+          sort_order: 1,
+          action_abbreviation: 'LIST',
+        },
+      ],
+      error: null,
     });
     const client = {
       auth: { signInWithPassword: signIn, signOut },
@@ -41,7 +51,10 @@ describe('AuthenticationRepository', () => {
       rpc,
     } as unknown as SupabaseClient;
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), { provide: SupabaseService, useValue: { client } }],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: SupabaseService, useValue: { client } },
+      ],
     });
     repository = TestBed.inject(AuthenticationRepository);
   });
@@ -53,25 +66,39 @@ describe('AuthenticationRepository', () => {
     expect(signOut).not.toHaveBeenCalled();
   });
 
+  it('marks permitted navigation items as visible', async () => {
+    const result = await firstValueFrom(repository.getMenuItems());
+
+    expect(result.datos[0].abreviatura).toBe('GREGACT');
+    expect(result.datos[0].isVisible).toBeTrue();
+  });
+
   it('rejects invalid credentials before querying application data', async () => {
-    signIn.and.resolveTo({ data: { user: null, session: null }, error: new Error('Invalid login') });
-    await expectAsync(firstValueFrom(repository.login(request))).toBeRejectedWithError('Invalid login');
+    signIn.and.resolveTo({
+      data: { user: null, session: null },
+      error: new Error('Invalid login'),
+    });
+    await expectAsync(firstValueFrom(repository.login(request))).toBeRejectedWithError(
+      'Invalid login',
+    );
     expect(maybeSingle).not.toHaveBeenCalled();
     expect(rpc).not.toHaveBeenCalled();
   });
 
   it('signs out an identity with no active application profile', async () => {
     maybeSingle.and.resolveTo({ data: null, error: null });
-    await expectAsync(firstValueFrom(repository.login(request)))
-      .toBeRejectedWithError(/perfil activo/);
+    await expectAsync(firstValueFrom(repository.login(request))).toBeRejectedWithError(
+      /perfil activo/,
+    );
     expect(signOut).toHaveBeenCalled();
     expect(rpc).not.toHaveBeenCalled();
   });
 
   it('signs out an identity whose active role grants no navigation', async () => {
     rpc.and.resolveTo({ data: [], error: null });
-    await expectAsync(firstValueFrom(repository.login(request)))
-      .toBeRejectedWithError(/permisos activos/);
+    await expectAsync(firstValueFrom(repository.login(request))).toBeRejectedWithError(
+      /permisos activos/,
+    );
     expect(signOut).toHaveBeenCalled();
   });
 });
