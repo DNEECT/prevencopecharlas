@@ -64,7 +64,7 @@ Read the custom dump outside the repository into a non-exposed staging schema. I
 
 - [A copied permission row could broaden access] → Compare the 42 source role/action rows with seeded destination grants and test both roles against direct Data API calls.
 - [Historical blank participant fields conflict with new validation] → Preserve them with explicit import exception markers and restrict the stricter validation to new writes.
-- [Evidence files may be permanently unavailable] → Report all unresolved paths and keep references non-downloadable until objects are verified; do not fabricate evidence.
+- [Evidence files may be permanently unavailable] → Recover only objects returned by the authenticated legacy download endpoint, verify their signatures and checksums, report every unresolved path, and keep unverified references non-downloadable; do not fabricate evidence.
 - [A browser upload can leave an orphan object] → Delete the object if metadata creation fails and reconcile remaining orphans periodically.
 - [Supabase free-tier storage, egress, and pausing affect continuity] → Document backup, recovery, and usage monitoring before cutover.
 - [Complex RLS can expose or hide records] → Use default-deny grants, cross-user tests, invoker views, and security-advisor checks as release gates.
@@ -76,11 +76,11 @@ Read the custom dump outside the repository into a non-exposed staging schema. I
 3. Apply reviewed migrations to `betgsxbtyckbbiepmols`, verify policies and advisors, and bootstrap the first institutional Monitor administrator.
 4. Migrate Angular Auth and repositories in dependency order, verifying the existing list, create, edit, archive, and evidence flows.
 5. Dry-run the available dump, resolve mapping and historical-validation exceptions, import approved database rows, and reconcile counts and representative records.
-6. Locate and import evidence files if available, reconcile all 2,632 references, and report any irrecoverable gaps before declaring evidence parity or removing the legacy backend path.
+6. Recover the legacy evidence through the authenticated legacy Vercel proxy while it remains available, validate and checksum every response, import verified objects into private Supabase Storage, reconcile all 2,632 references, and report any irrecoverable gaps before declaring evidence parity or removing the legacy backend path.
 
 Before production import, rollback can reset the empty destination from tested migrations. After records exist, use corrective forward migrations and preserve Supabase data; the old frontend path remains available only until the migrated flows are verified.
 
 ## Open Questions
 
-- The location and recoverability of the 2,632 attachment objects remain unknown. This affects evidence parity and cutover, not the database schema or initial migration tasks.
+- On 24 September 2026 an authenticated legacy activity exposed both referenced attachments as stored objects and issued its download request through the legacy Vercel proxy. Bulk recoverability remains subject to a complete 2,632-reference run and byte-level reconciliation.
 - The institution can choose its invitation and password-reset procedure before onboarding migrated users without changing the schema.

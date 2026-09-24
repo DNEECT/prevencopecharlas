@@ -11,6 +11,8 @@
 npm-debug.log
 yarn-error.log
 proxy-debug.log
+__pycache__/
+*.py[cod]
 *.dump
 *.backup
 *.bak

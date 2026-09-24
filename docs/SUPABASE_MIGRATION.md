@@ -409,6 +409,33 @@ is only a candidate until its bytes and provenance are verified; the supplied
 Charlas source tree yielded zero matches across 2,632 references. The Spring
 backend's configured upload directory is `/var/www/files/ventas/public/images`
 on the legacy host, outside that shared source tree.
+
+On 24 September 2026 the legacy application and its authenticated Vercel proxy
+were reachable again. A representative imported activity exposed its two dump
+references as stored attachments and sent downloads to the legacy
+`/files/download` endpoint. This reopens evidence recovery; it does not prove
+that every referenced object still exists. Use the controlled recovery tool:
+
+```powershell
+python -B scripts/recover-legacy-evidence.py `
+  --dump <reviewed-dump> `
+  --pg-restore <pg-restore-executable> `
+  --output <private-directory-outside-git> `
+  --username <legacy-user>
+```
+
+The password is read from `PREVENCOPE_LEGACY_PASSWORD` or a hidden interactive
+prompt. The command verifies the reviewed dump checksum, permits at most four
+workers, retries transient failures, rejects HTML or JSON error responses by
+checking file signatures, and writes a JSON Lines manifest with activity, kind,
+object path, byte size, MIME type, and SHA-256 checksum. Credentials and tokens
+are never written. Run `--dry-run` first, then a one-object `--limit 1` probe,
+then the complete recovery. Keep recovered bytes and reports outside Git.
+
+Upload and metadata reconciliation must use only manifest rows with status
+`recovered`. Preserve unavailable metadata for every failed or invalid response,
+and do not declare evidence parity until the private Storage object count,
+metadata count, and representative signed downloads match the recovery manifest.
 Stage the dump in a non-exposed schema outside Git, map source UUIDs and Auth
 users, preserve inactive flags and historical validation exceptions, and dry
 run twice to prove idempotency. Reconcile each format's next number against
