@@ -72,10 +72,13 @@ service role only. Unrecovered references remain unavailable and must not be
 displayed as downloadable evidence. Database reconciliation does not establish
 evidence parity.
 
-The owner confirmed this is the final supplied snapshot and accepted these
-2,632 references as unavailable for the migration. This acceptance closes the
-object-recovery attempt for the supplied handoff; it does not claim that the
-objects existed in Supabase or that evidence parity was achieved. If a verified
-IONOS volume or backup appears later, reconcile its bytes, actual MIME type,
-size, checksum, activity, and kind before importing it through the controlled
-legacy compatibility path.
+The owner confirmed this is the final supplied snapshot. On 24 September 2026,
+the authenticated legacy Vercel proxy made a separate byte-level recovery
+possible. The controlled run reconciled all 2,632 references, recovered and
+validated 2,187 objects (1,520,460,330 bytes), and imported them into private
+Supabase Storage. Of the remaining references, 442 returned no usable object
+and three returned bytes whose actual type contradicted the stored extension;
+those 445 metadata rows remain unavailable. Full historical evidence parity is
+therefore not claimed. If another verified legacy source appears, reconcile its
+bytes, actual MIME type, size, checksum, activity, and kind before importing it
+through the same controlled compatibility path.

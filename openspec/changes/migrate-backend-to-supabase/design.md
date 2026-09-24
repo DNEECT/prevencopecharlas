@@ -82,5 +82,5 @@ Before production import, rollback can reset the empty destination from tested m
 
 ## Open Questions
 
-- On 24 September 2026 an authenticated legacy activity exposed both referenced attachments as stored objects and issued its download request through the legacy Vercel proxy. Bulk recoverability remains subject to a complete 2,632-reference run and byte-level reconciliation.
+- The 24 September 2026 authenticated recovery reconciled all 2,632 references: 2,187 verified objects were imported, 442 remained unavailable, and three mismatched-type responses were rejected. The remaining 445 references require a verified legacy source or authorized replacement, so full historical evidence parity remains incomplete.
 - The institution can choose its invitation and password-reset procedure before onboarding migrated users without changing the schema.

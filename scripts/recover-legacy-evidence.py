@@ -362,6 +362,8 @@ def main() -> None:
     parser.add_argument("--password-env", default="PREVENCOPE_LEGACY_PASSWORD")
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--attempts", type=int, default=3)
+    parser.add_argument("--timeout", type=int, default=30,
+                        help="Per-request timeout in seconds (default: 30)")
     parser.add_argument("--limit", type=int)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -369,6 +371,8 @@ def main() -> None:
         raise ValueError("Workers must be between 1 and 4")
     if not 1 <= args.attempts <= 5:
         raise ValueError("Attempts must be between 1 and 5")
+    if not 5 <= args.timeout <= 300:
+        raise ValueError("Timeout must be between 5 and 300 seconds")
     output = validate_output_directory(args.output)
     references = parse_references(args.dump, args.pg_restore)
     selected = references[: args.limit] if args.limit is not None else references
@@ -386,7 +390,7 @@ def main() -> None:
     password = os.environ.get(args.password_env) or getpass.getpass("Contraseña legado: ")
     if not username or not password:
         raise ValueError("Legacy username and password are required")
-    client = LegacyClient(username, password)
+    client = LegacyClient(username, password, timeout=args.timeout)
     client.login()
     results: list[RecoveryResult] = []
     with ThreadPoolExecutor(max_workers=args.workers) as executor:

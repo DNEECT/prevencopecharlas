@@ -101,9 +101,9 @@ policies. The imported source matrix contains 2 roles and 42 role/action grants
 grants, producing 3 roles and 63 grants in the hosted configuration. The seed
 also contains 8 modules, 6 actions, 61 juries, and one `ACT009` format with next
 number 1642. The `activity-evidence` bucket is private, has a 20 MB limit and MIME
-restrictions, and currently contains no objects. The hosted activity and
-participant tables contain the reconciled legacy import described below; all
-2,632 legacy evidence references remain unavailable metadata. The Codex Supabase
+restrictions, and contains 2,187 recovered objects. The hosted activity and
+participant tables contain the reconciled legacy import described below;
+2,187 evidence rows are available and 445 remain explicitly unavailable. The Codex Supabase
 connector remains connected to a different account and reports insufficient
 permission for this project; use the institutional CLI for project checks.
 Run Vercel commands only through the repository's
@@ -281,11 +281,12 @@ unavailable-evidence inserts, with zero updates and zero skips. The matching
 apply transaction committed those counts. Its 30,843 historical-validation
 exceptions describe preserved blanks and do not block the imported rows.
 
-Post-import reconciliation found 93 profiles and memberships in total,
+The initial post-import reconciliation found 93 profiles and memberships in total,
 including the separately bootstrapped institutional Monitor. The 92 legacy
 profiles comprise 89 active and 3 inactive accounts with 11 Monitor and 81
 Gestor memberships. It also confirmed 1,637 activities (1,455 active), 32,042
-participants, 2,632 unavailable evidence records, 92 private Auth mappings,
+participants, 2,632 unavailable evidence records before the later authenticated
+evidence recovery, 92 private Auth mappings,
 one applied import batch, all 42 role/action grants (24 active), and an
 `ACT009` next number of 1642. The temporary database importer was removed and
 derived SQL containing personal data was deleted after reconciliation. The
@@ -426,11 +427,32 @@ python -B scripts/recover-legacy-evidence.py `
 
 The password is read from `PREVENCOPE_LEGACY_PASSWORD` or a hidden interactive
 prompt. The command verifies the reviewed dump checksum, permits at most four
-workers, retries transient failures, rejects HTML or JSON error responses by
+workers, accepts a bounded per-request `--timeout`, retries transient failures, rejects HTML or JSON error responses by
 checking file signatures, and writes a JSON Lines manifest with activity, kind,
 object path, byte size, MIME type, and SHA-256 checksum. Credentials and tokens
 are never written. Run `--dry-run` first, then a one-object `--limit 1` probe,
 then the complete recovery. Keep recovered bytes and reports outside Git.
+
+The completed 24 September 2026 run reconciled all 2,632 dump references. It
+recovered 2,187 verified files: 1,090 attendance lists and 1,097 photographic
+records, totaling 1,520,460,330 bytes. The verified MIME totals were 952 PDFs,
+102 XLSX files, 1,027 JPEGs, and 106 PNGs. The remaining 442 references were
+unavailable (434 legacy HTTP 500 responses and eight network failures), and
+three HTTP 200 responses were rejected because their signatures contradicted
+their stored extensions. No recovered file exceeded the 20 MiB limit.
+
+Run `scripts/upload-recovered-evidence.py` with a service-role key supplied only
+through `SUPABASE_SERVICE_ROLE_KEY`; it revalidates the local signature, size,
+and SHA-256 before uploading an exact deterministic object path and treats only
+an existing object with the same byte size as reusable. Then run
+`scripts/prepare-recovered-evidence-import.py --sql <private-sql-path>` and
+execute the generated SQL against the linked project. The transaction aborts
+unless every recovered manifest row matches an unavailable metadata row and a
+private Storage object with the expected size. Use
+`scripts/verify-recovered-evidence.py` for byte-for-byte signed URL checks.
+The completed reconciliation produced 2,187 available metadata rows, 2,187
+private Storage objects, and 445 explicitly unavailable rows. Signed downloads
+for a representative PDF and JPEG matched their local SHA-256 values.
 
 Upload and metadata reconciliation must use only manifest rows with status
 `recovered`. Preserve unavailable metadata for every failed or invalid response,
