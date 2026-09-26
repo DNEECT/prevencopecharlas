@@ -167,6 +167,16 @@ an unknown random password and `onboarding_state=pending_invitation`; it does
 not send an invitation or password-reset email. Deliver credentials only after
 the owner approves the onboarding procedure.
 
+For controlled recovery delivery, generate the recovery link on a trusted
+machine and send only an application URL containing Supabase's `hashed_token`
+as the `token_hash` query parameter. The change-password page exchanges that
+hash for a recovery session only when the user submits the new password. It
+also preserves the access and refresh tokens from older direct recovery links
+before the Supabase client clears the URL, so already-delivered links remain
+usable. Hosted Email OTP expiration is 86,400 seconds (24 hours). Treat every
+link as single-use, never log or retain tokens, and record only aggregate and
+per-recipient delivery status outside Git.
+
 On 23 September 2026, migration `20260923164059_admin_user_management.sql`
 and version 1 of `admin-directory` were deployed. The hosted migration list is
 matched, the function is active with JWT verification enabled, remote schema
