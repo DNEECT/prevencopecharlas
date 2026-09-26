@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormFieldPasswordComponent } from '@shared/components/form-field-password/form-field-password.component';
 import { SupabaseService } from '@shared/service/supabase/supabase.service';
 import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
@@ -15,6 +15,7 @@ import { ErrorField } from '@shared/interface/error-field.interface';
 })
 export class ChangePassword {
   private readonly supabase = inject(SupabaseService).client;
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly snackBar = inject(SnackbarService);
 
@@ -45,9 +46,7 @@ export class ChangePassword {
     }
     this.saving = true;
     try {
-      const { data: sessionData } = await this.supabase.auth.getSession();
-      if (!sessionData.session)
-        throw new Error('El enlace venció o no es válido. Solicite uno nuevo.');
+      await this.ensureRecoverySession();
       const { error } = await this.supabase.auth.updateUser({
         password: this.form.controls.password.value,
       });
@@ -61,6 +60,23 @@ export class ChangePassword {
       );
     } finally {
       this.saving = false;
+    }
+  }
+
+  private async ensureRecoverySession(): Promise<void> {
+    const { data: sessionData, error: sessionError } = await this.supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (sessionData.session) return;
+
+    const tokenHash = this.route.snapshot.queryParamMap.get('token_hash')?.trim();
+    if (!tokenHash) throw new Error('El enlace venció o no es válido. Solicite uno nuevo.');
+
+    const { data: verificationData, error: verificationError } = await this.supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: 'recovery',
+    });
+    if (verificationError || !verificationData.session) {
+      throw new Error('El enlace venció o no es válido. Solicite uno nuevo.');
     }
   }
 }
