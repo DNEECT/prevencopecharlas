@@ -11,6 +11,8 @@ export const ROUTES_WEB = {
   CODIGO_REGISTRO_ACTIVIDAD: '/:codigoRegistroActividad',
   CODIGO_USUARIO: '/:codigoUsuario',
   LOGIN: 'login',
+  RECUPERAR_CONTRASENA: 'recuperar-contrasena',
+  ACTUALIZAR_CONTRASENA: 'actualizar-contrasena',
   // Rutas para estados especiales
   NOT_PERMISION: 'not-permision',
 };

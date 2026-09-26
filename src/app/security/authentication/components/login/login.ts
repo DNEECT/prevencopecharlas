@@ -13,7 +13,7 @@ import {
 } from '../../interface/authentication';
 import { ErrorFields } from '@shared/interface/error-field.interface';
 import { AuthenticationService } from '../../service/authentication.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
 import { DialogService } from '@shared/service/dialog/dialog.service';
 import { finalize } from 'rxjs';
@@ -28,6 +28,7 @@ import { MatAutocompleteOrigin } from '@angular/material/autocomplete';
     ReactiveFormsModule,
     NgOptimizedImage,
     MatAutocompleteOrigin,
+    RouterLink,
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',

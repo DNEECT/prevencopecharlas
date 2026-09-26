@@ -1,10 +1,6 @@
 <section class="Login">
   <div class="Login__Form">
-
-    <h1 class="Login__Form__Content__Title">
-      FORMULARIO DE REGISTRO
-      DE ACTIVIDADES
-    </h1>
+    <h1 class="Login__Form__Content__Title">FORMULARIO DE REGISTRO DE ACTIVIDADES</h1>
     <form
       [formGroup]="loginForm"
       (ngSubmit)="login()"
@@ -33,6 +29,7 @@
       <button mat-raised-button type="submit" class="button-border" id="login">
         INICIAR SESIÓN
       </button>
+      <a [routerLink]="['/recuperar-contrasena']">¿Olvidó su contraseña?</a>
     </form>
   </div>
   <div class="Login__Background">
