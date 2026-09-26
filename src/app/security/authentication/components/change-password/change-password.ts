@@ -14,6 +14,7 @@ import { ErrorField } from '@shared/interface/error-field.interface';
   styleUrl: '../login/login.scss',
 })
 export class ChangePassword {
+  private readonly recoverySessionFromUrl = this.readRecoverySessionFromUrl();
   private readonly supabase = inject(SupabaseService).client;
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -68,6 +69,13 @@ export class ChangePassword {
     if (sessionError) throw sessionError;
     if (sessionData.session) return;
 
+    if (this.recoverySessionFromUrl) {
+      const { data: recoveredSession, error: recoveryError } = await this.supabase.auth.setSession(
+        this.recoverySessionFromUrl,
+      );
+      if (!recoveryError && recoveredSession.session) return;
+    }
+
     const tokenHash = this.route.snapshot.queryParamMap.get('token_hash')?.trim();
     if (!tokenHash) throw new Error('El enlace venció o no es válido. Solicite uno nuevo.');
 
@@ -78,5 +86,17 @@ export class ChangePassword {
     if (verificationError || !verificationData.session) {
       throw new Error('El enlace venció o no es válido. Solicite uno nuevo.');
     }
+  }
+
+  private readRecoverySessionFromUrl(): { access_token: string; refresh_token: string } | null {
+    if (typeof window === 'undefined' || !window.location.hash) return null;
+
+    const parameters = new URLSearchParams(window.location.hash.slice(1));
+    if (parameters.get('type') !== 'recovery') return null;
+    const accessToken = parameters.get('access_token')?.trim();
+    const refreshToken = parameters.get('refresh_token')?.trim();
+    if (!accessToken || !refreshToken) return null;
+
+    return { access_token: accessToken, refresh_token: refreshToken };
   }
 }

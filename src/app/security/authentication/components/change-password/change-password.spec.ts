@@ -7,6 +7,7 @@ import { ChangePassword } from './change-password';
 
 describe('ChangePassword', () => {
   const getSession = jasmine.createSpy('getSession');
+  const setSession = jasmine.createSpy('setSession');
   const verifyOtp = jasmine.createSpy('verifyOtp');
   const updateUser = jasmine.createSpy('updateUser');
   const signOut = jasmine.createSpy('signOut');
@@ -16,6 +17,7 @@ describe('ChangePassword', () => {
 
   beforeEach(async () => {
     getSession.and.resolveTo({ data: { session: null }, error: null });
+    setSession.and.resolveTo({ data: { session: {} }, error: null });
     verifyOtp.and.resolveTo({ data: { session: {} }, error: null });
     updateUser.and.resolveTo({ data: { user: {} }, error: null });
     signOut.and.resolveTo({ error: null });
@@ -27,7 +29,7 @@ describe('ChangePassword', () => {
         provideZonelessChangeDetection(),
         {
           provide: SupabaseService,
-          useValue: { client: { auth: { getSession, verifyOtp, updateUser, signOut } } },
+          useValue: { client: { auth: { getSession, setSession, verifyOtp, updateUser, signOut } } },
         },
         {
           provide: ActivatedRoute,
@@ -44,12 +46,14 @@ describe('ChangePassword', () => {
 
   afterEach(() => {
     getSession.calls.reset();
+    setSession.calls.reset();
     verifyOtp.calls.reset();
     updateUser.calls.reset();
     signOut.calls.reset();
     navigate.calls.reset();
     openErrorSnackBar.calls.reset();
     openSuccessSnackBar.calls.reset();
+    window.location.hash = '';
   });
 
   it('exchanges a recovery token hash before changing the password', async () => {
@@ -64,5 +68,22 @@ describe('ChangePassword', () => {
     expect(signOut).toHaveBeenCalled();
     expect(navigate).toHaveBeenCalledOnceWith(['/login']);
     expect(openErrorSnackBar).not.toHaveBeenCalled();
+  });
+
+  it('recovers the direct-link session when automatic URL detection has not persisted it', async () => {
+    window.location.hash =
+      '#access_token=direct-access-token&refresh_token=direct-refresh-token&type=recovery';
+    const fixture = TestBed.createComponent(ChangePassword);
+    const component = fixture.componentInstance;
+    component.form.setValue({ password: 'new-password', confirmation: 'new-password' });
+
+    await component.updatePassword();
+
+    expect(setSession).toHaveBeenCalledOnceWith({
+      access_token: 'direct-access-token',
+      refresh_token: 'direct-refresh-token',
+    });
+    expect(verifyOtp).not.toHaveBeenCalled();
+    expect(updateUser).toHaveBeenCalledOnceWith({ password: 'new-password' });
   });
 });
