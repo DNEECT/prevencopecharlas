@@ -20,6 +20,7 @@ export interface CodigoRegistroActividadResonse {
 
 export interface FormatoActividadResponse {
   codigoFormatoActividad: string;
+  codProcesoElectoral: string | null;
   codTipoActividad: string;
   descripcionTipoActividad: string;
   tema: string;

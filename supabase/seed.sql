@@ -234,3 +234,19 @@ insert into public.special_juries (id, jury_code, jury_name, source_process_code
   ('65817576-0af4-43f0-8a0d-4443a245e045', 2268, 'CAYLLOMA', 124, 'AREQUIPA', 'CAYLLOMA', '040201', 'CAYL', true),
   ('65817576-0af4-43f0-8a0d-4443a245e046', 0, 'JURADO NACIONAL DE ELECCIONES', 0, 'JURADO NACIONAL DE ELECCIONES', 'JNE', NULL, 'JNE', true)
 on conflict (id) do nothing;
+
+-- Catalog rows seeded after migrations belong to the historical General 2026
+-- process unless a migration assigned them to the current ERM 2026 process.
+update public.electoral_processes
+set accepts_registrations = false,
+    requires_jury_assignment = false
+where id = '29dc3419-0606-4a86-a816-9012a9414743';
+update public.activity_formats
+set electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
+where electoral_process_id is null;
+update public.target_audiences
+set electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
+where electoral_process_id is null;
+update public.special_juries
+set electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
+where electoral_process_id is null;

@@ -80,6 +80,16 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     [];
   @Input() public codigo: string = '';
   @Input() public isEdit: boolean = false;
+  private _isReadOnly: boolean = false;
+  @Input()
+  public set isReadOnly(value: boolean) {
+    this._isReadOnly = value;
+    if (value) this.formDetailParticipantes.disable();
+    else this.formDetailParticipantes.enable();
+  }
+  public get isReadOnly(): boolean {
+    return this._isReadOnly;
+  }
   @Input() public adjuntoListaAsistentesNoDisponible: string | null = null;
   @Input() public adjuntoRegistroFotograficoNoDisponible: string | null = null;
 
@@ -108,11 +118,8 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
-    this.selectActivityFormat();
     this.selectElectoralProcess();
-    this.selectSpecialNationalJury();
     this.selectAsistentType();
-    this.selectTargetAudience();
   }
 
   ngOnDestroy(): void {
@@ -163,11 +170,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   protected isLoadingAsistentType: boolean = false;
   protected isLoadingTargetAudience: boolean = false;
 
-  public selectActivityFormat() {
+  public selectActivityFormat(processId?: string | null) {
     this.listActivityFormat = [];
     this.isLoadingActivityType = true;
     this.activityFormatService
-      .select()
+      .select(processId)
       .pipe(
         finalize(() => {
           this.isLoadingActivityType = false;
@@ -229,11 +236,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     this.isLoadingTheme = false;
   }
 
-  public selectTargetAudience() {
+  public selectTargetAudience(processId?: string | null) {
     this.listTargetAudience = [];
     this.isLoadingTargetAudience = true;
     this.targetAudienceService
-      .select()
+      .select(processId)
       .pipe(
         finalize(() => {
           this.isLoadingTargetAudience = false;
@@ -357,6 +364,7 @@ export class FormActivityRegister implements OnInit, OnDestroy {
             const defaultProcess = this.electoralProcessService.getDefault(response);
             if (defaultProcess) processControl.setValue(defaultProcess);
           }
+          this.loadProcessCatalogs(processControl.value);
         },
         error: () => {
           this.listElectoralProcess = [];
@@ -364,11 +372,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
       });
   }
 
-  public selectSpecialNationalJury() {
+  public selectSpecialNationalJury(processId?: string | null) {
     this.listjuradoNacionalEspecial = [];
     this.isLoadingjuradoNacionalEspecial = true;
     this.specialNationalJuryService
-      .select()
+      .select(processId)
       .pipe(
         finalize(() => {
           this.isLoadingjuradoNacionalEspecial = false;
@@ -383,6 +391,30 @@ export class FormActivityRegister implements OnInit, OnDestroy {
           this.listjuradoNacionalEspecial = [];
         },
       });
+  }
+
+  public onElectoralProcessChanged(process: AutoCompleteData | null): void {
+    this.form.controls.juradoEspecial.reset();
+    this.form.controls.publicoObjetivo.reset();
+    this.form.controls.tipoActividad.reset();
+    this.form.controls.tema.reset();
+    this.codigo = '';
+    this.loadProcessCatalogs(process);
+  }
+
+  private loadProcessCatalogs(process: AutoCompleteData | null): void {
+    const processId = process?.key ?? null;
+    if (!processId) {
+      this.listActivityFormat = [];
+      this.listActivityType = [];
+      this.listTheme = [];
+      this.listjuradoNacionalEspecial = [];
+      this.listTargetAudience = [];
+      return;
+    }
+    this.selectActivityFormat(processId);
+    this.selectSpecialNationalJury(processId);
+    this.selectTargetAudience(processId);
   }
 
   public emitNewParticipant() {

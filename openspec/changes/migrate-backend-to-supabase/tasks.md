@@ -8,6 +8,7 @@
 - [x] 1.4 Add archival safeguards, including protection against disabling or demoting the final active Monitor administrator; verify the last-Monitor operation is rejected while ordinary profile updates succeed.
 - [x] 1.5 Add atomic activity-code generation using series plus a four-digit padded counter, transactional registration/participant RPCs, and invoker-security read views; verify concurrent calls cannot create duplicate codes and imported sequence state is respected.
 - [x] 1.6 Seed the 42 source role/action grants, module hierarchy, Monitor/Gestor roles, and known non-sensitive catalogs; verify disabled grants remain disabled and repeated seeds do not duplicate rows.
+- [x] 1.7 Add the ERM 2026 topic, seven process-specific target audiences, 91 JEE, and explicit process relationships while preserving General 2026 historical catalogs.
 
 ## 2. Database and Storage Authorization
 
@@ -16,6 +17,7 @@
 - [x] 2.3 Add Monitor administrative/global policies and Gestor creator-scoped policies for catalogs, formats, registrations, participants, and evidence metadata; verify direct cross-user reads/writes and inactive grants follow the source matrix.
 - [x] 2.4 Create the private `activity-evidence` bucket with 20 MiB and MIME restrictions plus path-based object policies; verify normal uploads, historical photographic PDF import, anonymous denial, creator scope, and authorized signed downloads.
 - [x] 2.5 Add SQL verification scripts for constraints, grants, RLS, role changes, archival behavior, and storage policy helpers; verify all scripts pass against a freshly reset database.
+- [x] 2.6 Enforce ERM 2026 JEE assignments for GPCC and Monitor accounts, retain Administrator global visibility, and make General 2026 historical records read-only and invisible to Gestores.
 
 ## 3. Supabase Project Deployment
 
@@ -38,6 +40,7 @@
 - [x] 4.9 Add a dedicated Administrator role without modifying the imported Monitor matrix, assign it only to the designated institutional Monitor, and verify all active views and actions are effective.
 - [x] 4.10 Restore the legacy grouped header by returning authorized Administración and Seguridad parent containers, hide non-functional route-less modules, and verify desktop and mobile navigation retain only permitted child routes.
 - [x] 4.11 Add Elecciones Regionales Municipales 2026 to the active process catalog, mark it as the single current default, and verify new registrations preselect it without changing edit-form values.
+- [x] 4.12 Filter registration catalogs by the selected electoral process and current user's JEE assignments; render General 2026 records through a read-only detail path.
 
 ## 5. Legacy Import and Cutover
 
@@ -56,6 +59,8 @@
 - [x] 5.6 Import recovered evidence through the controlled compatibility path, or explicitly record irrecoverable gaps; complete role and evidence parity testing before removing obsolete legacy backend URL configuration and migrated proxy endpoints.
 - [x] 5.7 Recover the newly reachable legacy evidence through the authenticated legacy Vercel proxy, validate file signatures, sizes, and SHA-256 checksums against all 2,632 dump references, import verified objects into private Supabase Storage, and reconcile evidence metadata before declaring evidence parity.
   - On 24 September 2026, 2,187 verified objects (1,520,460,330 bytes) were imported and reconciled; 442 references remained unavailable and three responses were rejected because their byte signatures contradicted the stored extensions. These 445 rows remain explicitly unavailable, so full historical evidence parity is not claimed.
+- [x] 5.8 Reconcile the approved ERM 2026 workbook without sending email: create missing identities with unknown random passwords, activate Monitor/Gestor roles, assign each GPCC to one JEE and each Monitor to the JEE listed under their supervision, and skip contractor accounts whose name or DNI is pending.
+  - On 28 September 2026, the approved two-sheet directory produced 91 ERM JEE, 11 new Monitor identities, and 180 active JEE assignments (89 staffed GPCC assignments plus 91 Monitor-to-JEE assignments). Urubamba and Lima Centro remained loaded without a GPCC assignment because their contractor names and DNI are pending. No invitation, recovery, or onboarding email was sent.
 
 ## 6. Documentation and Delivery
 

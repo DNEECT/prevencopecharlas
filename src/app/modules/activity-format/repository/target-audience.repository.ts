@@ -7,14 +7,25 @@ import { PublicoObjetivoDatosResponse } from '@modules/activity-format/interface
 export class TargetAudienceRepository {
   private readonly supabase = inject(SupabaseService);
 
-  public listar(): Observable<PublicoObjetivoDatosResponse> {
-    return from((async () => {
-      const { data, error } = await this.supabase.client.from('target_audiences')
-        .select('id,name,description').eq('is_active', true).order('name');
-      if (error) throw error;
-      return { datos: (data ?? []).map((row) => ({
-        codigoPublicoObjetivo: row.id, nombre: row.name, descripcion: row.description ?? '',
-      })) };
-    })());
+  public listar(processId?: string | null): Observable<PublicoObjetivoDatosResponse> {
+    return from(
+      (async () => {
+        let query = this.supabase.client
+          .from('target_audiences')
+          .select('id,name,description')
+          .eq('is_active', true)
+          .order('name');
+        if (processId) query = query.eq('electoral_process_id', processId);
+        const { data, error } = await query;
+        if (error) throw error;
+        return {
+          datos: (data ?? []).map((row) => ({
+            codigoPublicoObjetivo: row.id,
+            nombre: row.name,
+            descripcion: row.description ?? '',
+          })),
+        };
+      })(),
+    );
   }
 }

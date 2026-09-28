@@ -22,6 +22,7 @@ import { ErrorFields } from '@shared/interface/error-field.interface';
 import { firstValueFrom } from 'rxjs';
 import { MENU_ACTIONS_ITEM } from '@shared/const/menu-acciones.const';
 import { FileService } from '@modules/activity-register/service/file.service';
+import { ELECTORAL_PROCESS } from '@modules/activity-register/const/electoral-process.const';
 
 @Component({
   selector: 'app-edit-activity-register',
@@ -45,6 +46,7 @@ export class EditActivityRegister implements OnInit, OnDestroy {
   public listDetailsParticipantsRegistro: RegistroActividadParticipanteResponseTable[] = [];
 
   public codigo: string = '';
+  public isReadOnly: boolean = false;
   private codigoRegistroActividad: string = '';
 
   // URLs originales de los adjuntos para comparar si cambiaron
@@ -54,16 +56,17 @@ export class EditActivityRegister implements OnInit, OnDestroy {
   public adjuntoRegistroFotograficoNoDisponible: string | null = null;
 
   ngOnInit(): void {
-    this.setPageData();
     this.route.data.subscribe((data) => {
       const registroActividad = data['registroActividad'] as RegistroActividadResponse | null;
       if (registroActividad) {
+        this.isReadOnly = registroActividad.codProcesoElectoral !== ELECTORAL_PROCESS.ERM_2026;
         this.codigoRegistroActividad = registroActividad.codigoRegistroActividad;
         this.codigo = registroActividad.codigo;
 
         // Guardar URLs originales de los adjuntos
         this.originalAdjuntoListaAsistentes = registroActividad.adjuntoListaAsistentes ?? null;
-        this.originalAdjuntoRegistroFotografico = registroActividad.adjuntoRegistroFotografico ?? null;
+        this.originalAdjuntoRegistroFotografico =
+          registroActividad.adjuntoRegistroFotografico ?? null;
         this.adjuntoListaAsistentesNoDisponible =
           registroActividad.adjuntoListaAsistentesNoDisponible ?? null;
         this.adjuntoRegistroFotograficoNoDisponible =
@@ -72,6 +75,7 @@ export class EditActivityRegister implements OnInit, OnDestroy {
         this.activityRegisterForm.patchValue(
           convertirRegistroActividadResponseToRegistroActividadFormDto(registroActividad),
         );
+        if (this.isReadOnly) this.activityRegisterForm.disable();
         const participantes = registroActividad.participantes ?? [];
         this.listDetailsParticipantsRegistro = participantes.map(
           (item: RegistroActividadParticipanteResponse, index: number) => {
@@ -81,10 +85,11 @@ export class EditActivityRegister implements OnInit, OnDestroy {
               isIndigena: item.poblacion === 'Indígena',
               isDiscapacitado: item.poblacion === 'Personas con discapacidad',
               isAfroPeruano: item.poblacion === 'Afro-Peruana',
-              opciones: [MENU_ACTIONS_ITEM.DELETE],
+              opciones: this.isReadOnly ? [] : [MENU_ACTIONS_ITEM.DELETE],
             };
           },
         );
+        this.setPageData();
       }
     });
   }
@@ -100,52 +105,79 @@ export class EditActivityRegister implements OnInit, OnDestroy {
     this.breadcrumbsService.setRoot({ name: 'Inicio', path: '/inicio' });
     this.breadcrumbsService.pushPath([
       { name: 'Registro de actividad', path: parentPath },
-      { name: 'Editar', path: currentPath },
+      { name: this.isReadOnly ? 'Ver' : 'Editar', path: currentPath },
     ]);
   }
 
   public async createActivityRegister() {
+    if (this.isReadOnly) return;
     if (this.activityRegisterForm.invalid) return;
     this.dialogService.openLoadingWindow();
     const adjuntoListaAsistentes = this.activityRegisterForm.get('adjuntoListaAsistentes')?.value;
-    const adjuntoRegistroFotografico = this.activityRegisterForm.get('adjuntoRegistroFotografico')?.value;
+    const adjuntoRegistroFotografico = this.activityRegisterForm.get(
+      'adjuntoRegistroFotografico',
+    )?.value;
     let updated = false;
     try {
-      const request: RegistroActividadRequest = convertirRegistroActividadFormDtoToRegistroActividadRequest(
-        this.activityRegisterForm, this.listDetailsParticipantsRegistro,
+      const request: RegistroActividadRequest =
+        convertirRegistroActividadFormDtoToRegistroActividadRequest(
+          this.activityRegisterForm,
+          this.listDetailsParticipantsRegistro,
+        );
+      await firstValueFrom(
+        this.activityRegisterService.actualizar(request, this.codigoRegistroActividad),
       );
-      await firstValueFrom(this.activityRegisterService.actualizar(request, this.codigoRegistroActividad));
       updated = true;
       if (adjuntoListaAsistentes instanceof File) {
-        const path = await firstValueFrom(this.fileService.replaceFile(
-          adjuntoListaAsistentes, this.codigoRegistroActividad, 'attendance-list',
-          this.originalAdjuntoListaAsistentes));
+        const path = await firstValueFrom(
+          this.fileService.replaceFile(
+            adjuntoListaAsistentes,
+            this.codigoRegistroActividad,
+            'attendance-list',
+            this.originalAdjuntoListaAsistentes,
+          ),
+        );
         this.originalAdjuntoListaAsistentes = path;
         this.adjuntoListaAsistentesNoDisponible = null;
         this.activityRegisterForm.controls.adjuntoListaAsistentes.setValue(path);
       } else if (adjuntoListaAsistentes == null && this.originalAdjuntoListaAsistentes) {
-        await firstValueFrom(this.fileService.removeFile(
-          this.codigoRegistroActividad, this.originalAdjuntoListaAsistentes));
+        await firstValueFrom(
+          this.fileService.removeFile(
+            this.codigoRegistroActividad,
+            this.originalAdjuntoListaAsistentes,
+          ),
+        );
         this.originalAdjuntoListaAsistentes = null;
       }
       if (adjuntoRegistroFotografico instanceof File) {
-        const path = await firstValueFrom(this.fileService.replaceFile(
-          adjuntoRegistroFotografico, this.codigoRegistroActividad, 'photographic-record',
-          this.originalAdjuntoRegistroFotografico));
+        const path = await firstValueFrom(
+          this.fileService.replaceFile(
+            adjuntoRegistroFotografico,
+            this.codigoRegistroActividad,
+            'photographic-record',
+            this.originalAdjuntoRegistroFotografico,
+          ),
+        );
         this.originalAdjuntoRegistroFotografico = path;
         this.adjuntoRegistroFotograficoNoDisponible = null;
         this.activityRegisterForm.controls.adjuntoRegistroFotografico.setValue(path);
       } else if (adjuntoRegistroFotografico == null && this.originalAdjuntoRegistroFotografico) {
-        await firstValueFrom(this.fileService.removeFile(
-          this.codigoRegistroActividad, this.originalAdjuntoRegistroFotografico));
+        await firstValueFrom(
+          this.fileService.removeFile(
+            this.codigoRegistroActividad,
+            this.originalAdjuntoRegistroFotografico,
+          ),
+        );
         this.originalAdjuntoRegistroFotografico = null;
       }
       this.snackBarService.openSuccessSnackBar('Registro de actividad actualizado correctamente');
       this.cancelActivityRegister();
     } catch (error) {
-      this.snackBarService.openErrorSnackBar(updated
-        ? 'Los datos se guardaron, pero un adjunto falló. Reintente el archivo.'
-        : 'Error al actualizar el registro de actividad');
+      this.snackBarService.openErrorSnackBar(
+        updated
+          ? 'Los datos se guardaron, pero un adjunto falló. Reintente el archivo.'
+          : 'Error al actualizar el registro de actividad',
+      );
       console.error('Error al actualizar registro o adjunto:', error);
     } finally {
       this.dialogService.closeDialog();

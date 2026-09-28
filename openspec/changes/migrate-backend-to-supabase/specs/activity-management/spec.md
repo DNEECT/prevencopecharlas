@@ -11,7 +11,7 @@ The system SHALL expose active activity types, assistant types, target audiences
 
 #### Scenario: Load registration form catalogs
 - **WHEN** an authenticated active user opens the activity registration form
-- **THEN** the system returns every active catalog entry the user is allowed to use
+- **THEN** the system returns the active formats, target audiences, and special electoral juries for the selected process that the user is allowed to use
 - **AND** each entry includes a stable code and display name
 
 #### Scenario: Default the current electoral process on a new registration
@@ -43,15 +43,20 @@ The system SHALL generate registration identifiers as the selected format's seri
 - **THEN** each registration receives a unique sequential number and code
 
 ### Requirement: Authorized users record complete activities
-The system SHALL store each activity with its format, assistant type, target audience, electoral process, special electoral jury, place, date, time, recommendations, questions, creator, and audit timestamps. The system SHALL reject missing or inactive catalog references. It SHALL preserve the source's separate process UUID and jury record without inventing a jury/process foreign-key relationship.
+The system SHALL store each activity with its format, assistant type, target audience, electoral process, special electoral jury, place, date, time, recommendations, questions, creator, and audit timestamps. The system SHALL reject missing, inactive, closed, or cross-process catalog references. Formats, target audiences, and special electoral juries configured for ERM 2026 SHALL reference that process explicitly.
 
 #### Scenario: Create a valid registration
 - **WHEN** an authorized active user submits all required fields with valid catalog references
 - **THEN** the system creates the activity and returns its generated identifier
 
 #### Scenario: Missing catalog reference
-- **WHEN** a registration references an inactive or missing format, assistant type, target audience, process, or jury
+- **WHEN** a registration references an inactive, missing, closed, or different-process format, target audience, process, or jury
 - **THEN** the system rejects the registration without creating partial data
+
+#### Scenario: Historical General 2026 registration attempt
+
+- **WHEN** any user attempts to create, edit, or archive an Elecciones Generales 2026 activity
+- **THEN** the system rejects the write because that process is historical and read-only
 
 ### Requirement: Participants remain linked to their activity
 The system SHALL store zero or more participants for an activity in the same atomic operation as the activity write. New participants SHALL have an eight-digit DNI, full name, sex, non-negative age, and organization; position, phone, email, and population classification SHALL be optional within the existing form limits. Historical imported rows with documented blank values SHALL remain readable without fabricated replacements.
@@ -69,11 +74,17 @@ The system SHALL provide authorized users with paginated activity results contai
 
 #### Scenario: Monitor lists activities
 - **WHEN** an active Monitor requests the activity list
-- **THEN** the response can contain active registrations across creators and juries
+- **THEN** the response contains historical Elecciones Generales 2026 registrations and ERM 2026 registrations for the JEE assigned to that Monitor
 
 #### Scenario: Gestor lists activities
 - **WHEN** an active Gestor requests the activity list
-- **THEN** the response contains only active registrations created by that Gestor
+- **THEN** the response contains only active ERM 2026 registrations created by that Gestor for the assigned JEE
+- **AND** it contains no Elecciones Generales 2026 historical registration
+
+#### Scenario: Director lists activities
+
+- **WHEN** the active Director or Administrator requests the activity list
+- **THEN** the response can contain all historical and current registrations across JEE
 
 ### Requirement: Deletion preserves an audit trail
 User-facing delete operations SHALL archive application records instead of removing their business and audit history. Archived rows SHALL not appear in normal active lists and SHALL remain unavailable to unauthorized users.

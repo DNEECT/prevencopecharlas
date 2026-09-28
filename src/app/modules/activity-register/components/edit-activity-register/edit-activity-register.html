@@ -9,6 +9,7 @@
     [listDetailsParticipantsRegistro]="listDetailsParticipantsRegistro"
     [codigo]="codigo"
     [isEdit]="true"
+    [isReadOnly]="isReadOnly"
     [adjuntoListaAsistentesNoDisponible]="adjuntoListaAsistentesNoDisponible"
     [adjuntoRegistroFotograficoNoDisponible]="adjuntoRegistroFotograficoNoDisponible"
     (addParticipant)="onAddParticipant($event)"
@@ -20,13 +21,15 @@
     <button mat-raised-button (click)="cancelActivityRegister()" class="button-border">
       Cancelar
     </button>
-    <button
-      mat-raised-button
-      (click)="createActivityRegister()"
-      [disabled]="activityRegisterForm.invalid || listDetailsParticipantsRegistro.length == 0"
-      class="button-prevencope"
-    >
-      Actualizar
-    </button>
+    @if (!isReadOnly) {
+      <button
+        mat-raised-button
+        (click)="createActivityRegister()"
+        [disabled]="activityRegisterForm.invalid || listDetailsParticipantsRegistro.length == 0"
+        class="button-prevencope"
+      >
+        Actualizar
+      </button>
+    }
   </div>
 </div>

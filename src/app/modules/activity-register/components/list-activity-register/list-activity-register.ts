@@ -23,6 +23,7 @@ import { AutoCompleteData } from '@shared/interface/auto-complete-interface';
 import { SpecialnationaljuryService } from '@modules/activity-register/service/specialnationaljury.service';
 import { FormFieldAutoCompleteComponent } from '@shared/components/form-field-auto-complete/form-field-auto-complete.component';
 import { FormFieldInputComponent } from '@shared/components/form-field-input/form-field-input.component';
+import { ELECTORAL_PROCESS } from '@modules/activity-register/const/electoral-process.const';
 
 @Component({
   selector: 'app-list-activity-register',
@@ -146,8 +147,12 @@ class ListActivityRegister implements OnInit {
   ): RegistroActividadResponseTable[] {
     return datos?.map((item: RegistroActividadResponse) => {
       const options: MenuItems[] = [];
-      options.push(MENU_ACTIONS_ITEM.EDIT);
-      options.push(MENU_ACTIONS_ITEM.DELETE);
+      if (item.codProcesoElectoral === ELECTORAL_PROCESS.ERM_2026) {
+        options.push(MENU_ACTIONS_ITEM.EDIT);
+        options.push(MENU_ACTIONS_ITEM.DELETE);
+      } else {
+        options.push(MENU_ACTIONS_ITEM.SHOW);
+      }
       options.push(MENU_ACTIONS_ITEM.EXPORT);
       return {
         ...item,
@@ -169,6 +174,7 @@ class ListActivityRegister implements OnInit {
   }) {
     switch ($event.menuItem.id) {
       case MENU_ACTIONS_ITEM.EDIT.id:
+      case MENU_ACTIONS_ITEM.SHOW.id:
         this.redirectToEditActivityRegister($event.element);
         break;
       case MENU_ACTIONS_ITEM.DELETE.id:
@@ -223,7 +229,9 @@ class ListActivityRegister implements OnInit {
   }
 
   public async exportRegistroConParticipantes(registro: RegistroActividadResponse): Promise<void> {
-    registro = await firstValueFrom(this.activityRegisterService.obtener(registro.codigoRegistroActividad));
+    registro = await firstValueFrom(
+      this.activityRegisterService.obtener(registro.codigoRegistroActividad),
+    );
     const details = {
       Código: registro.codigo,
       Proceso: registro.nombreProcesoElectoral,

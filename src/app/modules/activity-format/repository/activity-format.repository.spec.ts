@@ -32,10 +32,17 @@ describe('ActivityFormatRepository', () => {
 
   it('maps joined format rows and applies active filters', async () => {
     const query = queryResult({
-      data: [{
-        id: 'format-1', activity_type_id: 'type-1', topic: 'Prevención',
-        series: 'PREV', next_number: 7, activity_types: [{ name: 'Charla' }],
-      }],
+      data: [
+        {
+          id: 'format-1',
+          electoral_process_id: 'process-1',
+          activity_type_id: 'type-1',
+          topic: 'Prevención',
+          series: 'PREV',
+          next_number: 7,
+          activity_types: [{ name: 'Charla' }],
+        },
+      ],
       count: 1,
       error: null,
     });
@@ -48,6 +55,7 @@ describe('ActivityFormatRepository', () => {
     expect(query.range).toHaveBeenCalledWith(0, 4);
     expect(response.formatosActividades[0]).toEqual({
       codigoFormatoActividad: 'format-1',
+      codProcesoElectoral: 'process-1',
       codTipoActividad: 'type-1',
       descripcionTipoActividad: 'Charla',
       tema: 'Prevención',

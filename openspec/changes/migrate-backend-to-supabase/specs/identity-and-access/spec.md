@@ -36,7 +36,7 @@ The system SHALL determine Gestor and Monitor authorization from protected datab
 
 ### Requirement: Monitor has administrative scope
 
-An active Monitor SHALL be authorized to manage application profiles, activity catalogs, formats, and all activity registrations according to the active module/action permission matrix. The seeded legacy matrix SHALL preserve the Monitor registration actions LIST, ADD, EDIT, DELETE, APROVE, and OBSERVE; format, type, and user actions LIST, ADD, EDIT, and DELETE; and the disabled permission-management actions. At least one active Monitor administrator SHALL remain after any administrative change.
+An active Monitor SHALL be authorized to manage application profiles, activity catalogs, formats, and current activity registrations according to the active module/action permission matrix. For a process that requires JEE assignments, registration row scope SHALL be limited to that Monitor's assigned JEE. Elecciones Generales 2026 SHALL remain visible to Monitors as historical read-only data. The seeded legacy matrix SHALL preserve the Monitor registration actions LIST, ADD, EDIT, DELETE, APROVE, and OBSERVE; format, type, and user actions LIST, ADD, EDIT, and DELETE; and the disabled permission-management actions. At least one active Monitor administrator SHALL remain after any administrative change.
 
 #### Scenario: Disable the last Monitor administrator
 
@@ -45,26 +45,31 @@ An active Monitor SHALL be authorized to manage application profiles, activity c
 
 ### Requirement: A designated Monitor can receive complete institutional administration
 
-The system SHALL support a separate Administrator role for an explicitly designated active Monitor without changing the reconciled Monitor grants for other accounts. Administrator SHALL grant every active module/action pair, including access to the Permissions view. Global record scope SHALL continue to require the designated account's Monitor membership.
+The system SHALL support a separate Administrator role for an explicitly designated active Monitor without changing the reconciled Monitor grants for other accounts. Administrator SHALL grant every active module/action pair, including access to the Permissions view. Global record scope SHALL continue to require the designated account's Monitor membership, and Administrator membership SHALL bypass current-process JEE assignments for institutional supervision.
 
 #### Scenario: Grant complete administration to the designated Monitor
 
 - **WHEN** the approved Monitor receives active Administrator membership
 - **THEN** effective permissions include every active module/action pair while other Monitor memberships and grants remain unchanged
 
-### Requirement: Gestor access is restricted to created activities
+### Requirement: Gestor access is restricted to assigned current-process activities
 
-An active Gestor SHALL be authorized to read the catalogs needed for registration and to list, create, edit, and archive their own activity registrations. A Gestor SHALL NOT administer configuration or users, approve or observe activities, or read or change another creator's activity. No jury assignment SHALL be required for either role.
+An active Gestor SHALL be authorized to read the current-process catalogs and JEE explicitly assigned to that profile and to list, create, edit, and archive their own ERM 2026 activity registrations for that JEE. A Gestor SHALL NOT administer configuration or users, approve or observe activities, access a different JEE, or read Elecciones Generales 2026 historical records.
 
 #### Scenario: Gestor accesses own activity
 
-- **WHEN** a Gestor reads or updates an activity they created
+- **WHEN** a Gestor reads or updates an ERM 2026 activity they created for their assigned JEE
 - **THEN** the database permits the operation allowed by the Gestor permission set
 
 #### Scenario: Gestor accesses another creator's activity
 
 - **WHEN** a Gestor requests an activity created by another user
 - **THEN** the database returns no row or rejects the write
+
+#### Scenario: Gestor requests a non-assigned JEE or historical record
+
+- **WHEN** a Gestor requests an ERM 2026 JEE outside their assignment or an Elecciones Generales 2026 record
+- **THEN** the database returns no row and rejects any write
 
 ### Requirement: Disabled profiles lose application access immediately
 

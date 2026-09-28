@@ -14,6 +14,7 @@ export class ElectoralprocessRepository {
           .from('electoral_processes')
           .select('id,name,description,is_default')
           .eq('is_active', true)
+          .eq('accepts_registrations', true)
           .order('name');
         if (error) throw error;
         return {

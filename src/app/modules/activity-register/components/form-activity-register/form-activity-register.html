@@ -18,6 +18,7 @@
           [options]="listElectoralProcess"
           [isLoading]="isLoadingElectoralProcess"
           [messageErrors]="errorMessagesForm['procesoElectoral']"
+          (valueChanged)="onElectoralProcessChanged($event)"
         >
         </app-form-field-auto-complete>
       </div>
@@ -243,15 +244,17 @@
     <div class="container table-form">
       <div class="title">
         <h2>Participantes</h2>
-        <button
-          type="button"
-          mat-raised-button
-          class="button-prevencope"
-          [disabled]="formDetailParticipantes.invalid"
-          (click)="emitNewParticipant()"
-        >
-          Agregar
-        </button>
+        @if (!isReadOnly) {
+          <button
+            type="button"
+            mat-raised-button
+            class="button-prevencope"
+            [disabled]="formDetailParticipantes.invalid"
+            (click)="emitNewParticipant()"
+          >
+            Agregar
+          </button>
+        }
       </div>
 
       <div class="table-wrapper">
@@ -309,8 +312,8 @@
           [controlName]="'adjuntoListaAsistentes'"
           [accept]="'.png,.jpg,.jpeg,.pdf,.xls,.xlsx'"
           [multiple]="false"
-          [isEditable]="true"
-          [showClearButton]="true"
+          [isEditable]="!isReadOnly"
+          [showClearButton]="!isReadOnly"
           [unavailableFileName]="adjuntoListaAsistentesNoDisponible"
           (valueChanged)="onAdjuntoListaAsistentesChange($event)"
           (downloadExisting)="descargarAdjunto($event)"
@@ -325,8 +328,8 @@
           [controlName]="'adjuntoRegistroFotografico'"
           [accept]="'.png,.jpg,.jpeg'"
           [multiple]="false"
-          [isEditable]="true"
-          [showClearButton]="true"
+          [isEditable]="!isReadOnly"
+          [showClearButton]="!isReadOnly"
           [unavailableFileName]="adjuntoRegistroFotograficoNoDisponible"
           (valueChanged)="onAdjuntoRegistroFotograficoChange($event)"
           (downloadExisting)="descargarAdjunto($event)"
