@@ -27,6 +27,12 @@ The system SHALL authenticate users through Supabase Auth and SHALL NOT store ap
 - **AND** a direct request to the self-service recovery route returns to login
 - **AND** the password-update route remains available for controlled 24-hour links already delivered by the institutional process
 
+#### Scenario: Recovery link opened with another persisted session
+
+- **WHEN** a user opens a controlled recovery link in a browser that already has an application session
+- **THEN** the password-update page verifies the recovery artifact from the URL before updating credentials
+- **AND** the persisted session cannot redirect the password change to a different identity
+
 ### Requirement: Roles come from protected database membership
 
 The system SHALL determine Gestor and Monitor authorization from protected database role membership. Users SHALL NOT be able to grant roles to themselves through profile metadata, JWT user metadata, or direct browser writes.

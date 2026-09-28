@@ -57,12 +57,14 @@ describe('ChangePassword', () => {
   });
 
   it('exchanges a recovery token hash before changing the password', async () => {
+    getSession.and.resolveTo({ data: { session: { user: { id: 'different-user' } } }, error: null });
     const fixture = TestBed.createComponent(ChangePassword);
     const component = fixture.componentInstance;
     component.form.setValue({ password: 'new-password', confirmation: 'new-password' });
 
     await component.updatePassword();
 
+    expect(getSession).not.toHaveBeenCalled();
     expect(verifyOtp).toHaveBeenCalledOnceWith({ token_hash: 'token-hash', type: 'recovery' });
     expect(updateUser).toHaveBeenCalledOnceWith({ password: 'new-password' });
     expect(signOut).toHaveBeenCalled();

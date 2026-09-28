@@ -65,10 +65,6 @@ export class ChangePassword {
   }
 
   private async ensureRecoverySession(): Promise<void> {
-    const { data: sessionData, error: sessionError } = await this.supabase.auth.getSession();
-    if (sessionError) throw sessionError;
-    if (sessionData.session) return;
-
     if (this.recoverySessionFromUrl) {
       const { data: recoveredSession, error: recoveryError } = await this.supabase.auth.setSession(
         this.recoverySessionFromUrl,
