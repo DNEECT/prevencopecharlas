@@ -24,8 +24,8 @@ export class ElectoralprocessService {
     ElectoralprocessRepository,
   );
 
-  public select(): Observable<AutoCompleteData[]> {
-    return this.electoralprocessRepostory.listar().pipe(map(mapElectoralProcesses));
+  public select(includeReadOnly: boolean = false): Observable<AutoCompleteData[]> {
+    return this.electoralprocessRepostory.listar(includeReadOnly).pipe(map(mapElectoralProcesses));
   }
 
   public getDefault(options: AutoCompleteData[]): AutoCompleteData | null {

@@ -41,7 +41,7 @@
 - [x] 4.10 Restore the legacy grouped header by returning authorized Administración and Seguridad parent containers, hide non-functional route-less modules, and verify desktop and mobile navigation retain only permitted child routes.
 - [x] 4.11 Add Elecciones Regionales Municipales 2026 to the active process catalog, mark it as the single current default, and verify new registrations preselect it without changing edit-form values.
 - [x] 4.12 Filter registration catalogs by the selected electoral process and current user's JEE assignments; render General 2026 records through a read-only detail path.
-- [x] 4.13 Add an electoral-process filter to the activity list, default it to ERM 2026, and scope the JEE options and activity results to the selected process so historical and current JEE names are not duplicated.
+- [x] 4.13 Add an electoral-process filter to the activity list, show all processes authorized for the user by default, and scope the JEE options and filtered results to a selected process so historical and current JEE names are not duplicated.
 
 ## 5. Legacy Import and Cutover
 

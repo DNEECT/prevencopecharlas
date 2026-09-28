@@ -7,15 +7,16 @@ import { ProcesoElectoralDatosResponse } from '@modules/activity-register/interf
 export class ElectoralprocessRepository {
   private readonly supabase = inject(SupabaseService);
 
-  public listar(): Observable<ProcesoElectoralDatosResponse> {
+  public listar(includeReadOnly: boolean = false): Observable<ProcesoElectoralDatosResponse> {
     return from(
       (async () => {
-        const { data, error } = await this.supabase.client
+        let query = this.supabase.client
           .from('electoral_processes')
           .select('id,name,description,is_default')
           .eq('is_active', true)
-          .eq('accepts_registrations', true)
           .order('name');
+        if (!includeReadOnly) query = query.eq('accepts_registrations', true);
+        const { data, error } = await query;
         if (error) throw error;
         return {
           datos: (data ?? []).map((row) => ({

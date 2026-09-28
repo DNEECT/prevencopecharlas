@@ -75,8 +75,9 @@ The system SHALL provide authorized users with paginated activity results contai
 #### Scenario: Filter the list by electoral process and JEE
 
 - **WHEN** an authorized user opens the activity list
-- **THEN** the current default electoral process is preselected
-- **AND** the JEE selector contains only the JEE belonging to that process
+- **THEN** the list contains registrations from every electoral process authorized for that user
+- **AND** the process filter includes writable and read-only historical processes
+- **AND** the JEE selector remains empty until a process is selected
 - **WHEN** the user selects a different process
 - **THEN** the JEE selection is cleared and replaced with that process's JEE catalog
 - **AND** the activity results are filtered by the selected process

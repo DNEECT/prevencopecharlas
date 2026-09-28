@@ -134,7 +134,7 @@ class ListActivityRegister implements OnInit {
     this.listElectoralProcess = [];
     this.isLoadingElectoralProcess = true;
     this.electoralProcessService
-      .select()
+      .select(true)
       .pipe(
         finalize(() => {
           this.isLoadingElectoralProcess = false;
@@ -144,9 +144,8 @@ class ListActivityRegister implements OnInit {
       .subscribe({
         next: (response: AutoCompleteData[]) => {
           this.listElectoralProcess = response;
-          const defaultProcess = this.electoralProcessService.getDefault(response);
-          this.formFilter.controls.procesoElectoral.setValue(defaultProcess, { emitEvent: false });
-          this.selectSpecialNationalJury(defaultProcess?.key);
+          this.formFilter.controls.procesoElectoral.setValue(null, { emitEvent: false });
+          this.selectSpecialNationalJury();
           this.paginar();
         },
         error: () => {
