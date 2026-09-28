@@ -77,10 +77,10 @@ export const usuarioFormGroup: FormGroup<UsuarioForm> = new FormGroup<UsuarioFor
     validators: [Validators.maxLength(20)],
   }),
   nombres: new FormControl<string>('', {
-    validators: [Validators.required, Validators.maxLength(100)],
+    validators: [Validators.maxLength(100)],
   }),
   apellidos: new FormControl<string>('', {
-    validators: [Validators.required, Validators.maxLength(100)],
+    validators: [Validators.maxLength(100)],
   }),
   username: new FormControl<string>('', {
     validators: [Validators.required, Validators.maxLength(20)],
@@ -102,11 +102,9 @@ export const errorMessagesUsuarioForm: ErrorFields = {
     { maxlength: 'El máximo de caracteres permitidos es 20.' },
   ],
   nombres: [
-    { required: 'Los nombres son obligatorios.' },
     { maxlength: 'El máximo de caracteres permitidos es 100.' },
   ],
   apellidos: [
-    { required: 'Los apellidos son obligatorios.' },
     { maxlength: 'El máximo de caracteres permitidos es 100.' },
   ],
   username: [

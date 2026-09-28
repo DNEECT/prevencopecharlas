@@ -38,11 +38,11 @@ The system SHALL determine Gestor and Monitor authorization from protected datab
 
 An active Monitor SHALL be authorized to manage application profiles, activity catalogs, formats, and current activity registrations according to the active module/action permission matrix. For a process that requires JEE assignments, registration row scope SHALL be limited to that Monitor's assigned JEE. Elecciones Generales 2026 SHALL remain visible to Monitors as historical read-only data. The seeded legacy matrix SHALL preserve the Monitor registration actions LIST, ADD, EDIT, DELETE, APROVE, and OBSERVE; format, type, and user actions LIST, ADD, EDIT, and DELETE; and the disabled permission-management actions. At least one active Monitor administrator SHALL remain after any administrative change.
 
-Administrative profile creation and editing SHALL require names, surnames, username, institutional email, and at least one role. Document number, birth date, and address SHALL remain optional because migrated and institutional service accounts may not have that personal information.
+Administrative profile creation and editing SHALL require username, institutional email, and at least one role. Document number, names, surnames, birth date, and address SHALL remain optional because migrated and institutional service accounts may not have that personal information.
 
 #### Scenario: Edit a migrated account without optional personal data
-- **WHEN** an authorized administrator edits a profile that has no document number, birth date, or address
-- **THEN** the form remains valid when names, surnames, username, institutional email, and at least one role are present
+- **WHEN** an authorized administrator edits a profile that has no document number, names, surnames, birth date, or address
+- **THEN** the form remains valid when username, institutional email, and at least one role are present
 - **AND** the administrative service stores missing optional values as null without changing the account's identity or role memberships
 
 #### Scenario: Disable the last Monitor administrator

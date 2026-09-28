@@ -22,17 +22,17 @@ describe('FormUser', () => {
     expect(component).toBeTruthy();
   });
 
-  it('allows administrative accounts without personal document, birth date, or address', () => {
+  it('requires only username, institutional email, and a role', () => {
     component.form.reset();
     component.form.patchValue({
-      nombres: 'Sissy',
-      apellidos: 'Fernandez',
       username: 'sfernandeza',
       correo: 'sfernandeza@jne.gob.pe',
       roles: [{ key: 'monitor-role', value: 'Monitor' }],
     });
 
     expect(component.form.controls.numeroDocumento.hasError('required')).toBeFalse();
+    expect(component.form.controls.nombres.hasError('required')).toBeFalse();
+    expect(component.form.controls.apellidos.hasError('required')).toBeFalse();
     expect(component.form.controls.fechaNacimiento.hasError('required')).toBeFalse();
     expect(component.form.controls.direccion.hasError('required')).toBeFalse();
     expect(component.form.valid).toBeTrue();

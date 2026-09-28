@@ -44,7 +44,7 @@
 - [x] 4.11 Add Elecciones Regionales Municipales 2026 to the active process catalog, mark it as the single current default, and verify new registrations preselect it without changing edit-form values.
 - [x] 4.12 Filter registration catalogs by the selected electoral process and current user's JEE assignments; render General 2026 records through a read-only detail path.
 - [x] 4.13 Add an electoral-process filter to the activity list, show all processes authorized for the user by default, and scope the JEE options and filtered results to a selected process so historical and current JEE names are not duplicated.
-- [x] 4.14 Make document number, birth date, and address optional in administrative user creation and editing while retaining required identity, email, and role fields in both Angular and the administrative Edge Function.
+- [x] 4.14 Require only username, institutional email, and at least one role in administrative user creation and editing; keep document number, names, surnames, birth date, and address optional in both Angular and the administrative Edge Function.
 
 ## 5. Legacy Import and Cutover
 
