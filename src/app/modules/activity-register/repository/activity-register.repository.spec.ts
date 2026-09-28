@@ -55,13 +55,16 @@ describe('ActivityRegisterRepository', () => {
     repository = TestBed.inject(ActivityRegisterRepository);
   });
 
-  it('maps scoped activity rows and applies code and optional jury filters', async () => {
+  it('maps scoped activity rows and applies process, code, and optional jury filters', async () => {
     const query = queryResult({ data: [activityRow], count: 1, error: null });
     client.from.and.returnValue(query);
 
-    const response = await firstValueFrom(repository.listar(0, 20, 'jury-1', '  PREV  '));
+    const response = await firstValueFrom(
+      repository.listar(0, 20, 'process-1', 'jury-1', '  PREV  '),
+    );
 
     expect(client.from).toHaveBeenCalledWith('activity_list');
+    expect(query.eq).toHaveBeenCalledWith('electoral_process_id', 'process-1');
     expect(query.eq).toHaveBeenCalledWith('special_jury_id', 'jury-1');
     expect(query.ilike).toHaveBeenCalledWith('code', '%PREV%');
     expect(query.range).toHaveBeenCalledWith(0, 19);

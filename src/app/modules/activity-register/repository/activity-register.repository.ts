@@ -69,12 +69,14 @@ export class ActivityRegisterRepository {
   private readonly supabaseService = inject(SupabaseService);
   private get client() { return this.supabaseService.client; }
 
-  public listar(page: number | null, size: number | null, juryId: string | null | undefined,
+  public listar(page: number | null, size: number | null,
+    processId: string | null | undefined, juryId: string | null | undefined,
     search: string | null | undefined): Observable<RegistroActividadPaginateResponse> {
     return from((async () => {
       const fetchPage = async (start: number, end: number) => {
         let query = this.client.from('activity_list').select('*', { count: 'exact' })
           .order('created_at', { ascending: false }).order('id', { ascending: false });
+        if (processId) query = query.eq('electoral_process_id', processId);
         if (juryId) query = query.eq('special_jury_id', juryId);
         if (search?.trim()) query = query.ilike('code', `%${search.trim()}%`);
         return query.range(start, end);

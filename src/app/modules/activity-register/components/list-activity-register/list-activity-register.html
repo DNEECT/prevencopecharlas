@@ -28,6 +28,20 @@
     </div>
     <div class="form-item col-span-3">
       <app-form-field-auto-complete
+        [label]="'Proceso Electoral'"
+        [placeholder]="'Seleccione un proceso electoral'"
+        [controlName]="'procesoElectoral'"
+        [keyField]="'key'"
+        [valueField]="'value'"
+        [control]="formFilter.controls['procesoElectoral']"
+        [options]="listElectoralProcess"
+        [isLoading]="isLoadingElectoralProcess"
+        (valueChanged)="onElectoralProcessChanged($event)"
+      >
+      </app-form-field-auto-complete>
+    </div>
+    <div class="form-item col-span-3">
+      <app-form-field-auto-complete
         [label]="'Jurado Electoral Especial'"
         [placeholder]="'Seleccione un jurado electoral especial'"
         [controlName]="'juradoNacionalEspecial'"
@@ -35,10 +49,11 @@
         [valueField]="'value'"
         [control]="formFilter.controls['juradoNacionalEspecial']"
         [options]="listjuradoNacionalEspecial"
+        [isLoading]="isLoadingJury"
       >
       </app-form-field-auto-complete>
     </div>
-    <div class="form-item col-span-2">
+    <div class="form-item col-span-3">
       <button mat-raised-button class="button-prevencope" (click)="paginar()" style="height: 56px !important;">
         Filtrar
       </button>

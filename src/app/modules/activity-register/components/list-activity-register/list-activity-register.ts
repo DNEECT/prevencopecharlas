@@ -24,6 +24,7 @@ import { SpecialnationaljuryService } from '@modules/activity-register/service/s
 import { FormFieldAutoCompleteComponent } from '@shared/components/form-field-auto-complete/form-field-auto-complete.component';
 import { FormFieldInputComponent } from '@shared/components/form-field-input/form-field-input.component';
 import { ELECTORAL_PROCESS } from '@modules/activity-register/const/electoral-process.const';
+import { ElectoralprocessService } from '@modules/activity-register/service/electoralprocess.service';
 
 @Component({
   selector: 'app-list-activity-register',
@@ -42,6 +43,8 @@ class ListActivityRegister implements OnInit {
   private readonly specialNationalJuryService: SpecialnationaljuryService = inject(
     SpecialnationaljuryService,
   );
+  private readonly electoralProcessService: ElectoralprocessService =
+    inject(ElectoralprocessService);
   private readonly dialogService: DialogService = inject(DialogService);
   private readonly snackBarService: SnackbarService = inject(SnackbarService);
   private readonly router: Router = inject(Router);
@@ -59,8 +62,12 @@ class ListActivityRegister implements OnInit {
   public dataSourceRegistroActividades: RegistroActividadResponseTable[] = [];
 
   protected listjuradoNacionalEspecial: AutoCompleteData[] = [];
+  protected listElectoralProcess: AutoCompleteData[] = [];
+  protected isLoadingElectoralProcess: boolean = true;
+  protected isLoadingJury: boolean = true;
 
   public formFilter = new FormGroup({
+    procesoElectoral: new FormControl<AutoCompleteData | null>(null),
     juradoNacionalEspecial: new FormControl<AutoCompleteData | null>(null),
     terminoBusqueda: new FormControl<string | null>(null),
   });
@@ -80,8 +87,7 @@ class ListActivityRegister implements OnInit {
 
   ngOnInit(): void {
     this.setPageData();
-    this.paginar();
-    this.selectSpecialNationalJury();
+    this.selectElectoralProcess();
   }
 
   public setPageData() {
@@ -97,6 +103,7 @@ class ListActivityRegister implements OnInit {
       .listar(
         this.paginationData.pageIndex,
         this.paginationData.pageSize,
+        this.formFilter.value.procesoElectoral?.key,
         this.formFilter.value.juradoNacionalEspecial?.key,
         this.formFilter.value.terminoBusqueda,
       )
@@ -123,12 +130,52 @@ class ListActivityRegister implements OnInit {
       });
   }
 
-  public selectSpecialNationalJury() {
-    this.listjuradoNacionalEspecial = [];
-    this.specialNationalJuryService
+  public selectElectoralProcess(): void {
+    this.listElectoralProcess = [];
+    this.isLoadingElectoralProcess = true;
+    this.electoralProcessService
       .select()
       .pipe(
         finalize(() => {
+          this.isLoadingElectoralProcess = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (response: AutoCompleteData[]) => {
+          this.listElectoralProcess = response;
+          const defaultProcess = this.electoralProcessService.getDefault(response);
+          this.formFilter.controls.procesoElectoral.setValue(defaultProcess, { emitEvent: false });
+          this.selectSpecialNationalJury(defaultProcess?.key);
+          this.paginar();
+        },
+        error: () => {
+          this.listElectoralProcess = [];
+          this.selectSpecialNationalJury();
+          this.paginar();
+        },
+      });
+  }
+
+  public onElectoralProcessChanged(process: AutoCompleteData | null): void {
+    this.formFilter.controls.juradoNacionalEspecial.reset();
+    this.paginationData.pageIndex = 0;
+    this.selectSpecialNationalJury(process?.key);
+    this.paginar();
+  }
+
+  public selectSpecialNationalJury(processId?: string | null): void {
+    this.listjuradoNacionalEspecial = [];
+    if (!processId) {
+      this.isLoadingJury = false;
+      return;
+    }
+    this.isLoadingJury = true;
+    this.specialNationalJuryService
+      .select(processId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingJury = false;
           this.cdr.detectChanges();
         }),
       )
@@ -281,6 +328,7 @@ class ListActivityRegister implements OnInit {
       .listar(
         null,
         null,
+        this.formFilter.value.procesoElectoral?.key,
         this.formFilter.value.juradoNacionalEspecial?.key,
         this.formFilter.value.terminoBusqueda,
       )

@@ -70,7 +70,16 @@ The system SHALL store zero or more participants for an activity in the same ato
 - **THEN** neither the participant set nor its new activity is committed
 
 ### Requirement: Activity queries return scoped joined data
-The system SHALL provide authorized users with paginated activity results containing the catalog names, format topic and series, participant count, and evidence references required by the existing list and detail screens. The legacy-compatible list SHALL search registration code and support an optional special electoral jury filter.
+The system SHALL provide authorized users with paginated activity results containing the catalog names, format topic and series, participant count, and evidence references required by the existing list and detail screens. The legacy-compatible list SHALL search registration code and support optional electoral-process and special-electoral-jury filters. The JEE selector SHALL contain only entries from the selected process so identically named historical and current JEE are not presented as duplicates.
+
+#### Scenario: Filter the list by electoral process and JEE
+
+- **WHEN** an authorized user opens the activity list
+- **THEN** the current default electoral process is preselected
+- **AND** the JEE selector contains only the JEE belonging to that process
+- **WHEN** the user selects a different process
+- **THEN** the JEE selection is cleared and replaced with that process's JEE catalog
+- **AND** the activity results are filtered by the selected process
 
 #### Scenario: Monitor lists activities
 - **WHEN** an active Monitor requests the activity list
