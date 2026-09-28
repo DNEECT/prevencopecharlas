@@ -20,6 +20,12 @@ The system SHALL authenticate users through Supabase Auth and SHALL NOT store ap
 - **WHEN** an authenticated identity has no active application profile
 - **THEN** application data access is denied
 
+#### Scenario: Self-service recovery transport is unavailable
+
+- **WHEN** password-recovery email delivery has not been verified with the configured SMTP service
+- **THEN** the login screen does not display a self-service recovery link
+- **AND** the password-update route remains available for controlled 24-hour links already delivered by the institutional process
+
 ### Requirement: Roles come from protected database membership
 
 The system SHALL determine Gestor and Monitor authorization from protected database role membership. Users SHALL NOT be able to grant roles to themselves through profile metadata, JWT user metadata, or direct browser writes.

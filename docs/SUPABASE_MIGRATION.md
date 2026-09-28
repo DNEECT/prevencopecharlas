@@ -177,6 +177,12 @@ usable. Hosted Email OTP expiration is 86,400 seconds (24 hours). Treat every
 link as single-use, never log or retain tokens, and record only aggregate and
 per-recipient delivery status outside Git.
 
+The login screen hides self-service password recovery while the configured
+SMTP transport remains unverified. Keep `/actualizar-contrasena` available for
+the controlled 24-hour links delivered through the institutional process. The
+hidden `/recuperar-contrasena` route can be restored to navigation only after a
+successful end-to-end self-service delivery test.
+
 On 28 September 2026, the approved ERM 2026 workbook was reconciled again for
 onboarding delivery. Its two sheets contained 108 unique institutional email
 addresses. Two GPCC rows were excluded because their contractor identities and
