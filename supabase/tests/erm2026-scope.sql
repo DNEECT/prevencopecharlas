@@ -81,6 +81,13 @@ select
 set local role authenticated;
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000401',true);
 do $$ begin
+  if (select count(*) from public.electoral_processes) <> 1
+    or not exists (
+      select 1 from public.electoral_processes
+      where id='57e96d43-5283-482b-a916-e21d72c7d605'
+    ) then
+    raise exception 'Gestor received a process outside current ERM 2026';
+  end if;
   if exists (select 1 from public.activity_registrations where code='HIST-TEST') then
     raise exception 'Gestor saw a historical General 2026 record';
   end if;
@@ -111,11 +118,33 @@ end $$;
 
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000402',true);
 do $$ begin
-  if not exists (select 1 from public.activity_registrations where code='HIST-TEST')
+  if exists (select 1 from public.activity_registrations where code='HIST-TEST')
     or not exists (select 1 from public.activity_registrations where code='ERM-A-TEST')
     or not exists (select 1 from public.activity_registrations where code='ERM-A-OTHER')
     or exists (select 1 from public.activity_registrations where code='ERM-B-TEST') then
-    raise exception 'Monitor historical or assigned-JEE read scope is incorrect';
+    raise exception 'Monitor current assigned-JEE read scope is incorrect';
+  end if;
+  if (select count(*) from public.electoral_processes) <> 1
+    or not exists (
+      select 1 from public.electoral_processes
+      where id='57e96d43-5283-482b-a916-e21d72c7d605'
+    ) then
+    raise exception 'Monitor received a process outside current ERM 2026';
+  end if;
+  if exists (
+    select 1 from public.special_juries
+    where electoral_process_id='29dc3419-0606-4a86-a816-9012a9414743'
+  ) then
+    raise exception 'Monitor saw historical General 2026 JEE';
+  end if;
+  if exists (
+    select 1 from public.activity_formats
+    where electoral_process_id='29dc3419-0606-4a86-a816-9012a9414743'
+  ) or exists (
+    select 1 from public.target_audiences
+    where electoral_process_id='29dc3419-0606-4a86-a816-9012a9414743'
+  ) then
+    raise exception 'Monitor saw historical General 2026 catalogs';
   end if;
   begin
     perform public.archive_activity('00000000-0000-4000-8000-000000000410');
@@ -129,6 +158,19 @@ do $$ begin
   if (select count(*) from public.activity_registrations
       where code in ('HIST-TEST','ERM-A-TEST','ERM-B-TEST','ERM-A-OTHER')) <> 4 then
     raise exception 'Administrator did not retain global read scope';
+  end if;
+  if (select count(*) from public.electoral_processes
+      where id in (
+        '29dc3419-0606-4a86-a816-9012a9414743',
+        '57e96d43-5283-482b-a916-e21d72c7d605'
+      )) <> 2 then
+    raise exception 'Administrator did not retain historical and current process scope';
+  end if;
+  if not exists (
+    select 1 from public.special_juries
+    where electoral_process_id='29dc3419-0606-4a86-a816-9012a9414743'
+  ) then
+    raise exception 'Administrator did not retain historical General 2026 JEE scope';
   end if;
 end $$;
 

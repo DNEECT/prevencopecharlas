@@ -18,8 +18,9 @@
 - [x] 2.3 Add Monitor administrative/global policies and Gestor creator-scoped policies for catalogs, formats, registrations, participants, and evidence metadata; verify direct cross-user reads/writes and inactive grants follow the source matrix.
 - [x] 2.4 Create the private `activity-evidence` bucket with 20 MiB and MIME restrictions plus path-based object policies; verify normal uploads, historical photographic PDF import, anonymous denial, creator scope, and authorized signed downloads.
 - [x] 2.5 Add SQL verification scripts for constraints, grants, RLS, role changes, archival behavior, and storage policy helpers; verify all scripts pass against a freshly reset database.
-- [x] 2.6 Enforce ERM 2026 JEE assignments for GPCC and Monitor accounts, retain Administrator global visibility, and make General 2026 historical records read-only and invisible to Gestores.
-- [x] 2.7 Evaluate activity-list RLS against the current row instead of looking it up again for every result; verify the Monitor/Administrator historical count completes without a statement timeout and Gestor scope remains unchanged.
+- [x] 2.6 Enforce ERM 2026 JEE assignments for GPCC and Monitor accounts, retain Administrator global visibility, and make General 2026 historical records read-only and invisible to Gestores and non-administrator Monitors.
+- [x] 2.7 Evaluate activity-list RLS against the current row instead of looking it up again for every result; verify the Administrator historical count completes without a statement timeout and Gestor scope remains unchanged.
+- [x] 2.8 Restrict the historical General 2026 process, catalogs, JEE, registrations, participants, and evidence to active Administrator or Director roles; verify Monitor and Gestor identities receive only current ERM 2026 data for assigned JEE.
 
 ## 3. Supabase Project Deployment
 
@@ -42,8 +43,8 @@
 - [x] 4.9 Add a dedicated Administrator role without modifying the imported Monitor matrix, assign it only to the designated institutional Monitor, and verify all active views and actions are effective.
 - [x] 4.10 Restore the legacy grouped header by returning authorized Administración and Seguridad parent containers, hide non-functional route-less modules, and verify desktop and mobile navigation retain only permitted child routes.
 - [x] 4.11 Add Elecciones Regionales Municipales 2026 to the active process catalog, mark it as the single current default, and verify new registrations preselect it without changing edit-form values.
-- [x] 4.12 Filter registration catalogs by the selected electoral process and current user's JEE assignments; render General 2026 records through a read-only detail path.
-- [x] 4.13 Add an electoral-process filter to the activity list, show all processes authorized for the user by default, and scope the JEE options and filtered results to a selected process so historical and current JEE names are not duplicated.
+- [x] 4.12 Filter registration catalogs by the selected electoral process, active role, and current user's JEE assignments; render General 2026 records through a read-only detail path for Administrator or Director roles only.
+- [x] 4.13 Add an electoral-process filter to the activity list, show all processes authorized for the user's role and JEE assignments by default, and scope the JEE options and filtered results to a selected process so historical and current JEE names are not duplicated.
 - [x] 4.14 Require only username, institutional email, and at least one role in administrative user creation and editing; keep document number, names, surnames, birth date, and address optional in both Angular and the administrative Edge Function.
 
 ## 5. Legacy Import and Cutover

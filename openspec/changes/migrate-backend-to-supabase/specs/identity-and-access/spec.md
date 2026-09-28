@@ -36,7 +36,7 @@ The system SHALL determine Gestor and Monitor authorization from protected datab
 
 ### Requirement: Monitor has administrative scope
 
-An active Monitor SHALL be authorized to manage application profiles, activity catalogs, formats, and current activity registrations according to the active module/action permission matrix. For a process that requires JEE assignments, registration row scope SHALL be limited to that Monitor's assigned JEE. Elecciones Generales 2026 SHALL remain visible to Monitors as historical read-only data. The seeded legacy matrix SHALL preserve the Monitor registration actions LIST, ADD, EDIT, DELETE, APROVE, and OBSERVE; format, type, and user actions LIST, ADD, EDIT, and DELETE; and the disabled permission-management actions. At least one active Monitor administrator SHALL remain after any administrative change.
+An active Monitor SHALL be authorized to manage application profiles, activity catalogs, formats, and current activity registrations according to the active module/action permission matrix. For a process that requires JEE assignments, process, catalog, and registration row scope SHALL be limited to that Monitor's assigned JEE. Elecciones Generales 2026 SHALL be hidden from a Monitor unless the same profile also has an active Administrator or Director role. The seeded legacy matrix SHALL preserve the Monitor registration actions LIST, ADD, EDIT, DELETE, APROVE, and OBSERVE; format, type, and user actions LIST, ADD, EDIT, and DELETE; and the disabled permission-management actions. At least one active Monitor administrator SHALL remain after any administrative change.
 
 Administrative profile creation and editing SHALL require username, institutional email, and at least one role. Document number, names, surnames, birth date, and address SHALL remain optional because migrated and institutional service accounts may not have that personal information.
 
@@ -52,7 +52,7 @@ Administrative profile creation and editing SHALL require username, institutiona
 
 ### Requirement: A designated Monitor can receive complete institutional administration
 
-The system SHALL support a separate Administrator role for an explicitly designated active Monitor without changing the reconciled Monitor grants for other accounts. Administrator SHALL grant every active module/action pair, including access to the Permissions view. Global record scope SHALL continue to require the designated account's Monitor membership, and Administrator membership SHALL bypass current-process JEE assignments for institutional supervision.
+The system SHALL support a separate Administrator role for an explicitly designated active Monitor without changing the reconciled Monitor grants for other accounts. Administrator SHALL grant every active module/action pair, including access to the Permissions view. An active Administrator or Director role SHALL be required to read the historical Elecciones Generales 2026 process, catalogs, JEE, registrations, participants, and evidence. Administrator membership SHALL bypass current-process JEE assignments for institutional supervision.
 
 #### Scenario: Grant complete administration to the designated Monitor
 

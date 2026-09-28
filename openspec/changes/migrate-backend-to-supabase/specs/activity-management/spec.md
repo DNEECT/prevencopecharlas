@@ -25,7 +25,7 @@ The system SHALL expose active activity types, assistant types, target audiences
 - **THEN** the system returns no catalog rows
 
 #### Scenario: Display historical and current JEE catalogs
-- **WHEN** an authorized Monitor or Administrator selects Elecciones Generales 2026 or ERM 2026
+- **WHEN** an authorized Administrator or Director selects Elecciones Generales 2026 or ERM 2026
 - **THEN** every JEE name uses consistent Spanish title capitalization and applicable accents
 - **AND** the normalization does not change the JEE identifier or any linked activity
 
@@ -81,7 +81,7 @@ The system SHALL provide authorized users with paginated activity results contai
 
 - **WHEN** an authorized user opens the activity list
 - **THEN** the list contains registrations from every electoral process authorized for that user
-- **AND** the process filter includes writable and read-only historical processes
+- **AND** the process filter includes only the processes allowed by the user's active roles and JEE assignments
 - **AND** the JEE selector remains empty until a process is selected
 - **WHEN** the user selects a different process
 - **THEN** the JEE selection is cleared and replaced with that process's JEE catalog
@@ -89,7 +89,8 @@ The system SHALL provide authorized users with paginated activity results contai
 
 #### Scenario: Monitor lists activities
 - **WHEN** an active Monitor requests the activity list
-- **THEN** the response contains historical Elecciones Generales 2026 registrations and ERM 2026 registrations for the JEE assigned to that Monitor
+- **THEN** the response contains only ERM 2026 registrations for the JEE assigned to that Monitor
+- **AND** the process selector and response contain no Elecciones Generales 2026 historical data unless that profile also has an active Administrator or Director role
 
 #### Scenario: Gestor lists activities
 - **WHEN** an active Gestor requests the activity list
