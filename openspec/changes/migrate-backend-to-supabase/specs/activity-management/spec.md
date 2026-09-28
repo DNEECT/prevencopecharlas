@@ -82,6 +82,8 @@ The system SHALL provide authorized users with paginated activity results contai
 - **WHEN** an authorized user opens the activity list
 - **THEN** the list contains registrations from every electoral process authorized for that user
 - **AND** the process filter includes only the processes allowed by the user's active roles and JEE assignments
+- **AND** a Monitor or Gestor with ERM 2026 access starts with ERM 2026 selected
+- **AND** an Administrator or Director starts with no process selected and sees all authorized registrations
 - **AND** the JEE selector remains empty until a process is selected
 - **WHEN** the user selects a different process
 - **THEN** the JEE selection is cleared and replaced with that process's JEE catalog

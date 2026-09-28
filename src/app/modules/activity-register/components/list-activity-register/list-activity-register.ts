@@ -144,8 +144,11 @@ class ListActivityRegister implements OnInit {
       .subscribe({
         next: (response: AutoCompleteData[]) => {
           this.listElectoralProcess = response;
-          this.formFilter.controls.procesoElectoral.setValue(null, { emitEvent: false });
-          this.selectSpecialNationalJury();
+          const defaultProcess = this.electoralProcessService.getActivityListDefault(response);
+          this.formFilter.controls.procesoElectoral.setValue(defaultProcess, {
+            emitEvent: false,
+          });
+          this.selectSpecialNationalJury(defaultProcess?.key);
           this.paginar();
         },
         error: () => {

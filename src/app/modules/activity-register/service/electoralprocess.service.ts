@@ -16,6 +16,12 @@ export function getDefaultElectoralProcess(options: AutoCompleteData[]): AutoCom
   return options.find((option) => option.isDefault) ?? null;
 }
 
+export function getActivityListDefaultElectoralProcess(
+  options: AutoCompleteData[],
+): AutoCompleteData | null {
+  return options.length === 1 ? getDefaultElectoralProcess(options) : null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,5 +36,9 @@ export class ElectoralprocessService {
 
   public getDefault(options: AutoCompleteData[]): AutoCompleteData | null {
     return getDefaultElectoralProcess(options);
+  }
+
+  public getActivityListDefault(options: AutoCompleteData[]): AutoCompleteData | null {
+    return getActivityListDefaultElectoralProcess(options);
   }
 }

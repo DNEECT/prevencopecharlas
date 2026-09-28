@@ -46,6 +46,7 @@
 - [x] 4.12 Filter registration catalogs by the selected electoral process, active role, and current user's JEE assignments; render General 2026 records through a read-only detail path for Administrator or Director roles only.
 - [x] 4.13 Add an electoral-process filter to the activity list, show all processes authorized for the user's role and JEE assignments by default, and scope the JEE options and filtered results to a selected process so historical and current JEE names are not duplicated.
 - [x] 4.14 Require only username, institutional email, and at least one role in administrative user creation and editing; keep document number, names, surnames, birth date, and address optional in both Angular and the administrative Edge Function.
+- [x] 4.15 Preselect ERM 2026 in the activity list when it is the only process authorized for a Monitor or Gestor, while leaving the Administrator or Director process filter empty so all authorized records are shown initially.
 
 ## 5. Legacy Import and Cutover
 
