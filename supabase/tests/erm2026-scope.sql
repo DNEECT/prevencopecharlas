@@ -78,9 +78,47 @@ select
   (select id from public.special_juries where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605' order by jury_code limit 1),
   'ERM place A other','2026-09-28','11:30','00000000-0000-4000-8000-000000000403';
 
+do $$ begin
+  if (select count(*) from public.target_audiences
+      where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605'
+        and is_active) <> 12
+    or exists (
+      select expected.name
+      from (values
+        ('Asociaciones'),
+        ('Comunidades campesinas o nativas'),
+        ('Estudiantes'),
+        ('Gremios Empresariales'),
+        ('Jueces de paz'),
+        ('Organizaciones políticas'),
+        ('Organizaciones sociales y sociedad civil'),
+        ('Prefecturas y Subprefecturas'),
+        ('Rondas campesinas'),
+        ('Sindicatos'),
+        ('Tenientes gobernadores'),
+        ('Usuarios de programas sociales')
+      ) expected(name)
+      except
+      select name::text from public.target_audiences
+      where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605'
+        and is_active
+    ) then
+    raise exception 'ERM 2026 target-audience catalog is incorrect';
+  end if;
+  if not exists (
+    select 1 from public.assistant_types
+    where id='f2ca6657-8c06-4440-b0a9-d4321424b97e'
+      and name='No aplica' and is_active
+  ) then
+    raise exception 'ERM 2026 internal assistant type is unavailable';
+  end if;
+end $$;
+
 set local role authenticated;
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000401',true);
-do $$ begin
+do $$
+declare v_activity_id uuid;
+begin
   if (select count(*) from public.electoral_processes) <> 1
     or not exists (
       select 1 from public.electoral_processes
@@ -114,6 +152,42 @@ do $$ begin
     raise exception 'Gestor created an activity in the historical process';
   exception when foreign_key_violation then null;
   end;
+  begin
+    perform public.create_activity(
+      (select id from public.activity_formats
+        where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605' limit 1),
+      'd518206d-3aea-49f3-95c3-bf93d43b82a9',
+      (select id from public.target_audiences
+        where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605' limit 1),
+      '57e96d43-5283-482b-a916-e21d72c7d605',
+      (select id from public.special_juries
+        where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605'
+        order by jury_code limit 1),
+      'Forbidden assistant type','2026-09-28','12:30',null,null,null,'[]'::jsonb
+    );
+    raise exception 'Gestor created an ERM activity with a user-selected assistant type';
+  exception when foreign_key_violation then null;
+  end;
+  select activity_id into v_activity_id
+  from public.create_activity(
+    (select id from public.activity_formats
+      where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605' limit 1),
+    'f2ca6657-8c06-4440-b0a9-d4321424b97e',
+    (select id from public.target_audiences
+      where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605' limit 1),
+    '57e96d43-5283-482b-a916-e21d72c7d605',
+    (select id from public.special_juries
+      where electoral_process_id='57e96d43-5283-482b-a916-e21d72c7d605'
+      order by jury_code limit 1),
+    'Internal assistant type','2026-09-28','13:00',null,null,null,'[]'::jsonb
+  );
+  if not exists (
+    select 1 from public.activity_registrations
+    where id=v_activity_id
+      and assistant_type_id='f2ca6657-8c06-4440-b0a9-d4321424b97e'
+  ) then
+    raise exception 'ERM activity did not store the internal assistant type';
+  end if;
 end $$;
 
 select set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000402',true);

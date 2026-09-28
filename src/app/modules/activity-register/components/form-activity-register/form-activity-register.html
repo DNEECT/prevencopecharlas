@@ -68,20 +68,22 @@
         </app-form-field-auto-complete>
       </div>
 
-      <div class="form-item col-span-4">
-        <app-form-field-auto-complete
-          [label]="'Tipo Asistente'"
-          [placeholder]="'Seleccione un tema de actividad'"
-          [controlName]="'tipoAsistente'"
-          [keyField]="'key'"
-          [valueField]="'value'"
-          [control]="form.controls['tipoAsistente']"
-          [options]="listAsistentType"
-          [isLoading]="isLoadingAsistentType"
-          [messageErrors]="errorMessagesForm['tipoAsistente']"
-        >
-        </app-form-field-auto-complete>
-      </div>
+      @if (showAssistantType) {
+        <div class="form-item col-span-4">
+          <app-form-field-auto-complete
+            [label]="'Tipo Asistente'"
+            [placeholder]="'Seleccione un tipo de asistente'"
+            [controlName]="'tipoAsistente'"
+            [keyField]="'key'"
+            [valueField]="'value'"
+            [control]="form.controls['tipoAsistente']"
+            [options]="listAsistentType"
+            [isLoading]="isLoadingAsistentType"
+            [messageErrors]="errorMessagesForm['tipoAsistente']"
+          >
+          </app-form-field-auto-complete>
+        </div>
+      }
 
       <div class="form-item col-span-4">
         <app-form-field-auto-complete

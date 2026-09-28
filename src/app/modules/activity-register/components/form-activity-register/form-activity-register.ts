@@ -43,6 +43,10 @@ import { FileService } from '@modules/activity-register/service/file.service';
 import { AsistentTypeService } from '@modules/activity-format/service/asistent-type.service';
 import { TargetAudienceService } from '@modules/activity-format/service/target-audience.service';
 import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
+import {
+  getInternalAssistantType,
+  showAssistantTypeField,
+} from '@modules/activity-register/const/assistant-type.const';
 
 @Component({
   selector: 'app-form-activity-register',
@@ -169,6 +173,10 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   protected isLoadingTheme: boolean = false;
   protected isLoadingAsistentType: boolean = false;
   protected isLoadingTargetAudience: boolean = false;
+
+  protected get showAssistantType(): boolean {
+    return showAssistantTypeField(this.form.controls.procesoElectoral.value?.key);
+  }
 
   public selectActivityFormat(processId?: string | null) {
     this.listActivityFormat = [];
@@ -404,6 +412,7 @@ export class FormActivityRegister implements OnInit, OnDestroy {
 
   private loadProcessCatalogs(process: AutoCompleteData | null): void {
     const processId = process?.key ?? null;
+    this.configureAssistantType(processId);
     if (!processId) {
       this.listActivityFormat = [];
       this.listActivityType = [];
@@ -415,6 +424,15 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     this.selectActivityFormat(processId);
     this.selectSpecialNationalJury(processId);
     this.selectTargetAudience(processId);
+  }
+
+  private configureAssistantType(processId: string | null): void {
+    const internalAssistantType = getInternalAssistantType(processId);
+    if (internalAssistantType) {
+      this.form.controls.tipoAsistente.setValue(internalAssistantType);
+      return;
+    }
+    if (!this.isEdit) this.form.controls.tipoAsistente.reset();
   }
 
   public emitNewParticipant() {

@@ -14,6 +14,11 @@ The system SHALL expose active activity types, assistant types, target audiences
 - **THEN** the system returns the active formats, target audiences, and special electoral juries for the selected process that the user is allowed to use
 - **AND** each entry includes a stable code and display name
 
+#### Scenario: Load the ERM 2026 target audiences
+
+- **WHEN** an authorized user opens an ERM 2026 activity form
+- **THEN** Público objetivo contains exactly Asociaciones, Comunidades campesinas o nativas, Estudiantes, Gremios Empresariales, Jueces de paz, Organizaciones políticas, Organizaciones sociales y sociedad civil, Prefecturas y Subprefecturas, Rondas campesinas, Sindicatos, Tenientes gobernadores, and Usuarios de programas sociales
+
 #### Scenario: Default the current electoral process on a new registration
 
 - **WHEN** an authenticated active user opens a new activity registration
@@ -48,11 +53,18 @@ The system SHALL generate registration identifiers as the selected format's seri
 - **THEN** each registration receives a unique sequential number and code
 
 ### Requirement: Authorized users record complete activities
-The system SHALL store each activity with its format, assistant type, target audience, electoral process, special electoral jury, place, date, time, recommendations, questions, creator, and audit timestamps. The system SHALL reject missing, inactive, closed, or cross-process catalog references. Formats, target audiences, and special electoral juries configured for ERM 2026 SHALL reference that process explicitly.
+The system SHALL store each activity with its format, internal assistant type, target audience, electoral process, special electoral jury, place, date, time, recommendations, questions, creator, and audit timestamps. The system SHALL reject missing, inactive, closed, or cross-process catalog references. Formats, target audiences, and special electoral juries configured for ERM 2026 SHALL reference that process explicitly. The ERM 2026 form SHALL hide Tipo de asistente and persist the controlled internal value No aplica; historical records SHALL retain their original assistant type.
 
 #### Scenario: Create a valid registration
 - **WHEN** an authorized active user submits all required fields with valid catalog references
 - **THEN** the system creates the activity and returns its generated identifier
+
+#### Scenario: Create or edit an ERM 2026 registration
+
+- **WHEN** an authorized user creates or edits an ERM 2026 activity
+- **THEN** the form does not display Tipo de asistente
+- **AND** the database stores No aplica as its internal assistant type
+- **AND** a direct request using a different assistant type is rejected
 
 #### Scenario: Missing catalog reference
 - **WHEN** a registration references an inactive, missing, closed, or different-process format, target audience, process, or jury

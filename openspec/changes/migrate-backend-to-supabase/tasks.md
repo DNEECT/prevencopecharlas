@@ -10,6 +10,7 @@
 - [x] 1.6 Seed the 42 source role/action grants, module hierarchy, Monitor/Gestor roles, and known non-sensitive catalogs; verify disabled grants remain disabled and repeated seeds do not duplicate rows.
 - [x] 1.7 Add the ERM 2026 topic, seven process-specific target audiences, 91 JEE, and explicit process relationships while preserving General 2026 historical catalogs.
 - [x] 1.8 Standardize the 61 General 2026 JEE display names to the ERM 2026 Spanish title style, including applicable accents, without changing identifiers or historical activity relationships.
+- [x] 1.9 Replace the ERM 2026 target-audience catalog with the 12 approved options and add a controlled internal No aplica assistant type without changing historical General 2026 values.
 
 ## 2. Database and Storage Authorization
 
@@ -47,6 +48,7 @@
 - [x] 4.13 Add an electoral-process filter to the activity list, show all processes authorized for the user's role and JEE assignments by default, and scope the JEE options and filtered results to a selected process so historical and current JEE names are not duplicated.
 - [x] 4.14 Require only username, institutional email, and at least one role in administrative user creation and editing; keep document number, names, surnames, birth date, and address optional in both Angular and the administrative Edge Function.
 - [x] 4.15 Preselect ERM 2026 in the activity list when it is the only process authorized for a Monitor or Gestor, while leaving the Administrator or Director process filter empty so all authorized records are shown initially.
+- [x] 4.16 Hide Tipo de asistente on ERM 2026 create and edit forms, set its internal No aplica value automatically, and retain the field when displaying historical General 2026 records.
 
 ## 5. Legacy Import and Cutover
 
