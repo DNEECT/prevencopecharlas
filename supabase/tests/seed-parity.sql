@@ -67,11 +67,24 @@ begin
 
   if (select count(*) from public.activity_types) <> 1
     or (select count(*) from public.assistant_types) <> 7
-    or (select count(*) from public.target_audiences) <> 11
+    or (select count(*) from public.target_audiences) <> 18
     or (select count(*) from public.electoral_processes) <> 2
-    or (select count(*) from public.activity_formats) <> 1
-    or (select count(*) from public.special_juries) <> 61 then
+    or (select count(*) from public.activity_formats) <> 2
+    or (select count(*) from public.special_juries) <> 152
+    or (select count(*) from public.special_juries where electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743') <> 61
+    or (select count(*) from public.special_juries where electoral_process_id = '57e96d43-5283-482b-a916-e21d72c7d605') <> 91 then
     raise exception 'Source lookup catalog counts differ';
+  end if;
+  if exists (
+    select 1 from public.special_juries
+    where electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
+      and jury_name = upper(jury_name)
+  ) or not exists (
+    select 1 from public.special_juries
+    where electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
+      and jury_code = 2213 and jury_name = 'San Román'
+  ) then
+    raise exception 'General 2026 JEE display names are not standardized';
   end if;
   if not exists (
     select 1 from public.electoral_processes

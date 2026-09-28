@@ -250,3 +250,74 @@ where electoral_process_id is null;
 update public.special_juries
 set electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
 where electoral_process_id is null;
+
+-- Keep historical EG 2026 JEE display names aligned with the ERM 2026 catalog.
+with standardized(jury_code, jury_name) as (
+  values
+    (0, 'Jurado Nacional de Elecciones'),
+    (2039, 'Lima Centro 1'),
+    (2040, 'Arequipa 1'),
+    (2041, 'Huancayo'),
+    (2042, 'Chiclayo'),
+    (2043, 'San Martín'),
+    (2060, 'Chachapoyas'),
+    (2061, 'Huaraz'),
+    (2064, 'Abancay'),
+    (2067, 'Huamanga'),
+    (2073, 'Callao'),
+    (2074, 'Cusco'),
+    (2076, 'Huancavelica'),
+    (2077, 'Huánuco'),
+    (2080, 'Ica'),
+    (2082, 'Trujillo'),
+    (2092, 'Lima Oeste 1'),
+    (2093, 'Lima Oeste 2'),
+    (2097, 'Huaura'),
+    (2100, 'Maynas'),
+    (2102, 'Tambopata'),
+    (2103, 'Mariscal Nieto'),
+    (2104, 'Pasco'),
+    (2106, 'Piura 2'),
+    (2108, 'Puno'),
+    (2110, 'Tacna'),
+    (2111, 'Tumbes'),
+    (2112, 'Coronel Portillo'),
+    (2184, 'Bagua'),
+    (2185, 'Santa'),
+    (2186, 'Huari'),
+    (2187, 'Andahuaylas'),
+    (2188, 'Arequipa 2'),
+    (2189, 'Cangallo'),
+    (2190, 'Lucanas'),
+    (2191, 'Chota'),
+    (2192, 'Jaén'),
+    (2193, 'Canchis'),
+    (2194, 'Huamalíes'),
+    (2195, 'Leoncio Prado'),
+    (2196, 'Chanchamayo'),
+    (2197, 'Pacasmayo'),
+    (2198, 'Sánchez Carrión'),
+    (2199, 'Lambayeque'),
+    (2200, 'Lima Norte 1'),
+    (2201, 'Lima Norte 2'),
+    (2202, 'Lima Norte 3'),
+    (2203, 'Lima Oeste 3'),
+    (2204, 'Lima Sur 1'),
+    (2205, 'Lima Sur 2'),
+    (2206, 'Lima Este 1'),
+    (2207, 'Lima Este 2'),
+    (2208, 'Cañete'),
+    (2210, 'Alto Amazonas'),
+    (2211, 'Piura 1'),
+    (2212, 'Sullana'),
+    (2213, 'San Román'),
+    (2214, 'Cajamarca'),
+    (2215, 'Lima Centro 2'),
+    (2268, 'Caylloma'),
+    (2269, 'Huarochirí')
+)
+update public.special_juries sj
+set jury_name = standardized.jury_name
+from standardized
+where sj.electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
+  and sj.jury_code = standardized.jury_code;

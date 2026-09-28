@@ -7,7 +7,7 @@ Defines the observable data and workflow behavior for configuring, recording, fi
 ## ADDED Requirements
 
 ### Requirement: Authenticated users can read active activity catalogs
-The system SHALL expose active activity types, assistant types, target audiences, electoral processes, and special electoral juries to authenticated application users. Catalog responses SHALL preserve the codes and Spanish descriptions expected by the existing Angular forms.
+The system SHALL expose active activity types, assistant types, target audiences, electoral processes, and special electoral juries to authenticated application users. Catalog responses SHALL preserve the codes and Spanish descriptions expected by the existing Angular forms. Historical Elecciones Generales 2026 and current ERM 2026 JEE display names SHALL use the same Spanish title style, including applicable accents, without changing their stable identifiers.
 
 #### Scenario: Load registration form catalogs
 - **WHEN** an authenticated active user opens the activity registration form
@@ -23,6 +23,11 @@ The system SHALL expose active activity types, assistant types, target audiences
 #### Scenario: Anonymous catalog request
 - **WHEN** a request without a valid authenticated session reads an application catalog
 - **THEN** the system returns no catalog rows
+
+#### Scenario: Display historical and current JEE catalogs
+- **WHEN** an authorized Monitor or Administrator selects Elecciones Generales 2026 or ERM 2026
+- **THEN** every JEE name uses consistent Spanish title capitalization and applicable accents
+- **AND** the normalization does not change the JEE identifier or any linked activity
 
 ### Requirement: Monitor users manage activity configuration
 The system SHALL allow active Monitor users to create, update, archive, and list activity types and activity formats. A format SHALL reference an active activity type and SHALL contain a topic compatible with the existing form and a series of at most 20 characters. Active formats SHALL have case-insensitively unique series.

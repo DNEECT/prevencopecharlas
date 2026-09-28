@@ -9,6 +9,7 @@
 - [x] 1.5 Add atomic activity-code generation using series plus a four-digit padded counter, transactional registration/participant RPCs, and invoker-security read views; verify concurrent calls cannot create duplicate codes and imported sequence state is respected.
 - [x] 1.6 Seed the 42 source role/action grants, module hierarchy, Monitor/Gestor roles, and known non-sensitive catalogs; verify disabled grants remain disabled and repeated seeds do not duplicate rows.
 - [x] 1.7 Add the ERM 2026 topic, seven process-specific target audiences, 91 JEE, and explicit process relationships while preserving General 2026 historical catalogs.
+- [x] 1.8 Standardize the 61 General 2026 JEE display names to the ERM 2026 Spanish title style, including applicable accents, without changing identifiers or historical activity relationships.
 
 ## 2. Database and Storage Authorization
 
