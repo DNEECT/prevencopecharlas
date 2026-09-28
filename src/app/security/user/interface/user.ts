@@ -74,7 +74,7 @@ export interface UsuarioForm {
 // inicializar formulario y mensajes
 export const usuarioFormGroup: FormGroup<UsuarioForm> = new FormGroup<UsuarioForm>({
   numeroDocumento: new FormControl<string>('', {
-    validators: [Validators.required, Validators.maxLength(20)],
+    validators: [Validators.maxLength(20)],
   }),
   nombres: new FormControl<string>('', {
     validators: [Validators.required, Validators.maxLength(100)],
@@ -89,11 +89,9 @@ export const usuarioFormGroup: FormGroup<UsuarioForm> = new FormGroup<UsuarioFor
     validators: [Validators.required, Validators.maxLength(100), Validators.email],
   }),
   direccion: new FormControl<string>('', {
-    validators: [Validators.required, Validators.maxLength(100)],
+    validators: [Validators.maxLength(100)],
   }),
-  fechaNacimiento: new FormControl<string>('', {
-    validators: [Validators.required],
-  }),
+  fechaNacimiento: new FormControl<string>(''),
   roles: new FormControl<AutoCompleteData[] | null>(null, {
     validators: [Validators.required],
   }),
@@ -101,7 +99,6 @@ export const usuarioFormGroup: FormGroup<UsuarioForm> = new FormGroup<UsuarioFor
 
 export const errorMessagesUsuarioForm: ErrorFields = {
   numeroDocumento: [
-    { required: 'El número de documento es obligatorio.' },
     { maxlength: 'El máximo de caracteres permitidos es 20.' },
   ],
   nombres: [
@@ -122,10 +119,9 @@ export const errorMessagesUsuarioForm: ErrorFields = {
     { email: 'El correo no tiene un formato válido.' },
   ],
   direccion: [
-    { required: 'La dirección es obligatoria.' },
     { maxlength: 'El máximo de caracteres permitidos es 100.' },
   ],
-  fechaNacimiento: [{ required: 'La fecha de nacimiento es obligatoria.' }],
+  fechaNacimiento: [],
   roles: [{ required: 'Seleccione al menos un rol.' }],
 };
 

@@ -56,10 +56,14 @@ function normalizedUser(input: DirectoryRequest['user']) {
   }
   const username = required(input.username, 'El nombre de usuario');
   if (username.length > 20) throw new Error('El nombre de usuario admite hasta 20 caracteres.');
+  const documentNumber = input.numeroDocumento?.trim() || null;
+  if (documentNumber && documentNumber.length > 20) {
+    throw new Error('El número de documento admite hasta 20 caracteres.');
+  }
   const address = input.direccion?.trim() || null;
   if (address && address.length > 100) throw new Error('La dirección admite hasta 100 caracteres.');
   return {
-    numeroDocumento: required(input.numeroDocumento, 'El número de documento'),
+    numeroDocumento: documentNumber,
     nombres: required(input.nombres, 'Los nombres'),
     apellidos: required(input.apellidos, 'Los apellidos'),
     username,
