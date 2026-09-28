@@ -18,6 +18,7 @@
 - [x] 2.4 Create the private `activity-evidence` bucket with 20 MiB and MIME restrictions plus path-based object policies; verify normal uploads, historical photographic PDF import, anonymous denial, creator scope, and authorized signed downloads.
 - [x] 2.5 Add SQL verification scripts for constraints, grants, RLS, role changes, archival behavior, and storage policy helpers; verify all scripts pass against a freshly reset database.
 - [x] 2.6 Enforce ERM 2026 JEE assignments for GPCC and Monitor accounts, retain Administrator global visibility, and make General 2026 historical records read-only and invisible to Gestores.
+- [x] 2.7 Evaluate activity-list RLS against the current row instead of looking it up again for every result; verify the Monitor/Administrator historical count completes without a statement timeout and Gestor scope remains unchanged.
 
 ## 3. Supabase Project Deployment
 
