@@ -177,6 +177,21 @@ usable. Hosted Email OTP expiration is 86,400 seconds (24 hours). Treat every
 link as single-use, never log or retain tokens, and record only aggregate and
 per-recipient delivery status outside Git.
 
+On 28 September 2026, the approved ERM 2026 workbook was reconciled again for
+onboarding delivery. Its two sheets contained 108 unique institutional email
+addresses. Two GPCC rows were excluded because their contractor identities and
+DNI remain pending, leaving 89 active Gestores and 17 active Monitores. All 106
+eligible addresses matched active application profiles and Auth identities. A
+preliminary send was stopped after one accepted message when its wording was
+corrected; the recipient then received the corrected message with the rest of
+the directory. The corrected batch produced 105 accepted deliveries and one
+temporary SMTP timeout, and the failed recipient was accepted on a fresh
+single-recipient retry. The final reconciliation therefore contains 106 unique
+accepted recipients, zero missing workbook recipients, and no stored recovery
+links or tokens. The user-facing message identifies PREVENCOPE Charlas as a
+migrated application without naming its infrastructure providers and does not
+describe the already completed functional validation as a pending user task.
+
 On 23 September 2026, migration `20260923164059_admin_user_management.sql`
 and version 1 of `admin-directory` were deployed. The hosted migration list is
 matched, the function is active with JWT verification enabled, remote schema
