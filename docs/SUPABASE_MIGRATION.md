@@ -191,6 +191,10 @@ accepted recipients, zero missing workbook recipients, and no stored recovery
 links or tokens. The user-facing message identifies PREVENCOPE Charlas as a
 migrated application without naming its infrastructure providers and does not
 describe the already completed functional validation as a pending user task.
+The owner then explicitly added `sfernandeza@jne.gob.pe`, which was not listed
+in the workbook; the institutional relay accepted her separate corrected
+24-hour message with the Monitor and Administrator profile label. This brings
+the authorized delivery population to 107 unique active accounts.
 
 On 23 September 2026, migration `20260923164059_admin_user_management.sql`
 and version 1 of `admin-directory` were deployed. The hosted migration list is
