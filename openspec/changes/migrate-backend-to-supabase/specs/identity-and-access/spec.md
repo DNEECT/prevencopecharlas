@@ -24,6 +24,7 @@ The system SHALL authenticate users through Supabase Auth and SHALL NOT store ap
 
 - **WHEN** password-recovery email delivery has not been verified with the configured SMTP service
 - **THEN** the login screen does not display a self-service recovery link
+- **AND** a direct request to the self-service recovery route returns to login
 - **AND** the password-update route remains available for controlled 24-hour links already delivered by the institutional process
 
 ### Requirement: Roles come from protected database membership

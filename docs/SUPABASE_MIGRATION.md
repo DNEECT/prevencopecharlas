@@ -178,10 +178,10 @@ link as single-use, never log or retain tokens, and record only aggregate and
 per-recipient delivery status outside Git.
 
 The login screen hides self-service password recovery while the configured
-SMTP transport remains unverified. Keep `/actualizar-contrasena` available for
-the controlled 24-hour links delivered through the institutional process. The
-hidden `/recuperar-contrasena` route can be restored to navigation only after a
-successful end-to-end self-service delivery test.
+SMTP transport remains unverified, and `/recuperar-contrasena` redirects to
+login. Keep `/actualizar-contrasena` available for the controlled 24-hour links
+delivered through the institutional process. The hidden recovery route can be
+restored only after a successful end-to-end self-service delivery test.
 
 On 28 September 2026, the approved ERM 2026 workbook was reconciled again for
 onboarding delivery. Its two sheets contained 108 unique institutional email
