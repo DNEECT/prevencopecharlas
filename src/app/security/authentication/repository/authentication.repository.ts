@@ -8,6 +8,7 @@ import {
   MenuItemDatosRespone,
   MenuItemResponse,
 } from '../interface/authentication';
+import { resolveDefaultRoute } from '../utils/default-route';
 
 interface PermissionRow {
   module_id: string;
@@ -62,13 +63,7 @@ export class AuthenticationRepository {
       await this.supabase.auth.signOut();
       throw menuError;
     }
-    const links = menus
-      .flatMap((item) => [item, ...(item.items ?? [])])
-      .map((item) => item.link)
-      .filter((link): link is string => !!link);
-    const first = links.includes(`/${ROUTES_WEB.REGISTRO_ACTIVIDADES}`)
-      ? `/${ROUTES_WEB.REGISTRO_ACTIVIDADES}`
-      : links[0];
+    const first = resolveDefaultRoute(menus);
     if (!first) {
       await this.supabase.auth.signOut();
       throw new Error('La cuenta no tiene permisos activos. Consulte al administrador.');

@@ -49,6 +49,7 @@
 - [x] 4.14 Require only username, institutional email, and at least one role in administrative user creation and editing; keep document number, names, surnames, birth date, and address optional in both Angular and the administrative Edge Function.
 - [x] 4.15 Preselect ERM 2026 in the activity list when it is the only process authorized for a Monitor or Gestor, while leaving the Administrator or Director process filter empty so all authorized records are shown initially.
 - [x] 4.16 Hide Tipo de asistente on ERM 2026 create and edit forms, set its internal No aplica value automatically, and retain the field when displaying historical General 2026 records.
+- [x] 4.17 Link the PREVENCOPE logo and Inicio breadcrumb to the signed-in user's first authorized screen, preferring the activity register when available, and refresh that route from the live permission menu.
 
 ## 5. Legacy Import and Cutover
 

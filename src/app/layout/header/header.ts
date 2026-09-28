@@ -61,6 +61,7 @@ export class Header implements AfterViewInit, OnDestroy, OnInit {
 
   public nombres: string = '';
   public apellidos: string = '';
+  public homeRoute: string = this.authenticationService.getRouteDefault();
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -125,6 +126,7 @@ export class Header implements AfterViewInit, OnDestroy, OnInit {
   ngOnInit(): void {
     this.permissionDataService.data$.pipe(takeUntil(this.destroy$)).subscribe((menuItems) => {
       this.menuItems = menuItems ?? [];
+      this.homeRoute = this.authenticationService.getRouteDefault();
       this.updateActiveFromUrl(this.router.url);
       this.cdr.detectChanges();
     });

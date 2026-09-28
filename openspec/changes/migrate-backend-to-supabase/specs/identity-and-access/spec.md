@@ -41,6 +41,7 @@ An active Monitor SHALL be authorized to manage application profiles, activity c
 Administrative profile creation and editing SHALL require username, institutional email, and at least one role. Document number, names, surnames, birth date, and address SHALL remain optional because migrated and institutional service accounts may not have that personal information.
 
 #### Scenario: Edit a migrated account without optional personal data
+
 - **WHEN** an authorized administrator edits a profile that has no document number, names, surnames, birth date, or address
 - **THEN** the form remains valid when username, institutional email, and at least one role are present
 - **AND** the administrative service stores missing optional values as null without changing the account's identity or role memberships
@@ -115,6 +116,12 @@ The system SHALL expose the effective hierarchical modules and actions for the s
 - **WHEN** an active user can list a child module below Administración or Seguridad
 - **THEN** the header groups that route below its authorized parent menu
 - **AND** a non-functional module without a route is not rendered as a navigation item
+
+#### Scenario: Home controls open the first authorized screen
+
+- **WHEN** an active user selects the PREVENCOPE logo or the Inicio breadcrumb
+- **THEN** the application navigates to that user's first authorized screen
+- **AND** the activity register is preferred when that module is authorized
 
 #### Scenario: Disabled permission grant
 
