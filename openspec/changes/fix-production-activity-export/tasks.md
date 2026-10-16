@@ -26,5 +26,5 @@
 
 - [x] 5.1 Run focused Angular repository, component, and Excel-service tests plus Supabase reporting/authorization tests; verify all suites pass.
 - [x] 5.2 Run the production build; verify it completes without new TypeScript, bundling, or size-budget failures attributable to the change.
-- [ ] 5.3 In a production-like browser session as Director, export the unfiltered 1,681+ row result and a filtered result; verify each action downloads exactly one valid `.xlsx`, row counts match the authorized list, representative participant totals match, and loading returns to idle.
-- [ ] 5.4 Record deployment and rollback evidence; verify the release requires no deletion or rewrite of registered activities and any database optimization is independently reversible by a forward migration.
+- [x] 5.3 In a production-like browser session as Director, export the unfiltered 1,681+ row result and a filtered result; verify each action downloads exactly one valid `.xlsx`, row counts match the authorized list, representative participant totals match, and loading returns to idle.
+- [x] 5.4 Record deployment and rollback evidence; verify the release requires no deletion or rewrite of registered activities and any database optimization is independently reversible by a forward migration.
