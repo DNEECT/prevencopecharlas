@@ -59,6 +59,7 @@ class ListActivityRegister implements OnInit {
   };
 
   public loading: boolean = false;
+  public listLoadFailed: boolean = false;
   public dataSourceRegistroActividades: RegistroActividadResponseTable[] = [];
 
   protected listjuradoNacionalEspecial: AutoCompleteData[] = [];
@@ -98,6 +99,7 @@ class ListActivityRegister implements OnInit {
 
   public paginar() {
     this.dataSourceRegistroActividades = [];
+    this.listLoadFailed = false;
     this.loading = true;
     this.activityRegisterService
       .listar(
@@ -126,6 +128,11 @@ class ListActivityRegister implements OnInit {
         },
         error: () => {
           this.dataSourceRegistroActividades = [];
+          this.paginationData.length = 0;
+          this.listLoadFailed = true;
+          this.snackBarService.openErrorSnackBar(
+            'No se pudieron cargar los registros. Inténtelo nuevamente.',
+          );
         },
       });
   }
@@ -324,30 +331,31 @@ class ListActivityRegister implements OnInit {
     });
   }
 
-  public exportRegistros() {
+  public async exportRegistros(): Promise<void> {
     this.dialogService.openLoadingWindow();
-    this.activityRegisterService
-      .listar(
-        null,
-        null,
-        this.formFilter.value.procesoElectoral?.key,
-        this.formFilter.value.juradoNacionalEspecial?.key,
-        this.formFilter.value.terminoBusqueda,
-      )
-      .pipe(
-        finalize(() => {
-          this.dialogService.closeDialog();
-          this.cdr.detectChanges();
-        }),
-      )
-      .subscribe({
-        next: (response: RegistroActividadPaginateResponse) => {
-          const mappedRows: RegistroActividadResponseTable[] = this.rowMapActivityRegister(
-            response.registroActividades,
-          );
-          this.exportRegistro(mappedRows).then();
-        },
-      });
+    try {
+      const registros = await firstValueFrom(
+        this.activityRegisterService.listarTodos(
+          this.formFilter.value.procesoElectoral?.key,
+          this.formFilter.value.juradoNacionalEspecial?.key,
+          this.formFilter.value.terminoBusqueda,
+        ),
+      );
+      if (registros.length === 0) {
+        this.snackBarService.openWarningSnackBar('No hay registros para exportar.');
+        return;
+      }
+      const mappedRows = this.rowMapActivityRegister(registros);
+      await this.exportRegistro(mappedRows);
+      this.snackBarService.openSuccessSnackBar('Reporte exportado correctamente.');
+    } catch {
+      this.snackBarService.openErrorSnackBar(
+        'No se pudo generar el reporte. Inténtelo nuevamente.',
+      );
+    } finally {
+      this.dialogService.closeDialog();
+      this.cdr.detectChanges();
+    }
   }
 
   public async exportRegistro(registros: RegistroActividadResponseTable[]): Promise<void> {
@@ -367,7 +375,7 @@ class ListActivityRegister implements OnInit {
       Observaciones: registro.observaciones ?? '',
       'Cantidad de participantes': registro.cantidadParticipantes,
     }));
-    this.excelService.jsonToExcel(rows, fileName).then();
+    await this.excelService.jsonToExcel(rows, fileName);
   }
 }
 
