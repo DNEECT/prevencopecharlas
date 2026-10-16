@@ -15,27 +15,62 @@ function queryResult(result: unknown) {
 }
 
 const activityRow = {
-  id: 'activity-1', code: 'PREV0007', place: 'Lima',
-  activity_date: '2026-09-22', activity_time: '10:30:00',
-  activity_format_id: 'format-1', activity_type_id: 'type-1',
-  activity_type_name: 'Charla', assistant_type_id: 'assistant-1',
-  assistant_type_name: 'Ciudadanía', target_audience_id: 'target-1',
-  target_audience_name: 'Público general', electoral_process_id: 'process-1',
-  electoral_process_name: 'Elecciones', special_jury_id: 'jury-1',
-  jury_name: 'JEE Lima', topic: 'Prevención', series: 'PREV', next_number: 8,
+  id: 'activity-1',
+  code: 'PREV0007',
+  place: 'Lima',
+  activity_date: '2026-09-22',
+  activity_time: '10:30:00',
+  activity_format_id: 'format-1',
+  activity_type_id: 'type-1',
+  activity_type_name: 'Charla',
+  assistant_type_id: 'assistant-1',
+  assistant_type_name: 'Ciudadanía',
+  target_audience_id: 'target-1',
+  target_audience_name: 'Público general',
+  electoral_process_id: 'process-1',
+  electoral_process_name: 'Elecciones',
+  special_jury_id: 'jury-1',
+  jury_name: 'JEE Lima',
+  topic: 'Prevención',
+  series: 'PREV',
+  next_number: 8,
   participant_count: 1,
+};
+
+const secondActivityRow = {
+  ...activityRow,
+  id: 'activity-2',
+  code: 'PREV0006',
+  electoral_process_id: 'process-2',
+  electoral_process_name: 'Elecciones históricas',
 };
 
 const request = {
   datos: {
-    codTipoActividad: 'type-1', tema: 'format-1', codTipoAsistentes: 'assistant-1',
-    codPublicoObjetivo: 'target-1', lugar: 'Lima', codProcesoElectoral: 'process-1',
-    codJuradoNacionalEspecial: 'jury-1', fecha: '2026-09-22', hora: '10:30',
-    preguntas: 'Preguntas', recomendaciones: 'Recomendaciones',
-    participantes: [{
-      dni: '12345678', nombresCompletos: 'Persona Uno', sexo: 'F', edad: 30,
-      organizacion: 'JNE', cargo: null, telefono: null, correo: null, poblacion: null,
-    }],
+    codTipoActividad: 'type-1',
+    tema: 'format-1',
+    codTipoAsistentes: 'assistant-1',
+    codPublicoObjetivo: 'target-1',
+    lugar: 'Lima',
+    codProcesoElectoral: 'process-1',
+    codJuradoNacionalEspecial: 'jury-1',
+    fecha: '2026-09-22',
+    hora: '10:30',
+    preguntas: 'Preguntas',
+    recomendaciones: 'Recomendaciones',
+    participantes: [
+      {
+        dni: '12345678',
+        nombresCompletos: 'Persona Uno',
+        sexo: 'F',
+        edad: 30,
+        organizacion: 'JNE',
+        cargo: null,
+        telefono: null,
+        correo: null,
+        poblacion: null,
+      },
+    ],
   },
 };
 
@@ -44,7 +79,10 @@ describe('ActivityRegisterRepository', () => {
   let client: any;
 
   beforeEach(() => {
-    client = { from: jasmine.createSpy('from'), rpc: jasmine.createSpy('rpc') };
+    client = {
+      from: jasmine.createSpy('from'),
+      rpc: jasmine.createSpy('rpc').and.returnValue(Promise.resolve({ data: 1, error: null })),
+    };
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
@@ -68,45 +106,147 @@ describe('ActivityRegisterRepository', () => {
     expect(query.eq).toHaveBeenCalledWith('special_jury_id', 'jury-1');
     expect(query.ilike).toHaveBeenCalledWith('code', '%PREV%');
     expect(query.range).toHaveBeenCalledWith(0, 19);
-    expect(response.registroActividades[0]).toEqual(jasmine.objectContaining({
-      codigoRegistroActividad: 'activity-1', codigo: 'PREV0007',
-      nombreJuradoNacionalEspecial: 'JEE Lima', cantidadParticipantes: 1,
-    }));
+    expect(response.registroActividades[0]).toEqual(
+      jasmine.objectContaining({
+        codigoRegistroActividad: 'activity-1',
+        codigo: 'PREV0007',
+        nombreJuradoNacionalEspecial: 'JEE Lima',
+        cantidadParticipantes: 1,
+      }),
+    );
+  });
+
+  it('loads an unfiltered Director page and obtains paginator metadata separately', async () => {
+    const query = queryResult({ data: [activityRow, secondActivityRow], error: null });
+    client.from.and.returnValue(query);
+    client.rpc.and.returnValue(Promise.resolve({ data: 2, error: null }));
+
+    const response = await firstValueFrom(repository.listar(0, 5, null, null, null));
+
+    expect(query.select).toHaveBeenCalledOnceWith('*');
+    expect(query.eq).not.toHaveBeenCalled();
+    expect(query.ilike).not.toHaveBeenCalled();
+    expect(query.range).toHaveBeenCalledOnceWith(0, 4);
+    expect(client.rpc).toHaveBeenCalledOnceWith('count_authorized_activities', {
+      p_process_id: null,
+      p_jury_id: null,
+      p_search: null,
+    });
+    expect(response.registroActividades.map((row) => row.codigoRegistroActividad)).toEqual([
+      'activity-1',
+      'activity-2',
+    ]);
+    expect(response.totalElementos).toBe(2);
+  });
+
+  it('passes page filters to both the bounded row query and authorized count', async () => {
+    const query = queryResult({ data: [activityRow], error: null });
+    client.from.and.returnValue(query);
+    client.rpc.and.returnValue(Promise.resolve({ data: 1, error: null }));
+
+    await firstValueFrom(repository.listar(1, 20, 'process-1', 'jury-1', ' PREV '));
+
+    expect(query.eq).toHaveBeenCalledWith('electoral_process_id', 'process-1');
+    expect(query.eq).toHaveBeenCalledWith('special_jury_id', 'jury-1');
+    expect(query.ilike).toHaveBeenCalledWith('code', '%PREV%');
+    expect(query.range).toHaveBeenCalledOnceWith(20, 39);
+    expect(client.rpc).toHaveBeenCalledOnceWith('count_authorized_activities', {
+      p_process_id: 'process-1',
+      p_jury_id: 'jury-1',
+      p_search: 'PREV',
+    });
+  });
+
+  it('aggregates a multi-page export once in stable order without exact counts', async () => {
+    const firstPage = queryResult({ data: [activityRow, secondActivityRow], error: null });
+    const finalPage = queryResult({
+      data: [{ ...activityRow, id: 'activity-3', code: 'PREV0005' }],
+      error: null,
+    });
+    client.from.and.returnValues(firstPage, finalPage);
+
+    const response: any[] = await firstValueFrom(
+      (repository as any).listarTodos(null, null, null, 2),
+    );
+
+    expect(client.from).toHaveBeenCalledTimes(2);
+    expect(firstPage.select).toHaveBeenCalledOnceWith('*');
+    expect(firstPage.order.calls.allArgs()).toEqual([
+      ['created_at', { ascending: false }],
+      ['id', { ascending: false }],
+    ]);
+    expect(firstPage.range).toHaveBeenCalledOnceWith(0, 1);
+    expect(finalPage.range).toHaveBeenCalledOnceWith(2, 3);
+    expect(client.rpc).not.toHaveBeenCalled();
+    expect(response.map((row) => row.codigoRegistroActividad)).toEqual([
+      'activity-1',
+      'activity-2',
+      'activity-3',
+    ]);
   });
 
   it('loads participants, detail fields, and unavailable legacy evidence', async () => {
     const queries: Record<string, any[]> = {
       activity_list: [queryResult({ data: activityRow, error: null })],
-      activity_registrations: [queryResult({
-        data: {
-          observations: 'Observación', questions: 'Preguntas',
-          recommendations: 'Recomendaciones', legacy_attendance_path: 'legacy/lista.pdf',
-          legacy_photo_path: null,
-        },
-        error: null,
-      })],
-      activity_evidence: [queryResult({
-        data: [{
-          kind: 'attendance-list', object_path: null, is_available: false,
-          legacy_reference: 'legacy/lista.pdf', original_name: 'lista.pdf',
-        }],
-        error: null,
-      })],
-      activity_participants: [queryResult({
-        data: [{
-          dni: '12345678', full_name: 'Persona Uno', sex: 'F', age: 30,
-          organization: 'JNE', position: null, phone: null, email: null, population: null,
-        }],
-        error: null,
-      })],
+      activity_registrations: [
+        queryResult({
+          data: {
+            observations: 'Observación',
+            questions: 'Preguntas',
+            recommendations: 'Recomendaciones',
+            legacy_attendance_path: 'legacy/lista.pdf',
+            legacy_photo_path: null,
+          },
+          error: null,
+        }),
+      ],
+      activity_evidence: [
+        queryResult({
+          data: [
+            {
+              kind: 'attendance-list',
+              object_path: null,
+              is_available: false,
+              legacy_reference: 'legacy/lista.pdf',
+              original_name: 'lista.pdf',
+            },
+          ],
+          error: null,
+        }),
+      ],
+      activity_participants: [
+        queryResult({
+          data: [
+            {
+              dni: '12345678',
+              full_name: 'Persona Uno',
+              sex: 'F',
+              age: 30,
+              organization: 'JNE',
+              position: null,
+              phone: null,
+              email: null,
+              population: null,
+            },
+          ],
+          error: null,
+        }),
+      ],
     };
     client.from.and.callFake((table: string) => queries[table].shift());
 
     const response = await firstValueFrom(repository.obtener('activity-1'));
 
     expect(response.datos.participantes[0]).toEqual({
-      dni: '12345678', nombresCompletos: 'Persona Uno', sexo: 'F', edad: 30,
-      organizacion: 'JNE', cargo: '', telefono: '', correo: '', poblacion: '',
+      dni: '12345678',
+      nombresCompletos: 'Persona Uno',
+      sexo: 'F',
+      edad: 30,
+      organizacion: 'JNE',
+      cargo: '',
+      telefono: '',
+      correo: '',
+      poblacion: '',
     });
     expect(response.datos.adjuntoListaAsistentes).toBeNull();
     expect(response.datos.adjuntoListaAsistentesNoDisponible).toBe('lista.pdf');
@@ -114,22 +254,34 @@ describe('ActivityRegisterRepository', () => {
   });
 
   it('sends create and replace through transactional RPCs with participants', async () => {
-    client.rpc.and.callFake((name: string) => Promise.resolve(name === 'create_activity'
-      ? { data: [{ activity_id: 'activity-1', activity_code: 'PREV0007' }], error: null }
-      : { data: null, error: null }));
+    client.rpc.and.callFake((name: string) =>
+      Promise.resolve(
+        name === 'create_activity'
+          ? { data: [{ activity_id: 'activity-1', activity_code: 'PREV0007' }], error: null }
+          : { data: null, error: null },
+      ),
+    );
 
     const created = await firstValueFrom(repository.crear(request));
     await firstValueFrom(repository.actualizar(request, 'activity-1'));
     await firstValueFrom(repository.eliminar('activity-1'));
 
     expect(created.datos).toEqual({ codigo: 'activity-1', mensaje: 'PREV0007' });
-    expect(client.rpc).toHaveBeenCalledWith('create_activity', jasmine.objectContaining({
-      p_format_id: 'format-1', p_jury_id: 'jury-1',
-      p_participants: request.datos.participantes,
-    }));
-    expect(client.rpc).toHaveBeenCalledWith('replace_activity', jasmine.objectContaining({
-      p_activity_id: 'activity-1', p_participants: request.datos.participantes,
-    }));
+    expect(client.rpc).toHaveBeenCalledWith(
+      'create_activity',
+      jasmine.objectContaining({
+        p_format_id: 'format-1',
+        p_jury_id: 'jury-1',
+        p_participants: request.datos.participantes,
+      }),
+    );
+    expect(client.rpc).toHaveBeenCalledWith(
+      'replace_activity',
+      jasmine.objectContaining({
+        p_activity_id: 'activity-1',
+        p_participants: request.datos.participantes,
+      }),
+    );
     expect(client.rpc).toHaveBeenCalledWith('archive_activity', {
       p_activity_id: 'activity-1',
     });
@@ -147,27 +299,57 @@ describe('ActivityRegisterRepository', () => {
 describe('evidenceForKind', () => {
   it('shows a missing historical reference without making it downloadable', () => {
     expect(evidenceForKind([], 'attendance-list', 'legacy/lista.pdf')).toEqual({
-      path: null, unavailable: 'legacy/lista.pdf',
+      path: null,
+      unavailable: 'legacy/lista.pdf',
     });
   });
 
   it('uses an unavailable evidence record when no Storage object exists', () => {
-    expect(evidenceForKind([
-      { kind: 'photographic-record', object_path: null, legacy_reference: 'legacy/photo.jpg',
-        original_name: 'photo.jpg', is_available: false },
-    ], 'photographic-record', null)).toEqual({
-      path: null, unavailable: 'photo.jpg',
+    expect(
+      evidenceForKind(
+        [
+          {
+            kind: 'photographic-record',
+            object_path: null,
+            legacy_reference: 'legacy/photo.jpg',
+            original_name: 'photo.jpg',
+            is_available: false,
+          },
+        ],
+        'photographic-record',
+        null,
+      ),
+    ).toEqual({
+      path: null,
+      unavailable: 'photo.jpg',
     });
   });
 
   it('prefers a verified Storage object over an unavailable reference', () => {
-    expect(evidenceForKind([
-      { kind: 'attendance-list', object_path: null, legacy_reference: 'old.pdf',
-        original_name: null, is_available: false },
-      { kind: 'attendance-list', object_path: 'activity/attendance-list/new.pdf',
-        legacy_reference: null, original_name: 'new.pdf', is_available: true },
-    ], 'attendance-list', 'old.pdf')).toEqual({
-      path: 'activity/attendance-list/new.pdf', unavailable: null,
+    expect(
+      evidenceForKind(
+        [
+          {
+            kind: 'attendance-list',
+            object_path: null,
+            legacy_reference: 'old.pdf',
+            original_name: null,
+            is_available: false,
+          },
+          {
+            kind: 'attendance-list',
+            object_path: 'activity/attendance-list/new.pdf',
+            legacy_reference: null,
+            original_name: 'new.pdf',
+            is_available: true,
+          },
+        ],
+        'attendance-list',
+        'old.pdf',
+      ),
+    ).toEqual({
+      path: 'activity/attendance-list/new.pdf',
+      unavailable: null,
     });
   });
 });

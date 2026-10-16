@@ -37,9 +37,19 @@ export class ActivityRegisterService {
   }
 
   public select(): Observable<RegistroActividadResponse[]> {
-    return this.activityRegisterRepository
-      .listar(null, null, null, null, null)
-      .pipe(map((response: RegistroActividadPaginateResponse) => response.registroActividades));
+    return this.activityRegisterRepository.listarTodos(null, null, null);
+  }
+
+  public listarTodos(
+    codProcesoElectoral: string | null | undefined,
+    codJuradoNacionalEspecial: string | null | undefined,
+    terminoBusqueda: string | null | undefined,
+  ): Observable<RegistroActividadResponse[]> {
+    return this.activityRegisterRepository.listarTodos(
+      codProcesoElectoral,
+      codJuradoNacionalEspecial,
+      terminoBusqueda,
+    );
   }
 
   public obtener(codigoRegistroActividad: string): Observable<RegistroActividadResponse> {

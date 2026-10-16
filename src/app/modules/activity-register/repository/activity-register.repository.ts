@@ -69,33 +69,82 @@ export class ActivityRegisterRepository {
   private readonly supabaseService = inject(SupabaseService);
   private get client() { return this.supabaseService.client; }
 
-  public listar(page: number | null, size: number | null,
-    processId: string | null | undefined, juryId: string | null | undefined,
-    search: string | null | undefined): Observable<RegistroActividadPaginateResponse> {
-    return from((async () => {
-      const fetchPage = async (start: number, end: number) => {
-        let query = this.client.from('activity_list').select('*', { count: 'exact' })
-          .order('created_at', { ascending: false }).order('id', { ascending: false });
-        if (processId) query = query.eq('electoral_process_id', processId);
-        if (juryId) query = query.eq('special_jury_id', juryId);
-        if (search?.trim()) query = query.ilike('code', `%${search.trim()}%`);
-        return query.range(start, end);
-      };
-      const rows: ActivityRow[] = [];
-      let total = 0;
-      const chunkSize = size ?? 500;
-      for (let index = page === null ? 0 : page * chunkSize;; index += chunkSize) {
-        const { data, count, error } = await fetchPage(index, index + chunkSize - 1);
-        if (error) throw error;
-        rows.push(...((data ?? []) as ActivityRow[]));
-        total = count ?? 0;
-        if (page !== null || rows.length >= total || !data?.length) break;
-      }
-      return {
-        registroActividades: rows.map(mapRow),
-        totalElementos: total, numeroPagina: page ?? 0, tamanioPagina: size ?? total,
-      };
-    })());
+  private buildListQuery(
+    processId: string | null | undefined,
+    juryId: string | null | undefined,
+    search: string | null | undefined,
+  ): any {
+    let query = this.client
+      .from('activity_list')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .order('id', { ascending: false });
+    if (processId) query = query.eq('electoral_process_id', processId);
+    if (juryId) query = query.eq('special_jury_id', juryId);
+    if (search?.trim()) query = query.ilike('code', `%${search.trim()}%`);
+    return query;
+  }
+
+  public listar(
+    page: number | null,
+    size: number | null,
+    processId: string | null | undefined,
+    juryId: string | null | undefined,
+    search: string | null | undefined,
+  ): Observable<RegistroActividadPaginateResponse> {
+    return from(
+      (async () => {
+        const pageNumber = page ?? 0;
+        const pageSize = size ?? 5;
+        const start = pageNumber * pageSize;
+        const normalizedSearch = search?.trim() || null;
+        const [pageResult, countResult] = await Promise.all([
+          this.buildListQuery(processId, juryId, normalizedSearch).range(
+            start,
+            start + pageSize - 1,
+          ),
+          this.client.rpc('count_authorized_activities', {
+            p_process_id: processId ?? null,
+            p_jury_id: juryId ?? null,
+            p_search: normalizedSearch,
+          }),
+        ]);
+        if (pageResult.error) throw pageResult.error;
+        if (countResult.error) throw countResult.error;
+        const rows = (pageResult.data ?? []) as ActivityRow[];
+        return {
+          registroActividades: rows.map(mapRow),
+          totalElementos: Number(countResult.data ?? 0),
+          numeroPagina: pageNumber,
+          tamanioPagina: pageSize,
+        };
+      })(),
+    );
+  }
+
+  public listarTodos(
+    processId: string | null | undefined,
+    juryId: string | null | undefined,
+    search: string | null | undefined,
+    chunkSize: number = 100,
+  ): Observable<RegistroActividadResponse[]> {
+    return from(
+      (async () => {
+        const rows: ActivityRow[] = [];
+        const boundedChunkSize = Math.max(1, Math.min(chunkSize, 500));
+        for (let start = 0; ; start += boundedChunkSize) {
+          const { data, error } = await this.buildListQuery(processId, juryId, search).range(
+            start,
+            start + boundedChunkSize - 1,
+          );
+          if (error) throw error;
+          const pageRows = (data ?? []) as ActivityRow[];
+          rows.push(...pageRows);
+          if (pageRows.length < boundedChunkSize) break;
+        }
+        return rows.map(mapRow);
+      })(),
+    );
   }
 
   public obtener(id: string): Observable<RegistroActividadDatosResponse> {
