@@ -3,11 +3,15 @@ import { TestBed } from '@angular/core/testing';
 import { firstValueFrom } from 'rxjs';
 
 import { SupabaseService } from '@shared/service/supabase/supabase.service';
-import { ActivityRegisterRepository, evidenceForKind } from './activity-register.repository';
+import {
+  ActivityExportRetrievalError,
+  ActivityRegisterRepository,
+  evidenceForKind,
+} from './activity-register.repository';
 
 function queryResult(result: unknown) {
   const query: any = {};
-  ['select', 'eq', 'order', 'range', 'single', 'ilike'].forEach((method) => {
+  ['select', 'eq', 'order', 'range', 'single', 'ilike', 'or', 'limit'].forEach((method) => {
     query[method] = jasmine.createSpy(method).and.returnValue(query);
   });
   query.then = (resolve: (value: unknown) => unknown) => Promise.resolve(result).then(resolve);
@@ -35,6 +39,7 @@ const activityRow = {
   series: 'PREV',
   next_number: 8,
   participant_count: 1,
+  created_at: '2026-10-16T12:00:00.000Z',
 };
 
 const secondActivityRow = {
@@ -157,32 +162,82 @@ describe('ActivityRegisterRepository', () => {
     });
   });
 
-  it('aggregates a multi-page export once in stable order without exact counts', async () => {
-    const firstPage = queryResult({ data: [activityRow, secondActivityRow], error: null });
-    const finalPage = queryResult({
-      data: [{ ...activityRow, id: 'activity-3', code: 'PREV0005' }],
-      error: null,
-    });
-    client.from.and.returnValues(firstPage, finalPage);
+  it('exports 1,681 rows once with tied timestamps and participant totals', async () => {
+    const rows = Array.from({ length: 1681 }, (_, index) => ({
+      ...activityRow,
+      id: `activity-${String(1681 - index).padStart(4, '0')}`,
+      code: `PREV${String(1681 - index).padStart(4, '0')}`,
+      created_at: `2026-10-${String(16 - Math.floor(index / 500)).padStart(2, '0')}T12:00:00.000Z`,
+      participant_count: index % 79,
+    }));
+    const pages = [
+      rows.slice(0, 500),
+      rows.slice(500, 1000),
+      rows.slice(1000, 1500),
+      rows.slice(1500),
+    ];
+    const queries = pages.map((data) => queryResult({ data, error: null }));
+    client.from.and.returnValues(...queries);
 
-    const response: any[] = await firstValueFrom(
-      (repository as any).listarTodos(null, null, null, 2),
-    );
+    const response = await firstValueFrom(repository.listarTodos(null, null, null));
 
-    expect(client.from).toHaveBeenCalledTimes(2);
+    expect(client.from).toHaveBeenCalledTimes(4);
+    expect(new Set(response.map((row) => row.codigoRegistroActividad)).size).toBe(1681);
+    expect(response.length).toBe(1681);
+    expect(response[78].cantidadParticipantes).toBe(78);
+    const firstPage = queries[0];
     expect(firstPage.select).toHaveBeenCalledOnceWith('*');
     expect(firstPage.order.calls.allArgs()).toEqual([
       ['created_at', { ascending: false }],
       ['id', { ascending: false }],
     ]);
-    expect(firstPage.range).toHaveBeenCalledOnceWith(0, 1);
-    expect(finalPage.range).toHaveBeenCalledOnceWith(2, 3);
+    expect(firstPage.limit).toHaveBeenCalledOnceWith(500);
+    expect(queries[1].or).toHaveBeenCalledWith(
+      'created_at.lt.2026-10-16T12:00:00.000Z,and(created_at.eq.2026-10-16T12:00:00.000Z,id.lt.activity-1182)',
+    );
+    expect(queries[3].limit).toHaveBeenCalledOnceWith(500);
     expect(client.rpc).not.toHaveBeenCalled();
-    expect(response.map((row) => row.codigoRegistroActividad)).toEqual([
-      'activity-1',
-      'activity-2',
-      'activity-3',
-    ]);
+  });
+
+  it('applies all filters to every keyset page', async () => {
+    const firstPage = queryResult({ data: [activityRow, secondActivityRow], error: null });
+    const finalPage = queryResult({ data: [], error: null });
+    client.from.and.returnValues(firstPage, finalPage);
+
+    await firstValueFrom(repository.listarTodos('process-1', 'jury-1', ' PREV ', 2));
+
+    for (const query of [firstPage, finalPage]) {
+      expect(query.eq).toHaveBeenCalledWith('electoral_process_id', 'process-1');
+      expect(query.eq).toHaveBeenCalledWith('special_jury_id', 'jury-1');
+      expect(query.ilike).toHaveBeenCalledWith('code', '%PREV%');
+    }
+    expect(finalPage.or).toHaveBeenCalledWith(
+      'created_at.lt.2026-10-16T12:00:00.000Z,and(created_at.eq.2026-10-16T12:00:00.000Z,id.lt.activity-2)',
+    );
+  });
+
+  it('aborts after a later export page fails with safe retrieval diagnostics', async () => {
+    const firstPage = queryResult({ data: [activityRow, secondActivityRow], error: null });
+    const failedPage = queryResult({
+      data: null,
+      error: { code: '57014', status: 500, message: 'statement timeout', details: 'row data' },
+    });
+    client.from.and.returnValues(firstPage, failedPage);
+
+    let failure: unknown;
+    try {
+      await firstValueFrom(repository.listarTodos(null, null, null, 2));
+    } catch (error) {
+      failure = error;
+    }
+
+    expect(client.from).toHaveBeenCalledTimes(2);
+    expect(failure).toEqual(jasmine.any(ActivityExportRetrievalError));
+    const retrievalFailure = failure as ActivityExportRetrievalError;
+    expect(retrievalFailure.page).toBe(1);
+    expect(retrievalFailure.sourceCode).toBe('57014');
+    expect(retrievalFailure.sourceMessage).toBe('statement timeout');
+    expect(retrievalFailure as any).not.toEqual(jasmine.objectContaining({ details: 'row data' }));
   });
 
   it('loads participants, detail fields, and unavailable legacy evidence', async () => {

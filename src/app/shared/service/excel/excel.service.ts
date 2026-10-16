@@ -35,7 +35,7 @@ export class ExcelService {
     if (data.length === 0) {
       throw new Error('No hay datos para exportar.');
     }
-    const workbook = new ExcelJS.Workbook();
+    const workbook = this.createWorkbook();
     const worksheet = workbook.addWorksheet('Datos');
 
     // Agregar encabezados
@@ -49,6 +49,10 @@ export class ExcelService {
     // Generar buffer
     const buffer = await workbook.xlsx.writeBuffer();
     this.saveAsExcelFile(buffer, fileName);
+  }
+
+  private createWorkbook(): ExcelJS.Workbook {
+    return new ExcelJS.Workbook();
   }
 
   private saveAsExcelFile(buffer: BlobPart, fileName: string): void {

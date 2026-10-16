@@ -32,7 +32,7 @@ select
   time '09:00',
   timestamptz '2026-10-01 12:00:00+00' - (series * interval '1 second'),
   '00000000-0000-4000-8000-000000000501'
-from generate_series(1, 1500) series
+from generate_series(1, 1681) series
 cross join lateral (
   select id from public.electoral_processes
   where is_active order by accepts_registrations, id limit 1
@@ -71,23 +71,21 @@ select set_config(
 
 \timing on
 
-savepoint expected_timeout;
-set local statement_timeout = '500ms';
-\set ON_ERROR_STOP off
-\set VERBOSITY verbose
-select *
-from public.activity_list
-order by created_at desc, id desc
-limit 5;
-\set VERBOSITY default
-rollback to savepoint expected_timeout;
-\set ON_ERROR_STOP on
+-- One client export page must stay inside this local performance budget.
+set local statement_timeout = '2s';
+select count(*) as first_export_page_rows
+from (
+  select *
+  from public.activity_list
+  order by created_at desc, id desc
+  limit 500
+) export_page;
 
 explain (analyze, buffers, settings)
 select *
 from public.activity_list
 order by created_at desc, id desc
-limit 5;
+limit 500;
 
 explain (analyze, buffers, settings)
 select count(*)
@@ -98,6 +96,6 @@ select *
 from public.activity_list
 where electoral_process_id = '29dc3419-0606-4a86-a816-9012a9414743'
 order by created_at desc, id desc
-limit 5;
+limit 500;
 
 rollback;
