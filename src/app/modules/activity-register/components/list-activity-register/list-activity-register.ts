@@ -25,6 +25,7 @@ import { FormFieldAutoCompleteComponent } from '@shared/components/form-field-au
 import { FormFieldInputComponent } from '@shared/components/form-field-input/form-field-input.component';
 import { ELECTORAL_PROCESS } from '@modules/activity-register/const/electoral-process.const';
 import { ElectoralprocessService } from '@modules/activity-register/service/electoralprocess.service';
+import { ActivityExportRetrievalError } from '@modules/activity-register/repository/activity-register.repository';
 
 @Component({
   selector: 'app-list-activity-register',
@@ -333,6 +334,7 @@ class ListActivityRegister implements OnInit {
 
   public async exportRegistros(): Promise<void> {
     this.dialogService.openLoadingWindow();
+    let phase: 'retrieval' | 'workbook' = 'retrieval';
     try {
       const registros = await firstValueFrom(
         this.activityRegisterService.listarTodos(
@@ -345,10 +347,12 @@ class ListActivityRegister implements OnInit {
         this.snackBarService.openWarningSnackBar('No hay registros para exportar.');
         return;
       }
+      phase = 'workbook';
       const mappedRows = this.rowMapActivityRegister(registros);
       await this.exportRegistro(mappedRows);
       this.snackBarService.openSuccessSnackBar('Reporte exportado correctamente.');
-    } catch {
+    } catch (error) {
+      this.logExportFailure(phase, error);
       this.snackBarService.openErrorSnackBar(
         'No se pudo generar el reporte. Inténtelo nuevamente.',
       );
@@ -356,6 +360,25 @@ class ListActivityRegister implements OnInit {
       this.dialogService.closeDialog();
       this.cdr.detectChanges();
     }
+  }
+
+  private logExportFailure(phase: 'retrieval' | 'workbook', error: unknown): void {
+    if (error instanceof ActivityExportRetrievalError) {
+      console.error('[activity-export] failed', {
+        phase: error.phase,
+        page: error.page,
+        cursor: error.cursor,
+        code: error.sourceCode,
+        status: error.sourceStatus,
+        message: error.sourceMessage,
+      });
+      return;
+    }
+    console.error('[activity-export] failed', {
+      phase,
+      name: error instanceof Error ? error.name : 'UnknownError',
+      message: error instanceof Error ? error.message : 'Error no identificado.',
+    });
   }
 
   public async exportRegistro(registros: RegistroActividadResponseTable[]): Promise<void> {

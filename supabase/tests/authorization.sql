@@ -59,11 +59,13 @@ insert into public.role_module_actions(id,module_id,role_module_id,module_action
 
 insert into public.activity_types(id,name) values ('00000000-0000-4000-8000-000000000229','Type');
 insert into public.assistant_types(id,name) values ('00000000-0000-4000-8000-000000000230','Assistant');
-insert into public.target_audiences(id,name) values ('00000000-0000-4000-8000-000000000231','Audience');
 insert into public.electoral_processes(id,name) values ('00000000-0000-4000-8000-000000000232','Process');
-insert into public.special_juries(id,jury_name) values ('00000000-0000-4000-8000-000000000233','Jury');
-insert into public.activity_formats(id,activity_type_id,topic,series) values
-  ('00000000-0000-4000-8000-000000000234','00000000-0000-4000-8000-000000000229','Topic','FIX');
+insert into public.target_audiences(id,name,electoral_process_id) values
+  ('00000000-0000-4000-8000-000000000231','Audience','00000000-0000-4000-8000-000000000232');
+insert into public.special_juries(id,jury_name,electoral_process_id) values
+  ('00000000-0000-4000-8000-000000000233','Jury','00000000-0000-4000-8000-000000000232');
+insert into public.activity_formats(id,activity_type_id,topic,series,electoral_process_id) values
+  ('00000000-0000-4000-8000-000000000234','00000000-0000-4000-8000-000000000229','Topic','FIX','00000000-0000-4000-8000-000000000232');
 insert into public.activity_registrations(id,code,activity_format_id,assistant_type_id,target_audience_id,electoral_process_id,special_jury_id,place,activity_date,activity_time,created_by) values
   ('00000000-0000-4000-8000-000000000235','FIX0001','00000000-0000-4000-8000-000000000234','00000000-0000-4000-8000-000000000230','00000000-0000-4000-8000-000000000231','00000000-0000-4000-8000-000000000232','00000000-0000-4000-8000-000000000233','Place A','2026-09-21','12:00','00000000-0000-4000-8000-000000000202'),
   ('00000000-0000-4000-8000-000000000236','FIX0002','00000000-0000-4000-8000-000000000234','00000000-0000-4000-8000-000000000230','00000000-0000-4000-8000-000000000231','00000000-0000-4000-8000-000000000232','00000000-0000-4000-8000-000000000233','Place B','2026-09-21','13:00','00000000-0000-4000-8000-000000000203');

@@ -12,6 +12,7 @@ import { MENU_ACTIONS_ITEM } from '@shared/const/menu-acciones.const';
 import { ExcelService } from '@shared/service/excel/excel.service';
 import { ElectoralprocessService } from '@modules/activity-register/service/electoralprocess.service';
 import { SpecialnationaljuryService } from '@modules/activity-register/service/specialnationaljury.service';
+import { ActivityExportRetrievalError } from '@modules/activity-register/repository/activity-register.repository';
 
 const registroMock = {
   codigo: 'COD-1',
@@ -23,6 +24,7 @@ const registroMock = {
   hora: '10:00',
   observaciones: 'Obs',
   tema: 'Tema X',
+  cantidadParticipantes: 2,
   participantes: [
     {
       dni: '123',
@@ -260,7 +262,8 @@ describe('ListActivityRegister', () => {
     await component.exportRegistros();
 
     expect(activityService.listarTodos).toHaveBeenCalledWith(undefined, undefined, null);
-    expect(excel.jsonToExcel).toHaveBeenCalled();
+    expect(excel.jsonToExcel).toHaveBeenCalledTimes(1);
+    expect(excel.jsonToExcel.calls.mostRecent().args[0][0]['Cantidad de participantes']).toBe(2);
     expect(snackbar.openSuccessSnackBar).toHaveBeenCalledWith('Reporte exportado correctamente.');
     expect(dialog.closeDialog).toHaveBeenCalled();
   });
@@ -276,7 +279,17 @@ describe('ListActivityRegister', () => {
   });
 
   it('reports export retrieval failures and closes loading', async () => {
-    activityService.listarTodos.and.returnValue(throwError(() => new Error('query failed')));
+    const consoleError = spyOn(console, 'error');
+    activityService.listarTodos.and.returnValue(
+      throwError(
+        () =>
+          new ActivityExportRetrievalError(
+            2,
+            { createdAt: '2026-10-16T12:00:00.000Z', id: 'activity-500' },
+            { code: '57014', status: 500, message: 'statement timeout', details: 'private row' },
+          ),
+      ),
+    );
 
     await component.exportRegistros();
 
@@ -284,10 +297,19 @@ describe('ListActivityRegister', () => {
     expect(snackbar.openErrorSnackBar).toHaveBeenCalledWith(
       'No se pudo generar el reporte. Inténtelo nuevamente.',
     );
+    expect(consoleError).toHaveBeenCalledWith('[activity-export] failed', {
+      phase: 'retrieval',
+      page: 2,
+      cursor: { createdAt: '2026-10-16T12:00:00.000Z', id: 'activity-500' },
+      code: '57014',
+      status: 500,
+      message: 'statement timeout',
+    });
     expect(dialog.closeDialog).toHaveBeenCalled();
   });
 
   it('reports workbook failures and closes loading', async () => {
+    const consoleError = spyOn(console, 'error');
     excel.jsonToExcel.and.returnValue(Promise.reject(new Error('workbook failed')));
 
     await component.exportRegistros();
@@ -295,6 +317,11 @@ describe('ListActivityRegister', () => {
     expect(snackbar.openErrorSnackBar).toHaveBeenCalledWith(
       'No se pudo generar el reporte. Inténtelo nuevamente.',
     );
+    expect(consoleError).toHaveBeenCalledWith('[activity-export] failed', {
+      phase: 'workbook',
+      name: 'Error',
+      message: 'workbook failed',
+    });
     expect(dialog.closeDialog).toHaveBeenCalled();
   });
 });
