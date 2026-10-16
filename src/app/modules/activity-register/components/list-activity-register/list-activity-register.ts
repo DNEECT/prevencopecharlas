@@ -14,7 +14,7 @@ import {
   RegistroActividadResponse,
   RegistroActividadResponseTable,
 } from '@modules/activity-register/interface/activity-register';
-import { finalize } from 'rxjs';
+import { finalize, firstValueFrom } from 'rxjs';
 import { MENU_ACTIONS_ITEM } from '@shared/const/menu-acciones.const';
 import { Sort } from '@angular/material/sort';
 import { ExcelService } from '@shared/service/excel/excel.service';
@@ -23,6 +23,8 @@ import { AutoCompleteData } from '@shared/interface/auto-complete-interface';
 import { SpecialnationaljuryService } from '@modules/activity-register/service/specialnationaljury.service';
 import { FormFieldAutoCompleteComponent } from '@shared/components/form-field-auto-complete/form-field-auto-complete.component';
 import { FormFieldInputComponent } from '@shared/components/form-field-input/form-field-input.component';
+import { ELECTORAL_PROCESS } from '@modules/activity-register/const/electoral-process.const';
+import { ElectoralprocessService } from '@modules/activity-register/service/electoralprocess.service';
 
 @Component({
   selector: 'app-list-activity-register',
@@ -41,6 +43,8 @@ class ListActivityRegister implements OnInit {
   private readonly specialNationalJuryService: SpecialnationaljuryService = inject(
     SpecialnationaljuryService,
   );
+  private readonly electoralProcessService: ElectoralprocessService =
+    inject(ElectoralprocessService);
   private readonly dialogService: DialogService = inject(DialogService);
   private readonly snackBarService: SnackbarService = inject(SnackbarService);
   private readonly router: Router = inject(Router);
@@ -55,11 +59,16 @@ class ListActivityRegister implements OnInit {
   };
 
   public loading: boolean = false;
+  public listLoadFailed: boolean = false;
   public dataSourceRegistroActividades: RegistroActividadResponseTable[] = [];
 
   protected listjuradoNacionalEspecial: AutoCompleteData[] = [];
+  protected listElectoralProcess: AutoCompleteData[] = [];
+  protected isLoadingElectoralProcess: boolean = true;
+  protected isLoadingJury: boolean = true;
 
   public formFilter = new FormGroup({
+    procesoElectoral: new FormControl<AutoCompleteData | null>(null),
     juradoNacionalEspecial: new FormControl<AutoCompleteData | null>(null),
     terminoBusqueda: new FormControl<string | null>(null),
   });
@@ -79,8 +88,7 @@ class ListActivityRegister implements OnInit {
 
   ngOnInit(): void {
     this.setPageData();
-    this.paginar();
-    this.selectSpecialNationalJury();
+    this.selectElectoralProcess();
   }
 
   public setPageData() {
@@ -91,11 +99,13 @@ class ListActivityRegister implements OnInit {
 
   public paginar() {
     this.dataSourceRegistroActividades = [];
+    this.listLoadFailed = false;
     this.loading = true;
     this.activityRegisterService
       .listar(
         this.paginationData.pageIndex,
         this.paginationData.pageSize,
+        this.formFilter.value.procesoElectoral?.key,
         this.formFilter.value.juradoNacionalEspecial?.key,
         this.formFilter.value.terminoBusqueda,
       )
@@ -118,16 +128,63 @@ class ListActivityRegister implements OnInit {
         },
         error: () => {
           this.dataSourceRegistroActividades = [];
+          this.paginationData.length = 0;
+          this.listLoadFailed = true;
+          this.snackBarService.openErrorSnackBar(
+            'No se pudieron cargar los registros. Inténtelo nuevamente.',
+          );
         },
       });
   }
 
-  public selectSpecialNationalJury() {
-    this.listjuradoNacionalEspecial = [];
-    this.specialNationalJuryService
-      .select()
+  public selectElectoralProcess(): void {
+    this.listElectoralProcess = [];
+    this.isLoadingElectoralProcess = true;
+    this.electoralProcessService
+      .select(true)
       .pipe(
         finalize(() => {
+          this.isLoadingElectoralProcess = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (response: AutoCompleteData[]) => {
+          this.listElectoralProcess = response;
+          const defaultProcess = this.electoralProcessService.getActivityListDefault(response);
+          this.formFilter.controls.procesoElectoral.setValue(defaultProcess, {
+            emitEvent: false,
+          });
+          this.selectSpecialNationalJury(defaultProcess?.key);
+          this.paginar();
+        },
+        error: () => {
+          this.listElectoralProcess = [];
+          this.selectSpecialNationalJury();
+          this.paginar();
+        },
+      });
+  }
+
+  public onElectoralProcessChanged(process: AutoCompleteData | null): void {
+    this.formFilter.controls.juradoNacionalEspecial.reset();
+    this.paginationData.pageIndex = 0;
+    this.selectSpecialNationalJury(process?.key);
+    this.paginar();
+  }
+
+  public selectSpecialNationalJury(processId?: string | null): void {
+    this.listjuradoNacionalEspecial = [];
+    if (!processId) {
+      this.isLoadingJury = false;
+      return;
+    }
+    this.isLoadingJury = true;
+    this.specialNationalJuryService
+      .select(processId)
+      .pipe(
+        finalize(() => {
+          this.isLoadingJury = false;
           this.cdr.detectChanges();
         }),
       )
@@ -146,13 +203,17 @@ class ListActivityRegister implements OnInit {
   ): RegistroActividadResponseTable[] {
     return datos?.map((item: RegistroActividadResponse) => {
       const options: MenuItems[] = [];
-      options.push(MENU_ACTIONS_ITEM.EDIT);
-      options.push(MENU_ACTIONS_ITEM.DELETE);
+      if (item.codProcesoElectoral === ELECTORAL_PROCESS.ERM_2026) {
+        options.push(MENU_ACTIONS_ITEM.EDIT);
+        options.push(MENU_ACTIONS_ITEM.DELETE);
+      } else {
+        options.push(MENU_ACTIONS_ITEM.SHOW);
+      }
       options.push(MENU_ACTIONS_ITEM.EXPORT);
       return {
         ...item,
         opciones: options,
-        cantidadParticipantes: item.participantes?.length,
+        cantidadParticipantes: item.cantidadParticipantes ?? item.participantes?.length ?? 0,
       };
     });
   }
@@ -169,6 +230,7 @@ class ListActivityRegister implements OnInit {
   }) {
     switch ($event.menuItem.id) {
       case MENU_ACTIONS_ITEM.EDIT.id:
+      case MENU_ACTIONS_ITEM.SHOW.id:
         this.redirectToEditActivityRegister($event.element);
         break;
       case MENU_ACTIONS_ITEM.DELETE.id:
@@ -223,6 +285,9 @@ class ListActivityRegister implements OnInit {
   }
 
   public async exportRegistroConParticipantes(registro: RegistroActividadResponse): Promise<void> {
+    registro = await firstValueFrom(
+      this.activityRegisterService.obtener(registro.codigoRegistroActividad),
+    );
     const details = {
       Código: registro.codigo,
       Proceso: registro.nombreProcesoElectoral,
@@ -266,29 +331,31 @@ class ListActivityRegister implements OnInit {
     });
   }
 
-  public exportRegistros() {
+  public async exportRegistros(): Promise<void> {
     this.dialogService.openLoadingWindow();
-    this.activityRegisterService
-      .listar(
-        null,
-        null,
-        this.formFilter.value.juradoNacionalEspecial?.key,
-        this.formFilter.value.terminoBusqueda,
-      )
-      .pipe(
-        finalize(() => {
-          this.dialogService.closeDialog();
-          this.cdr.detectChanges();
-        }),
-      )
-      .subscribe({
-        next: (response: RegistroActividadPaginateResponse) => {
-          const mappedRows: RegistroActividadResponseTable[] = this.rowMapActivityRegister(
-            response.registroActividades,
-          );
-          this.exportRegistro(mappedRows).then();
-        },
-      });
+    try {
+      const registros = await firstValueFrom(
+        this.activityRegisterService.listarTodos(
+          this.formFilter.value.procesoElectoral?.key,
+          this.formFilter.value.juradoNacionalEspecial?.key,
+          this.formFilter.value.terminoBusqueda,
+        ),
+      );
+      if (registros.length === 0) {
+        this.snackBarService.openWarningSnackBar('No hay registros para exportar.');
+        return;
+      }
+      const mappedRows = this.rowMapActivityRegister(registros);
+      await this.exportRegistro(mappedRows);
+      this.snackBarService.openSuccessSnackBar('Reporte exportado correctamente.');
+    } catch {
+      this.snackBarService.openErrorSnackBar(
+        'No se pudo generar el reporte. Inténtelo nuevamente.',
+      );
+    } finally {
+      this.dialogService.closeDialog();
+      this.cdr.detectChanges();
+    }
   }
 
   public async exportRegistro(registros: RegistroActividadResponseTable[]): Promise<void> {
@@ -308,7 +375,7 @@ class ListActivityRegister implements OnInit {
       Observaciones: registro.observaciones ?? '',
       'Cantidad de participantes': registro.cantidadParticipantes,
     }));
-    this.excelService.jsonToExcel(rows, fileName).then();
+    await this.excelService.jsonToExcel(rows, fileName);
   }
 }
 

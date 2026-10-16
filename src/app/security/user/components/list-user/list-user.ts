@@ -18,6 +18,7 @@ import {
 } from '../../interface/user';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FormFieldInputComponent } from '@shared/components/form-field-input/form-field-input.component';
+import { MensajeResponse } from '@shared/interface/api.interface';
 
 @Component({
   selector: 'app-list-user',
@@ -72,7 +73,11 @@ export class ListUser implements OnInit {
     this.dataSourceUser = [];
     this.loading = true;
     this.userService
-      .listar(this.paginationData.pageIndex, this.paginationData.pageSize, this.formFilter.value.terminoBusqueda)
+      .listar(
+        this.paginationData.pageIndex,
+        this.paginationData.pageSize,
+        this.formFilter.value.terminoBusqueda,
+      )
       .pipe(
         finalize(() => {
           this.loading = false;
@@ -166,8 +171,8 @@ export class ListUser implements OnInit {
         }),
       )
       .subscribe({
-        next: () => {
-          this.snackBarService.openSuccessSnackBar('Usuario eliminado correctamente');
+        next: (response: MensajeResponse) => {
+          this.snackBarService.openSuccessSnackBar(response.mensaje);
         },
       });
   }

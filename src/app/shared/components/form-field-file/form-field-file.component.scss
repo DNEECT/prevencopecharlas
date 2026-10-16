@@ -163,6 +163,11 @@
       }
     }
 
+    .file-item.unavailable {
+      border-style: dashed;
+      opacity: 0.8;
+    }
+
     .controls {
       display: flex;
       gap: 8px;

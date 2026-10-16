@@ -66,7 +66,12 @@
       </button>
 
       <!--<span class="logo">PREVENCOPE</span>-->
-      <div class="logo" title="PREVENCOPE">
+      <a
+        class="logo"
+        [routerLink]="homeRoute"
+        title="Ir al inicio"
+        aria-label="Ir a la pantalla de inicio de PREVENCOPE"
+      >
         <img
           ngSrc="/prevencope-icon.png"
           alt="PREVENCOPE"
@@ -74,7 +79,7 @@
           height="1024"
           width="1536"
         />
-      </div>
+      </a>
 
       <!-- 🔹 MENÚ DESKTOP -->
       <div class="menu-desktop">

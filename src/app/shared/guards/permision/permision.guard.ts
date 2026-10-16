@@ -9,7 +9,7 @@ export const permisionGuard: CanActivateFn = async (route, state) => {
   const authenticationService: AuthenticationService = inject(AuthenticationService);
   const router = inject(Router);
 
-  if (!authenticationService.isAuthenticated()) {
+  if (!(await authenticationService.hasActiveSession())) {
     return router.parseUrl(ROUTES_WEB.LOGIN);
   }
 

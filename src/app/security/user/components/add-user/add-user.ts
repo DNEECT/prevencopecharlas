@@ -64,8 +64,8 @@ export class AddUser implements OnInit, OnDestroy {
         }),
       )
       .subscribe({
-        next: () => {
-          this.snackBarService.openSuccessSnackBar('Usuario creado correctamente');
+        next: (response) => {
+          this.snackBarService.openSuccessSnackBar(response.mensaje);
           this.cancelUser();
         },
       });

@@ -42,6 +42,11 @@ import { FormFieldFileComponent } from '@shared/components/form-field-file/form-
 import { FileService } from '@modules/activity-register/service/file.service';
 import { AsistentTypeService } from '@modules/activity-format/service/asistent-type.service';
 import { TargetAudienceService } from '@modules/activity-format/service/target-audience.service';
+import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
+import {
+  getInternalAssistantType,
+  showAssistantTypeField,
+} from '@modules/activity-register/const/assistant-type.const';
 
 @Component({
   selector: 'app-form-activity-register',
@@ -71,6 +76,7 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   private readonly consultService: ConsultService = inject(ConsultService);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private readonly fileService: FileService = inject(FileService);
+  private readonly snackbarService: SnackbarService = inject(SnackbarService);
 
   @Input() public form: FormGroup<RegistroActividadForm> = registroActividadFormGroup;
   @Input() public errorMessagesForm: ErrorFields = errorMessagesRegistroActividadForm;
@@ -78,6 +84,18 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     [];
   @Input() public codigo: string = '';
   @Input() public isEdit: boolean = false;
+  private _isReadOnly: boolean = false;
+  @Input()
+  public set isReadOnly(value: boolean) {
+    this._isReadOnly = value;
+    if (value) this.formDetailParticipantes.disable();
+    else this.formDetailParticipantes.enable();
+  }
+  public get isReadOnly(): boolean {
+    return this._isReadOnly;
+  }
+  @Input() public adjuntoListaAsistentesNoDisponible: string | null = null;
+  @Input() public adjuntoRegistroFotograficoNoDisponible: string | null = null;
 
   @Output() addParticipant = new EventEmitter<RegistroActividadParticipanteResponseTable>();
   @Output() removeParticipant = new EventEmitter<RegistroActividadParticipanteResponseTable>();
@@ -104,11 +122,8 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
-    this.selectActivityFormat();
     this.selectElectoralProcess();
-    this.selectSpecialNationalJury();
     this.selectAsistentType();
-    this.selectTargetAudience()
   }
 
   ngOnDestroy(): void {
@@ -159,11 +174,15 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   protected isLoadingAsistentType: boolean = false;
   protected isLoadingTargetAudience: boolean = false;
 
-  public selectActivityFormat() {
+  protected get showAssistantType(): boolean {
+    return showAssistantTypeField(this.form.controls.procesoElectoral.value?.key);
+  }
+
+  public selectActivityFormat(processId?: string | null) {
     this.listActivityFormat = [];
     this.isLoadingActivityType = true;
     this.activityFormatService
-      .select()
+      .select(processId)
       .pipe(
         finalize(() => {
           this.isLoadingActivityType = false;
@@ -205,16 +224,16 @@ export class FormActivityRegister implements OnInit, OnDestroy {
       this.listTheme = [];
     }
     const selectedCodigoTipoActividad = activityType?.key;
-    const uniqueMap = new Map<any, AutoCompleteData>();
+    const uniqueMap = new Map<string, AutoCompleteData>();
 
     for (const activityFormat of this.listActivityFormat) {
       if (activityFormat.codTipoActividad !== selectedCodigoTipoActividad) {
         continue;
       }
 
-      if (!uniqueMap.has(activityFormat.tema)) {
-        uniqueMap.set(activityFormat.tema, {
-          key: activityFormat.tema,
+      if (!uniqueMap.has(activityFormat.codigoFormatoActividad)) {
+        uniqueMap.set(activityFormat.codigoFormatoActividad, {
+          key: activityFormat.codigoFormatoActividad,
           value: activityFormat.tema,
           aux1: selectedCodigoTipoActividad,
         });
@@ -225,12 +244,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
     this.isLoadingTheme = false;
   }
 
-
-  public selectTargetAudience() {
+  public selectTargetAudience(processId?: string | null) {
     this.listTargetAudience = [];
     this.isLoadingTargetAudience = true;
     this.targetAudienceService
-      .select()
+      .select(processId)
       .pipe(
         finalize(() => {
           this.isLoadingTargetAudience = false;
@@ -271,27 +289,18 @@ export class FormActivityRegister implements OnInit, OnDestroy {
   protected selectCodigo(tema: AutoCompleteData) {
     if (!tema) {
       this.codigo = '';
-      return
+      return;
     }
     const selectedTeme = tema?.key ?? '';
     const selectedCodigoTipoActividad = tema?.aux1 ?? '';
     if (!this.isEdit) {
-      this.consultCodeRegistroActivity(
-        selectedCodigoTipoActividad,
-        selectedTeme
-      );
+      this.consultCodeRegistroActivity(selectedCodigoTipoActividad, selectedTeme);
     }
   }
 
-  public consultCodeRegistroActivity(
-    codigoTipoActividad: string,
-    tema: string
-  ) {
+  public consultCodeRegistroActivity(codigoTipoActividad: string, tema: string) {
     this.activityFormatService
-      .consultarCodigoSiguiente(
-        codigoTipoActividad,
-        tema
-      )
+      .consultarCodigoSiguiente(codigoTipoActividad, tema)
       .pipe()
       .subscribe({
         next: (response: string) => {
@@ -335,8 +344,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
           this.formDetailParticipantes.patchValue(cleanData);
           this.cdr.detectChanges();
         },
-        error: () => {
-          this.codigo = '';
+        error: (error: Error) => {
+          this.ultimoDniConsultado = '';
+          this.snackbarService.openWarningSnackBar(
+            error.message || 'No se encontraron datos previos para el DNI.',
+          );
         },
       });
   }
@@ -355,6 +367,12 @@ export class FormActivityRegister implements OnInit, OnDestroy {
       .subscribe({
         next: (response: AutoCompleteData[]) => {
           this.listElectoralProcess = response;
+          const processControl = this.form.controls.procesoElectoral;
+          if (!this.isEdit && !processControl.value) {
+            const defaultProcess = this.electoralProcessService.getDefault(response);
+            if (defaultProcess) processControl.setValue(defaultProcess);
+          }
+          this.loadProcessCatalogs(processControl.value);
         },
         error: () => {
           this.listElectoralProcess = [];
@@ -362,11 +380,11 @@ export class FormActivityRegister implements OnInit, OnDestroy {
       });
   }
 
-  public selectSpecialNationalJury() {
+  public selectSpecialNationalJury(processId?: string | null) {
     this.listjuradoNacionalEspecial = [];
     this.isLoadingjuradoNacionalEspecial = true;
     this.specialNationalJuryService
-      .select()
+      .select(processId)
       .pipe(
         finalize(() => {
           this.isLoadingjuradoNacionalEspecial = false;
@@ -381,6 +399,40 @@ export class FormActivityRegister implements OnInit, OnDestroy {
           this.listjuradoNacionalEspecial = [];
         },
       });
+  }
+
+  public onElectoralProcessChanged(process: AutoCompleteData | null): void {
+    this.form.controls.juradoEspecial.reset();
+    this.form.controls.publicoObjetivo.reset();
+    this.form.controls.tipoActividad.reset();
+    this.form.controls.tema.reset();
+    this.codigo = '';
+    this.loadProcessCatalogs(process);
+  }
+
+  private loadProcessCatalogs(process: AutoCompleteData | null): void {
+    const processId = process?.key ?? null;
+    this.configureAssistantType(processId);
+    if (!processId) {
+      this.listActivityFormat = [];
+      this.listActivityType = [];
+      this.listTheme = [];
+      this.listjuradoNacionalEspecial = [];
+      this.listTargetAudience = [];
+      return;
+    }
+    this.selectActivityFormat(processId);
+    this.selectSpecialNationalJury(processId);
+    this.selectTargetAudience(processId);
+  }
+
+  private configureAssistantType(processId: string | null): void {
+    const internalAssistantType = getInternalAssistantType(processId);
+    if (internalAssistantType) {
+      this.form.controls.tipoAsistente.setValue(internalAssistantType);
+      return;
+    }
+    if (!this.isEdit) this.form.controls.tipoAsistente.reset();
   }
 
   public emitNewParticipant() {

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { DialogDataDto } from '../../models/dialogs.model';
+import { DialogLoadingDto } from '@shared/interface/dialog.interface';
 import { DialogLoadingComponent } from './dialog-loading.component';
 
 describe('DialogAlertComponent', () => {
@@ -10,7 +10,7 @@ describe('DialogAlertComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DialogLoadingComponent],
+      imports: [DialogLoadingComponent],
       providers: [
         { provide: MatDialogRef, useValue: {} },
         {
@@ -18,7 +18,7 @@ describe('DialogAlertComponent', () => {
           useValue: {
             tittle: 'Test Title',
             content: 'Test Content',
-          } as DialogDataDto,
+          } as DialogLoadingDto,
         },
       ],
     }).compileComponents();

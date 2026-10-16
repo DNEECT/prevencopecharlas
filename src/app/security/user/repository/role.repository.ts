@@ -1,17 +1,19 @@
 import { inject, Injectable } from '@angular/core';
-import { ApiService } from '@shared/service/api/api.service';
-import { ROUTES_SERVIDOR_PATH } from '@shared/const/routes-servidor.const';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { RolDatosResponse } from '../interface/role';
+import { SupabaseService } from '@shared/service/supabase/supabase.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoleRepository {
-  private readonly apiService: ApiService = inject(ApiService);
-  private readonly uriRol = `${ROUTES_SERVIDOR_PATH.BASE_URL}${ROUTES_SERVIDOR_PATH.ROLES}`;
+  private readonly supabaseService = inject(SupabaseService);
 
   public listar(): Observable<RolDatosResponse> {
-    return this.apiService.get(`${this.uriRol}`, {}, {}, {}, true);
+    return from(
+      this.supabaseService.invoke<RolDatosResponse>('admin-directory', {
+        action: 'list-roles',
+      }),
+    );
   }
 }

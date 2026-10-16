@@ -27,9 +27,9 @@ export class ActivityFormatService {
       .pipe(map((response: FormatoActividadPaginateResponse) => response));
   }
 
-  public select(): Observable<FormatoActividadResponse[]> {
+  public select(processId?: string | null): Observable<FormatoActividadResponse[]> {
     return this.activityFormatRepository
-      .listar(null, null)
+      .listar(null, null, processId)
       .pipe(map((response: FormatoActividadPaginateResponse) => response.formatosActividades));
   }
 
@@ -39,15 +39,9 @@ export class ActivityFormatService {
       .pipe(map((response: FormatoActividadDatosResponse) => response.datos));
   }
 
-  public consultarCodigoSiguiente(
-    codigoTipoActividad: string,
-    tema: string
-  ): Observable<string> {
+  public consultarCodigoSiguiente(codigoTipoActividad: string, tema: string): Observable<string> {
     return this.activityFormatRepository
-      .consultarCodigoSiguiente(
-        codigoTipoActividad,
-        tema
-      )
+      .consultarCodigoSiguiente(codigoTipoActividad, tema)
       .pipe(map((response: CodigoRegistroActividadResonse) => response.datos));
   }
 

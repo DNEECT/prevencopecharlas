@@ -1,17 +1,20 @@
 import { inject, Injectable } from '@angular/core';
-import { ApiService } from '@shared/service/api/api.service';
-import { ROUTES_SERVIDOR_PATH } from '@shared/const/routes-servidor.const';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { PermisosDatosResponse } from '../interface/permission';
+import { SupabaseService } from '@shared/service/supabase/supabase.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PermissionRepository {
-  private readonly apiService: ApiService = inject(ApiService);
-  private readonly uriPermisos = `${ROUTES_SERVIDOR_PATH.BASE_URL}${ROUTES_SERVIDOR_PATH.PERMISOS}`;
+  private readonly supabaseService = inject(SupabaseService);
 
   public listar(codigoRol: string): Observable<PermisosDatosResponse> {
-    return this.apiService.get(`${this.uriPermisos}/${codigoRol}`, {}, {}, {}, false);
+    return from(
+      this.supabaseService.invoke<PermisosDatosResponse>('admin-directory', {
+        action: 'list-permissions',
+        roleId: codigoRol,
+      }),
+    );
   }
 }

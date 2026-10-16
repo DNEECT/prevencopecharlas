@@ -14,8 +14,8 @@ export class TargetAudienceService {
   private readonly targetAudienceRepository: TargetAudienceRepository =
     inject(TargetAudienceRepository);
 
-  public select(): Observable<AutoCompleteData[]> {
-    return this.targetAudienceRepository.listar().pipe(
+  public select(processId?: string | null): Observable<AutoCompleteData[]> {
+    return this.targetAudienceRepository.listar(processId).pipe(
       map((response: PublicoObjetivoDatosResponse) => {
         return response.datos.map((tipoActividad: PublicoObjetivoResponse) => {
           return {

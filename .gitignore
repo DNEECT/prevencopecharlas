@@ -11,6 +11,8 @@
 npm-debug.log
 yarn-error.log
 proxy-debug.log
+__pycache__/
+*.py[cod]
 *.dump
 *.backup
 *.bak
@@ -21,6 +23,8 @@ proxy-debug.log
 !.env.example
 /supabase/.branches
 /supabase/.temp
+/src/environments/supabase.generated.ts
+/.vercel
 
 # IDEs and editors
 .idea/

@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, map, finalize } from 'rxjs';
-import { FileRepository, FileUploadResponse } from '../repository/file.repository';
+import { Observable, finalize } from 'rxjs';
+import { EvidenceKind, FileRepository } from '../repository/file.repository';
 import { DialogService } from '@shared/service/dialog/dialog.service';
+import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,20 +10,23 @@ import { DialogService } from '@shared/service/dialog/dialog.service';
 export class FileService {
   private readonly fileRepository = inject(FileRepository);
   private readonly dialogService: DialogService = inject(DialogService);
+  private readonly snackbarService = inject(SnackbarService);
 
-  /**
-   * Sube un archivo y retorna la URL/ruta del archivo guardado (string)
-   */
-  public uploadFile(file: File): Observable<string> {
-    return this.fileRepository.upload(file).pipe(
-      map((response: FileUploadResponse) => response.datos.codigo)
-    );
+  /** Upload to the private activity bucket and return its object path. */
+  public uploadFile(file: File, activityId: string, kind: EvidenceKind): Observable<string> {
+    return this.fileRepository.upload(file, activityId, kind);
   }
 
-  /**
-   * Descarga un archivo por su ruta completa
-   * @param rutaArchivo Ruta completa del archivo (ej: /var/www/files/ventas/public/images/archivo.jpg)
-   */
+  public replaceFile(file: File, activityId: string, kind: EvidenceKind,
+    previousPath: string | null): Observable<string> {
+    return this.fileRepository.replace(file, activityId, kind, previousPath);
+  }
+
+  public removeFile(activityId: string, path: string): Observable<void> {
+    return this.fileRepository.remove(activityId, path);
+  }
+
+  /** Download a private object through a short-lived signed URL. */
   public downloadFile(rutaArchivo: string): Observable<Blob> {
     return this.fileRepository.download(rutaArchivo);
   }
@@ -54,9 +58,9 @@ export class FileService {
             a.download = nombreArchivo;
             a.click();
           }
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          setTimeout(() => URL.revokeObjectURL(url), 30_000);
         },
-        error: (err) => console.error('Error al descargar archivo:', err),
+        error: () => this.snackbarService.openWarningSnackBar('El archivo no está disponible.'),
       });
   }
 

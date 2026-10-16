@@ -149,6 +149,9 @@ mat-panel-title {
   gap: 0; /* sin espacio entre elementos */
   max-width: 100%;
   padding: 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* Icono principal (mobile first: más pequeño) */

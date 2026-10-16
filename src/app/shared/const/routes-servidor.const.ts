@@ -1,23 +1,3 @@
-export const ROUTES_SERVIDOR_PATH = {
-  BASE_URL: 'https://prevencope.actividades.api.fordevs.pe/ne-pre-gestionactividades/v1',
-  // BASE_URL: 'http://localhost:9099/ne-pre-gestionactividades/v1',
-  TIPO_ACTIVIDADES: '/tipo-actividades',
-  TIPO_ASISTENTES: '/tipo-asistentes',
-  PUBLICO_OBJETIVO: '/publico-objetivo',
-  FORMATO_ACTIVIDADES: '/formato-actividades',
-  REGISTRO_ACTIVIDADES: '/registro-actividades',
-  PROCESOS_ELECTORALES: '/procesos-electorales',
-  JURADO_NACIONAL_ESPECIAL: '/jurados-nacionales-especiales',
-  FILES: '/files',
-  ROLES: '/roles',
-  ACCIONES: '/acciones',
-  USUARIO: '/usuarios',
-  CONSULTAS: '/consultas',
-  PERMISOS: '/permisos',
-  LOGIN: '/auth/login',
-  MENUS: '/menus',
-};
-
 export const ROUTES_WEB = {
   TIPO_ACTIVIDADES: 'tipo-actividad',
   FORMATO_ACTIVIDADES: 'formato-actividad',
@@ -31,6 +11,8 @@ export const ROUTES_WEB = {
   CODIGO_REGISTRO_ACTIVIDAD: '/:codigoRegistroActividad',
   CODIGO_USUARIO: '/:codigoUsuario',
   LOGIN: 'login',
+  RECUPERAR_CONTRASENA: 'recuperar-contrasena',
+  ACTUALIZAR_CONTRASENA: 'actualizar-contrasena',
   // Rutas para estados especiales
   NOT_PERMISION: 'not-permision',
 };

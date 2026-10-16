@@ -1,13 +1,10 @@
 <div class="container">
-
   <div class="form-grid">
     <div class="form-item col-span-8">
       <h2>Registro de actividad</h2>
     </div>
     <div class="form-item col-span-2">
-      <button mat-raised-button class="button-border" (click)="exportRegistros()">
-        Exportar
-      </button>
+      <button mat-raised-button class="button-border" (click)="exportRegistros()">Exportar</button>
     </div>
     <div class="form-item col-span-2">
       <button mat-raised-button class="button-prevencope" (click)="redirectToAddRegisterActivity()">
@@ -28,6 +25,20 @@
     </div>
     <div class="form-item col-span-3">
       <app-form-field-auto-complete
+        [label]="'Proceso Electoral'"
+        [placeholder]="'Todos los procesos autorizados'"
+        [controlName]="'procesoElectoral'"
+        [keyField]="'key'"
+        [valueField]="'value'"
+        [control]="formFilter.controls['procesoElectoral']"
+        [options]="listElectoralProcess"
+        [isLoading]="isLoadingElectoralProcess"
+        (valueChanged)="onElectoralProcessChanged($event)"
+      >
+      </app-form-field-auto-complete>
+    </div>
+    <div class="form-item col-span-3">
+      <app-form-field-auto-complete
         [label]="'Jurado Electoral Especial'"
         [placeholder]="'Seleccione un jurado electoral especial'"
         [controlName]="'juradoNacionalEspecial'"
@@ -35,27 +46,39 @@
         [valueField]="'value'"
         [control]="formFilter.controls['juradoNacionalEspecial']"
         [options]="listjuradoNacionalEspecial"
+        [isLoading]="isLoadingJury"
       >
       </app-form-field-auto-complete>
     </div>
-    <div class="form-item col-span-2">
-      <button mat-raised-button class="button-prevencope" (click)="paginar()" style="height: 56px !important;">
+    <div class="form-item col-span-3">
+      <button
+        mat-raised-button
+        class="button-prevencope"
+        (click)="paginar()"
+        style="height: 56px !important"
+      >
         Filtrar
       </button>
     </div>
   </div>
 
   <div class="table-wrapper">
-    <app-table-paginate
-      [loading]="loading"
-      [dataSource]="dataSourceRegistroActividades"
-      [pageSize]="paginationData.pageSize"
-      [pageIndex]="paginationData.pageIndex"
-      [length]="paginationData.length"
-      [headers]="headers"
-      (pageChange)="onPageChange($event)"
-      (optionSelect)="onOptionSelect($event)"
-    >
-    </app-table-paginate>
+    @if (listLoadFailed) {
+      <div class="list-error" role="alert">
+        No se pudieron cargar los registros. Inténtelo nuevamente.
+      </div>
+    } @else {
+      <app-table-paginate
+        [loading]="loading"
+        [dataSource]="dataSourceRegistroActividades"
+        [pageSize]="paginationData.pageSize"
+        [pageIndex]="paginationData.pageIndex"
+        [length]="paginationData.length"
+        [headers]="headers"
+        (pageChange)="onPageChange($event)"
+        (optionSelect)="onOptionSelect($event)"
+      >
+      </app-table-paginate>
+    }
   </div>
 </div>

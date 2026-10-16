@@ -6,4 +6,5 @@ export interface ProcesoElectoralResponse {
   codigoProcesoElectoral: string;
   nombre: string;
   descripcion: string;
+  esPredeterminado: boolean;
 }

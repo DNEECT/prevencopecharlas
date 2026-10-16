@@ -4,7 +4,7 @@ import { AutoCompleteData } from '@shared/interface/auto-complete-interface';
 import { SpecialnationaljuryRepository } from '@modules/activity-register/repository/specialnationaljury.repository';
 import {
   JuradoNacionalEspecialDatosResponse,
-  JuradoNacionalEspecialResponse
+  JuradoNacionalEspecialResponse,
 } from '@modules/activity-register/interface/specialnationaljury';
 
 @Injectable({
@@ -15,8 +15,8 @@ export class SpecialnationaljuryService {
     SpecialnationaljuryRepository,
   );
 
-  public select(): Observable<AutoCompleteData[]> {
-    return this.specialNationalJuryRepository.listar().pipe(
+  public select(processId?: string | null): Observable<AutoCompleteData[]> {
+    return this.specialNationalJuryRepository.listar(processId).pipe(
       map((response: JuradoNacionalEspecialDatosResponse) => {
         return response.datos.map((specialNationalJury: JuradoNacionalEspecialResponse) => {
           return {

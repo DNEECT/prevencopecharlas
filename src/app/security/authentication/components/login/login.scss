@@ -16,6 +16,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    &__Content__Title {
+      margin: 0;
+      padding: 0 16px;
+      max-width: 540px;
+      line-height: 1.2;
+      text-align: center;
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+    }
     &__Header {
       display: flex;
       flex-direction: column;

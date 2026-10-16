@@ -98,8 +98,9 @@ export class FormFieldAutoCompleteMultiple implements OnInit {
     if (this.control.asyncValidator) {
       this.formControl.addAsyncValidators(this.control.asyncValidator);
     }
-    this.formControl.setValue(this.control.value);
-    this.selected = [...this.control.value];
+    const initialValue = Array.isArray(this.control.value) ? this.control.value : [];
+    this.formControl.setValue(initialValue);
+    this.selected = [...initialValue];
     this.subscribeToFormControl();
     this.filter();
   }
@@ -119,7 +120,6 @@ export class FormFieldAutoCompleteMultiple implements OnInit {
 
   public subscribeToFormControl() {
     this.control.valueChanges.pipe(distinctUntilChanged()).subscribe((value) => {
-      console.log(value);
       if (value) {
         this.valueChanged.emit(value);
         this.selected = [...value];

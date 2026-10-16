@@ -27,6 +27,7 @@ import { NoPermitidoComponent } from '@shared/components/no-permitido/no-permiti
 import { NotFoundComponent } from '@shared/components/not-found/not-found.component';
 import { ViewUser } from './security/user/components/view-user/view-user';
 import { UserPasswordResolver } from './security/user/resolver/user-password.resolver';
+import { ChangePassword } from './security/authentication/components/change-password/change-password';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,15 @@ export const routes: Routes = [
   {
     path: ROUTES_WEB.LOGIN,
     component: Login,
+  },
+  {
+    path: ROUTES_WEB.RECUPERAR_CONTRASENA,
+    redirectTo: ROUTES_WEB.LOGIN,
+    pathMatch: 'full',
+  },
+  {
+    path: ROUTES_WEB.ACTUALIZAR_CONTRASENA,
+    component: ChangePassword,
   },
   {
     path: 'not-found',

@@ -26,7 +26,11 @@ export class UserService {
     }, 500);
   }
 
-  public listar(numeroPagina: number, tamanioPagina: number, terminoBusqueda: string | null | undefined): Observable<UsuarioPaginateResponse> {
+  public listar(
+    numeroPagina: number,
+    tamanioPagina: number,
+    terminoBusqueda: string | null | undefined,
+  ): Observable<UsuarioPaginateResponse> {
     return this.userRepository
       .listar(numeroPagina, tamanioPagina, terminoBusqueda)
       .pipe(map((response: UsuarioPaginateResponse) => response));
@@ -71,8 +75,10 @@ export class UserService {
       .pipe(map((response: MensajeDatosResponse) => response.datos));
   }
 
-  public eliminar(codigoUsuario: string): Observable<void> {
-    return this.userRepository.eliminar(codigoUsuario).pipe(map((response: void) => response));
+  public eliminar(codigoUsuario: string): Observable<MensajeResponse> {
+    return this.userRepository
+      .eliminar(codigoUsuario)
+      .pipe(map((response: MensajeDatosResponse) => response.datos));
   }
 
   private cargarUsuario() {

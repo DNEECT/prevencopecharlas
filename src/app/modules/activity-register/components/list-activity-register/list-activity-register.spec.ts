@@ -1,14 +1,17 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import ListActivityRegister from './list-activity-register';
 import { Router } from '@angular/router';
 import { BreadcrumbsService } from '@shared/service/breadcrumbs/breadcrumbs-service';
 import { DialogService } from '@shared/service/dialog/dialog.service';
 import { SnackbarService } from '@shared/service/snackbar/snackbar.service';
 import { ActivityRegisterService } from '@modules/activity-register/service/activity-register.service';
-import { of, Subject, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { MENU_ACTIONS_ITEM } from '@shared/const/menu-acciones.const';
 import { ExcelService } from '@shared/service/excel/excel.service';
+import { ElectoralprocessService } from '@modules/activity-register/service/electoralprocess.service';
+import { SpecialnationaljuryService } from '@modules/activity-register/service/specialnationaljury.service';
 
 const registroMock = {
   codigo: 'COD-1',
@@ -70,17 +73,36 @@ class DialogServiceStub {
 
 class SnackbarServiceStub {
   openSuccessSnackBar = jasmine.createSpy('openSuccessSnackBar');
+  openErrorSnackBar = jasmine.createSpy('openErrorSnackBar');
+  openWarningSnackBar = jasmine.createSpy('openWarningSnackBar');
 }
 
 class ActivityRegisterServiceStub {
   listar = jasmine.createSpy('listar').and.returnValue(of(paginateResponse));
+  listarTodos = jasmine.createSpy('listarTodos').and.returnValue(of([registroMock]));
+  obtener = jasmine.createSpy('obtener').and.returnValue(of(registroMock));
   eliminar = jasmine.createSpy('eliminar').and.returnValue(of(void 0));
 }
 
 class ExcelServiceStub {
+  jsonToExcel = jasmine.createSpy('jsonToExcel').and.returnValue(Promise.resolve());
   exportSheetWithDetailsAndTable = jasmine
     .createSpy('exportSheetWithDetailsAndTable')
     .and.returnValue(Promise.resolve());
+}
+
+class ElectoralprocessServiceStub {
+  select = jasmine.createSpy('select').and.returnValue(
+    of([
+      { key: 'process-1', value: 'Proceso actual', isDefault: true },
+      { key: 'process-2', value: 'Proceso histórico', isDefault: false },
+    ]),
+  );
+  getActivityListDefault = jasmine.createSpy('getActivityListDefault').and.returnValue(null);
+}
+
+class SpecialnationaljuryServiceStub {
+  select = jasmine.createSpy('select').and.returnValue(of([]));
 }
 
 describe('ListActivityRegister', () => {
@@ -90,17 +112,21 @@ describe('ListActivityRegister', () => {
   let router: RouterStub;
   let dialog: DialogServiceStub;
   let excel: ExcelServiceStub;
+  let snackbar: SnackbarServiceStub;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ListActivityRegister],
       providers: [
+        provideZonelessChangeDetection(),
         { provide: Router, useClass: RouterStub },
         { provide: BreadcrumbsService, useClass: BreadcrumbsServiceStub },
         { provide: DialogService, useClass: DialogServiceStub },
         { provide: SnackbarService, useClass: SnackbarServiceStub },
         { provide: ActivityRegisterService, useClass: ActivityRegisterServiceStub },
         { provide: ExcelService, useClass: ExcelServiceStub },
+        { provide: ElectoralprocessService, useClass: ElectoralprocessServiceStub },
+        { provide: SpecialnationaljuryService, useClass: SpecialnationaljuryServiceStub },
       ],
     }).compileComponents();
 
@@ -110,6 +136,7 @@ describe('ListActivityRegister', () => {
     router = TestBed.inject(Router) as any;
     dialog = TestBed.inject(DialogService) as any;
     excel = TestBed.inject(ExcelService) as any;
+    snackbar = TestBed.inject(SnackbarService) as any;
   });
 
   it('should create and set breadcrumbs on init', () => {
@@ -120,39 +147,79 @@ describe('ListActivityRegister', () => {
     expect(bc.pushPath).toHaveBeenCalled();
   });
 
-  it('should call listar and populate table on paginar success', fakeAsync(() => {
+  it('should call listar and populate table on paginar success', () => {
     fixture.detectChanges(); // triggers ngOnInit -> paginar
-    tick();
-    expect(activityService.listar).toHaveBeenCalledWith(0, 5);
+    expect(activityService.listar).toHaveBeenCalledWith(0, 5, undefined, undefined, null);
     expect(component.dataSourceRegistroActividades.length).toBe(1);
     expect(component.paginationData.length).toBe(1);
-  }));
+  });
 
-  it('should clear table on paginar error', fakeAsync(() => {
+  it('keeps the Director process filter empty and lists every authorized process', () => {
+    fixture.detectChanges();
+
+    expect(component.formFilter.value.procesoElectoral).toBeNull();
+    expect(activityService.listar).toHaveBeenCalledWith(0, 5, undefined, undefined, null);
+  });
+
+  it('passes selected process, jury, and search filters unchanged', () => {
+    fixture.detectChanges();
+    component.formFilter.setValue({
+      procesoElectoral: { key: 'process-1', value: 'Proceso actual' },
+      juradoNacionalEspecial: { key: 'jury-1', value: 'JEE Lima' },
+      terminoBusqueda: ' PREV ',
+    });
+
+    component.paginar();
+
+    expect(activityService.listar).toHaveBeenCalledWith(0, 5, 'process-1', 'jury-1', ' PREV ');
+  });
+
+  it('should clear table on paginar error', () => {
     (activityService.listar as any).and.returnValue(throwError(() => new Error('fail')));
     fixture.detectChanges(); // ngOnInit -> paginar
-    tick();
     expect(component.dataSourceRegistroActividades).toEqual([]);
-  }));
+    expect(component.listLoadFailed).toBeTrue();
+    expect(snackbar.openErrorSnackBar).toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')?.textContent).toContain(
+      'No se pudieron cargar los registros',
+    );
+  });
 
-  it('should handle page change and repaginate', fakeAsync(() => {
+  it('keeps a successful empty response distinct from a request failure', () => {
+    activityService.listar.and.returnValue(
+      of({
+        ...paginateResponse,
+        registroActividades: [],
+        totalElementos: 0,
+      }),
+    );
+
+    fixture.detectChanges();
+
+    expect(component.dataSourceRegistroActividades).toEqual([]);
+    expect(component.listLoadFailed).toBeFalse();
+    expect(snackbar.openErrorSnackBar).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
+  });
+
+  it('should handle page change and repaginate', () => {
     fixture.detectChanges();
     const spyPaginar = spyOn(component as any, 'paginar').and.callThrough();
     component['onPageChange']({
       pageEvent: { pageIndex: 1, pageSize: 10 } as PageEvent,
       sort: null,
     });
-    expect(component.paginationData.pageIndex).toBe(1);
+    expect(activityService.listar).toHaveBeenCalledWith(1, 10, undefined, undefined, null);
     expect(component.paginationData.pageSize).toBe(10);
     expect(spyPaginar).toHaveBeenCalled();
-  }));
+  });
 
-  it('should navigate to edit on EDIT option', fakeAsync(() => {
+  it('should navigate to edit on EDIT option', () => {
     component['onOptionSelect']({ menuItem: MENU_ACTIONS_ITEM.EDIT, element: registroMock as any });
     expect(router.navigate).toHaveBeenCalled();
-  }));
+  });
 
-  it('should confirm and delete on DELETE option', fakeAsync(() => {
+  it('should confirm and delete on DELETE option', () => {
     spyOn(component as any, 'paginar');
     component['onOptionSelect']({
       menuItem: MENU_ACTIONS_ITEM.DELETE,
@@ -160,14 +227,14 @@ describe('ListActivityRegister', () => {
     });
     expect(dialog.openDialogConfirmacion).toHaveBeenCalled();
     expect(activityService.eliminar).toHaveBeenCalledWith('REG-1');
-  }));
+  });
 
-  it('should export registro and participants on EXPORT option', fakeAsync(async () => {
+  it('should export registro and participants on EXPORT option', async () => {
     await component['exportRegistroConParticipantes'](registroMock as any);
     expect(excel.exportSheetWithDetailsAndTable).toHaveBeenCalled();
-  }));
+  });
 
-  it('should build participants table flags correctly in export', fakeAsync(async () => {
+  it('should build participants table flags correctly in export', async () => {
     await component['exportRegistroConParticipantes'](registroMock as any);
     const callArgs = excel.exportSheetWithDetailsAndTable.calls.mostRecent().args[0];
     expect(callArgs.details['Código']).toBe('COD-1');
@@ -178,13 +245,56 @@ describe('ListActivityRegister', () => {
     expect(first['Indígena']).toBeTrue();
     expect(first['Discapacitado']).toBeFalse();
     expect(first['Afro-Peruano']).toBeFalse();
-  }));
+  });
 
-  it('should handle empty participantes when exporting', fakeAsync(async () => {
+  it('should handle empty participantes when exporting', async () => {
     const reg = { ...registroMock, participantes: [] } as any;
+    activityService.obtener.and.returnValue(of(reg));
     await component['exportRegistroConParticipantes'](reg);
     const callArgs = excel.exportSheetWithDetailsAndTable.calls.mostRecent().args[0];
     expect(callArgs.tableHeaders).toEqual([]);
     expect(callArgs.tableRows).toEqual([]);
-  }));
+  });
+
+  it('exports all matching records and closes loading after workbook success', async () => {
+    await component.exportRegistros();
+
+    expect(activityService.listarTodos).toHaveBeenCalledWith(undefined, undefined, null);
+    expect(excel.jsonToExcel).toHaveBeenCalled();
+    expect(snackbar.openSuccessSnackBar).toHaveBeenCalledWith('Reporte exportado correctamente.');
+    expect(dialog.closeDialog).toHaveBeenCalled();
+  });
+
+  it('does not generate a workbook for an empty export and closes loading', async () => {
+    activityService.listarTodos.and.returnValue(of([]));
+
+    await component.exportRegistros();
+
+    expect(excel.jsonToExcel).not.toHaveBeenCalled();
+    expect(snackbar.openWarningSnackBar).toHaveBeenCalledWith('No hay registros para exportar.');
+    expect(dialog.closeDialog).toHaveBeenCalled();
+  });
+
+  it('reports export retrieval failures and closes loading', async () => {
+    activityService.listarTodos.and.returnValue(throwError(() => new Error('query failed')));
+
+    await component.exportRegistros();
+
+    expect(excel.jsonToExcel).not.toHaveBeenCalled();
+    expect(snackbar.openErrorSnackBar).toHaveBeenCalledWith(
+      'No se pudo generar el reporte. Inténtelo nuevamente.',
+    );
+    expect(dialog.closeDialog).toHaveBeenCalled();
+  });
+
+  it('reports workbook failures and closes loading', async () => {
+    excel.jsonToExcel.and.returnValue(Promise.reject(new Error('workbook failed')));
+
+    await component.exportRegistros();
+
+    expect(snackbar.openErrorSnackBar).toHaveBeenCalledWith(
+      'No se pudo generar el reporte. Inténtelo nuevamente.',
+    );
+    expect(dialog.closeDialog).toHaveBeenCalled();
+  });
 });

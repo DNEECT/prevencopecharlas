@@ -32,6 +32,9 @@ export class ExcelService {
   }
 
   public async jsonToExcel(data: any[], fileName: string): Promise<void> {
+    if (data.length === 0) {
+      throw new Error('No hay datos para exportar.');
+    }
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Datos');
 
